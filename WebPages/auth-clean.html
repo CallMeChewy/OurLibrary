@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OurLibrary - Clean Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .form-field {
+            margin-bottom: 15px;
+        }
+        
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>OurLibrary</h1>
+            <p>Educational Access Platform</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
+        </div>
+        
+        <div id="login-content" class="tab-content active">
+            <form>
+                <div class="form-field">
+                    <label>Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+        </div>
+        
+        <div id="register-content" class="tab-content">
+            <form>
+                <div class="form-field">
+                    <label>Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-field">
+                    <label>Username</label>
+                    <input type="text">
+                </div>
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Register</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active from tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            // Activate tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

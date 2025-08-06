@@ -1,0 +1,55 @@
+# File: category_test.html
+# Path: /home/herb/Desktop/OurLibrary/category_test.html
+# Standard: AIDEV-PascalCase-2.1
+# Created: 2025-07-23
+# Last Modified: 2025-07-23 09:37PM
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Category Test</title>
+</head>
+<body>
+    <h1>Category Loading Test</h1>
+    <select id="categoryDropdown">
+        <option value="">Loading...</option>
+    </select>
+    <div id="results"></div>
+    
+    <script>
+        async function testCategories() {
+            try {
+                console.log('Fetching categories from http://127.0.0.1:8080/api/categories');
+                const response = await fetch('http://127.0.0.1:8080/api/categories');
+                const categories = await response.json();
+                
+                console.log('Categories received:', categories);
+                console.log('Categories count:', categories.length);
+                
+                const dropdown = document.getElementById('categoryDropdown');
+                const results = document.getElementById('results');
+                
+                // Clear dropdown
+                dropdown.innerHTML = '<option value="">Select Category</option>';
+                
+                // Add each category
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.category;
+                    option.textContent = cat.category;
+                    dropdown.appendChild(option);
+                });
+                
+                results.innerHTML = `<p>✅ Loaded ${categories.length} categories successfully</p>`;
+                
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                document.getElementById('results').innerHTML = `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', testCategories);
+    </script>
+</body>
+</html>

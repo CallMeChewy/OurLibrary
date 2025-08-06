@@ -1,0 +1,195 @@
+/* File: desktop-library.css
+ * Path: /home/herb/Desktop/AndyLibrary/WebPages/static/styles/desktop-library.css
+ * Standard: AIDEV-PascalCase-2.1
+ * Created: 2025-08-04
+ * Last Modified: 2025-08-04 10:30AM
+ */
+
+/* Enhanced Base Styles for Desktop Library */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(to bottom, rgb(3, 50, 76), rgb(6, 82, 125) 29%, rgb(8, 117, 178) 51%, rgb(7, 108, 164) 75%, rgb(3, 51, 77));
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.search-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+.book-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.book-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.book-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.book-author {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 5px;
+}
+
+.book-subject {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.error-message {
+    background: rgba(255, 0, 0, 0.2);
+    border: 1px solid rgba(255, 0, 0, 0.4);
+    color: #ffcccc;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a6fd8;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .header {
+        padding: 10px 15px;
+    }
+    
+    .search-container {
+        margin: 5px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .book-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .user-menu {
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}

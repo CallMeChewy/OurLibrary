@@ -1,0 +1,153 @@
+flowchart TD
+    A[User Opens GitUp] --> B{First Time User?}
+    
+    B -->|Yes| C[Onboarding Flow]
+    B -->|No| D[Main Dashboard]
+    
+    C --> C1[Welcome & Tutorial]
+    C1 --> C2[Git Configuration Setup]
+    C2 --> C3[Repository Connection Options]
+    C3 --> C3a[Clone Existing Repo]
+    C3 --> C3b[Initialize New Repo]
+    C3 --> C3c[Connect Local Repo]
+    C3a --> D
+    C3b --> D  
+    C3c --> D
+    
+    D --> E{What Action?}
+    
+    E --> F[Quick Actions]
+    E --> G[Repository Management]
+    E --> H[Branch Operations]
+    E --> I[Collaboration Tools]
+    E --> J[Advanced Features]
+    E --> K[Settings & Config]
+    
+    F --> F1[Smart Commit]
+    F --> F2[Quick Push/Pull]
+    F --> F3[Status Check]
+    F --> F4[Recent Changes View]
+    F1 --> F1a{Auto-generate commit message?}
+    F1a -->|Yes| F1b[AI Commit Message]
+    F1a -->|No| F1c[Manual Message]
+    F1b --> F1d[Review & Commit]
+    F1c --> F1d
+    F1d --> F1e{Push immediately?}
+    F1e -->|Yes| F2
+    F1e -->|No| D
+    
+    G --> G1[Repo Health Check]
+    G --> G2[File History Explorer]
+    G --> G3[Dependency Tracking]
+    G --> G4[Repository Analytics]
+    G1 --> G1a{Issues Found?}
+    G1a -->|Yes| G1b[Suggested Fixes]
+    G1a -->|No| G1c[All Good Report]
+    G1b --> G1d{Apply Fixes?}
+    G1d -->|Yes| G1e[Auto-apply Changes]
+    G1d -->|No| D
+    
+    H --> H1[Branch Creation]
+    H --> H2[Branch Switching]
+    H --> H3[Merge Operations]
+    H --> H4[Conflict Resolution]
+    H1 --> H1a{Branch Type?}
+    H1a --> H1b[Feature Branch]
+    H1a --> H1c[Hotfix Branch]
+    H1a --> H1d[Release Branch]
+    H1b --> H1e[Apply Template]
+    H1c --> H1e
+    H1d --> H1e
+    H3 --> H3a{Conflicts Detected?}
+    H3a -->|Yes| H4
+    H3a -->|No| H3b[Auto Merge]
+    H4 --> H4a[Visual Conflict Resolver]
+    H4a --> H4b{Resolution Method?}
+    H4b --> H4c[AI-Assisted Resolution]
+    H4b --> H4d[Manual Resolution]
+    H4b --> H4e[Use External Tool]
+    
+    I --> I1[Team Sync]
+    I --> I2[Code Review Queue]
+    I --> I3[Shared Workspaces]
+    I --> I4[Communication Hub]
+    I1 --> I1a[Pull Latest Changes]
+    I1 --> I1b[Check Team Status]
+    I1 --> I1c[Coordinate Merges]
+    I2 --> I2a{Pending Reviews?}
+    I2a -->|Yes| I2b[Review Interface]
+    I2a -->|No| I2c[Create New Review]
+    
+    J --> J1[Advanced Git Operations]
+    J --> J2[Automation & Scripts]
+    J --> J3[Integration Management]
+    J --> J4[Backup & Recovery]
+    J1 --> J1a[Interactive Rebase]
+    J1 --> J1b[Cherry Picking]
+    J1 --> J1c[Stash Management]
+    J2 --> J2a{Automation Type?}
+    J2a --> J2b[CI/CD Integration]
+    J2a --> J2c[Hook Management]
+    J2a --> J2d[Workflow Automation]
+    J3 --> J3a[IDE Integration]
+    J3 --> J3b[External Tool Sync]
+    J3 --> J3c[API Connections]
+    
+    K --> K1[User Preferences]
+    K --> K2[Repository Settings]
+    K --> K3[Security & Auth]
+    K --> K4[Export/Import Config]
+    
+    %% Return paths
+    F2 --> L{Success?}
+    F3 --> M[Status Report]
+    F4 --> N[Changes Timeline]
+    G1c --> D
+    G1e --> D
+    H1e --> D
+    H3b --> D
+    H4c --> D
+    H4d --> D
+    H4e --> D
+    I1a --> D
+    I1b --> D
+    I1c --> D
+    I2b --> D
+    I2c --> D
+    J1a --> D
+    J1b --> D
+    J1c --> D
+    J2b --> D
+    J2c --> D
+    J2d --> D
+    J3a --> D
+    J3b --> D
+    J3c --> D
+    K1 --> D
+    K2 --> D
+    K3 --> D
+    K4 --> D
+    M --> D
+    N --> D
+    
+    L -->|Success| L1[Success Notification]
+    L -->|Error| L2[Error Handler]
+    L1 --> D
+    L2 --> L2a{Retry Available?}
+    L2a -->|Yes| L2b[Suggest Retry]
+    L2a -->|No| L2c[Help & Support]
+    L2b --> F2
+    L2c --> D
+    
+    %% Styling
+    classDef startEnd fill:#e1f5fe
+    classDef decision fill:#fff3e0
+    classDef process fill:#f3e5f5
+    classDef action fill:#e8f5e8
+    classDef error fill:#ffebee
+    
+    class A,D startEnd
+    class B,E,F1a,F1e,G1a,G1d,H1a,H3a,H4b,I2a,J2a,L,L2a decision
+    class C,F,G,H,I,J,K process
+    class F1,F2,F3,F4,G1,G2,G3,G4,H1,H2,H3,H4,I1,I2,I3,I4,J1,J2,J3,J4,K1,K2,K3,K4 action
+    class L2,L2c error
