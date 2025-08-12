@@ -348,6 +348,10 @@ client_secret_*.json
 .env*
 !.env.template
 
+# SENSITIVE INFORMATION - NEVER COMMIT
+SENSITIVE_CREDENTIALS.md
+SENSITIVE_*
+
 # Database and Local Data
 Data/Local/
 *.db

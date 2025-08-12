@@ -1,19 +1,8 @@
-This project uses Google Pages: https://callmechewy.github.io/BowersWorld-com/
-The website it will be replacing is: https://BowersWorld.com/
-The site is registered through Misk.com
-    Primary Account: Herb@BowersWorld.com
-    Password: IChewy#4
-    Project Account: ProjectHimalaya@BowersWorld.com
+This project uses GitHub Pages: https://callmechewy.github.io/BowersWorld-com/
+The live website is: https://BowersWorld.com/
+Domain registered through Misk.com
 
-DNS Records TXT
-v=spf1 include:_spf.misk.com ?all
-google-site-verification=iwlqmh8XJfNjIIvqTOj0pMzPL7OQxW4rDMXO2njctGk
-openai-domain-verification=dv-U9OZXEgJW2iJmac4f1LDX1X8
-
-Forwarding	http://bowersworld.com/	edit
-Incoming Mail Servers (MX)
-Mail Server: mx.misk.com (10)
-Server Name: mail.example.com   Priority: 10    mx.misk.com (10)
+Note: All sensitive credentials stored in SENSITIVE_CREDENTIALS.md (not committed to git)
 
 This project will not use local servers. All testing wi be via Google pages with integration of BowersWorld.xom mail and OurLibrary project application. Registration authorization will ne via email or social media login options including Google, GitHub, Facebook, Microsoft, etc.
 
