@@ -154,6 +154,7 @@
                     <p class="text-gray-400 mt-4 text-sm">
                         Already a member? <a href="#" onclick="showLogin()" class="text-blue-400 hover:text-blue-300 underline">Sign in here</a>
                     </p>
+                    
                 </div>
             </div>
         </div>
@@ -200,12 +201,8 @@
                 <form id="register-form" onsubmit="handleRegistration(event)">
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">Username *</label>
-                            <input type="text" name="username" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">Email Address *</label>
-                            <input type="email" name="email" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-gray-300 text-sm font-bold mb-2">Email Address (User ID) *</label>
+                            <input type="email" name="email" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="your.email@example.com">
                         </div>
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">First Name *</label>
@@ -214,6 +211,14 @@
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Last Name *</label>
                             <input type="text" name="lastName" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-bold mb-2">Password *</label>
+                            <input type="password" name="password" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Minimum 8 characters">
+                        </div>
+                        <div>
+                            <label class="block text-gray-300 text-sm font-bold mb-2">Confirm Password *</label>
+                            <input type="password" name="confirmPassword" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Re-enter your password">
                         </div>
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Zip Code</label>
@@ -311,7 +316,28 @@
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyB2LPmuXM2WZp6aB6vrSxs5NFNP4CIVApE",
+          authDomain: "bowersworld-digital-alexandria.firebaseapp.com",
+          projectId: "bowersworld-digital-alexandria",
+          storageBucket: "bowersworld-digital-alexandria.firebasestorage.app",
+          messagingSenderId: "486786884647",
+          appId: "1:486786884647:web:85806a519fe582e6fd5a02",
+          measurementId: "G-F3RKG1X6NE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
         // Modal Management
         function showRegistration() {
             document.getElementById('modal-background').classList.remove('hidden');
@@ -342,10 +368,16 @@
             return emailRegex.test(email);
         }
         
-        function validateUsername(username) {
-            // Username: 3-20 characters, letters, numbers, underscore only
-            const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-            return usernameRegex.test(username);
+        function validatePassword(password) {
+            // Password: minimum 8 characters, at least one letter and one number
+            if (password.length < 8) return false;
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            return hasLetter && hasNumber;
+        }
+
+        function validatePasswordMatch(password, confirmPassword) {
+            return password === confirmPassword;
         }
         
         function validateName(name) {
@@ -390,87 +422,32 @@
         function handleRegistration(event) {
             event.preventDefault();
             
-            // Remove any existing error messages
-            const existingError = document.getElementById('validation-error');
-            if (existingError) {
-                existingError.remove();
-            }
-            
             const formData = new FormData(event.target);
-            const username = formData.get('username').trim();
             const email = formData.get('email').trim().toLowerCase();
-            const firstName = formData.get('firstName').trim();
-            const lastName = formData.get('lastName').trim();
-            const zipCode = formData.get('zipCode').trim();
-            const agreeTerms = formData.get('agreeTerms');
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
             
-            // Validation
-            if (!validateUsername(username)) {
-                showValidationError('Username must be 3-20 characters, letters, numbers, and underscores only.');
+            // Basic validation
+            if (!validatePasswordMatch(password, confirmPassword)) {
+                showValidationError('Passwords do not match.');
                 return;
             }
-            
-            if (!validateEmail(email)) {
-                showValidationError('Please enter a valid email address.');
-                return;
-            }
-            
-            if (!validateName(firstName)) {
-                showValidationError('First name must be 2-50 characters, letters only.');
-                return;
-            }
-            
-            if (!validateName(lastName)) {
-                showValidationError('Last name must be 2-50 characters, letters only.');
-                return;
-            }
-            
-            if (!validateZipCode(zipCode)) {
-                showValidationError('Please enter a valid zip/postal code.');
-                return;
-            }
-            
-            if (!agreeTerms) {
-                showValidationError('You must agree to the Terms of Service to continue.');
-                return;
-            }
-            
-            // Check if user already registered
-            const existingRegistrations = JSON.parse(localStorage.getItem('registrations') || '[]');
-            if (existingRegistrations.find(reg => reg.email === email)) {
-                showValidationError('An account with this email already exists. Please sign in instead.');
-                return;
-            }
-            
-            if (existingRegistrations.find(reg => reg.username === username)) {
-                showValidationError('This username is already taken. Please choose a different one.');
-                return;
-            }
-            
-            const userData = {
-                username: username,
-                email: email,
-                firstName: firstName,
-                lastName: lastName,
-                zipCode: zipCode,
-                agreeTerms: true,
-                registrationDate: new Date().toISOString(),
-                method: 'email',
-                verified: false,
-                id: Date.now().toString()
-            };
-            
-            // Store user data
-            existingRegistrations.push(userData);
-            localStorage.setItem('registrations', JSON.stringify(existingRegistrations));
-            localStorage.setItem('pendingRegistration', JSON.stringify(userData));
-            
-            // Show success message
-            alert(`✅ Registration successful for ${userData.email}!\n\n👋 Welcome, ${userData.firstName}!\n\nNext steps:\n1. Check your email for verification link\n2. Click the link to verify your account\n3. Return here to access your library\n\nNote: This is a demo - email verification will be implemented in the next phase.`);
-            
-            // Clear form
-            event.target.reset();
-            hideModal();
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    sendEmailVerification(user)
+                        .then(() => {
+                            alert('Registration successful! A verification email has been sent to your email address. Please verify your email before signing in.');
+                            hideModal();
+                        });
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    showValidationError(errorMessage);
+                });
         }
         
         function handleLogin(event) {
@@ -478,32 +455,57 @@
             const formData = new FormData(event.target);
             const email = formData.get('email').trim().toLowerCase();
             const password = formData.get('password');
-            
-            // Check if user exists in registrations
-            const registrations = JSON.parse(localStorage.getItem('registrations') || '[]');
-            const user = registrations.find(reg => reg.email === email);
-            
-            if (user) {
-                if (!user.verified) {
-                    alert(`📧 Account found for ${user.firstName}!\n\nHowever, your email address hasn't been verified yet.\n\nPlease:\n1. Check your email for verification link\n2. Click the link to verify your account\n3. Return here to sign in\n\nNote: This is a demo - email verification will be implemented in the next phase.`);
-                } else {
-                    alert(`🎉 Welcome back, ${user.firstName}!\n\nRedirecting to your library...\n\nNote: This is a demo - library interface will be implemented in the next phase.`);
-                    
-                    // Store current user session
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                }
-                hideModal();
-                return;
-            }
-            
-            alert('❌ Email not found.\n\nPlease:\n• Check your email address\n• Register if you don\'t have an account\n• Ensure you\'ve completed registration');
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    if (user.emailVerified) {
+                        alert('Welcome back!');
+                        hideModal();
+                    } else {
+                        alert('Please verify your email before signing in.');
+                    }
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                });
         }
         
-        // Social Authentication Handlers (Placeholders)
+        // Social Authentication Handlers
         function registerWithGoogle() {
-            alert('Google registration will be implemented in the next phase.\n\nThis will use Google OAuth for instant account creation.');
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    // The signed-in user info.
+                    const user = result.user;
+                    alert('Signed in with Google!');
+                    hideModal();
+                }).catch((error) => {
+                    // Handle Errors here.
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // The email of the user's account used.
+                    const email = error.email;
+                    // The AuthCredential type that was used.
+                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    alert(errorMessage);
+                });
         }
-        
+
+        window.handleRegistration = handleRegistration;
+        window.handleLogin = handleLogin;
+        window.registerWithGoogle = registerWithGoogle;
+        window.showRegistration = showRegistration;
+        window.showLogin = showLogin;
+        window.hideModal = hideModal;
+        window.showRegistrationFromLogin = showRegistrationFromLogin;
+
         function registerWithGitHub() {
             alert('GitHub registration will be implemented in the next phase.\n\nThis will use GitHub OAuth for instant account creation.');
         }
