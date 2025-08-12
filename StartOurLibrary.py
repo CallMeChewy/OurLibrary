@@ -241,7 +241,7 @@ class OurLibraryStarter:
         print("=" * 60)
         
         # Set mode for FastAPI app
-        os.environ['ANDYGOOGLE_MODE'] = mode
+        os.environ['OURLIBRARY_MODE'] = mode
         
         # Import and start the FastAPI app
         try:

@@ -1,7 +1,11 @@
 # File: README.md
+
 # Path: {{project_name}}/Docs/README.md
+
 # Standard: AIDEV-PascalCase-2.3
+
 # Created: {{creation_date}}
+
 # Last Modified: {{current_time}}
 
 # {{project_name}} Documentation
@@ -24,6 +28,7 @@
 ## Standards Compliance
 
 This project follows **Design Standard v2.3** for:
+
 - Symlink-aware script development
 - Context-sensitive tooling
 - Relative path conventions

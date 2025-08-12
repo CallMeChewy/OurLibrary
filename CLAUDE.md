@@ -1,7 +1,11 @@
 # File: CLAUDE.md
+
 # Path: /home/herb/Desktop/OurLibrary/CLAUDE.md
+
 # Standard: AIDEV-PascalCase-2.1
+
 # Created: 2025-08-05
+
 # Last Modified: 2025-08-05 05:54PM
 
 # CLAUDE.md
@@ -15,10 +19,12 @@ An AI-powered educational library management system focused on providing equitab
 ## Development Commands
 
 ### Primary Entry Points
+
 - `python StartOurLibrary.py`: Start the main web server with smart port detection and environment validation
 - `python RunStableMode.py`: Start in stable mode (if available)
 
 ### Testing and Validation
+
 - `python -m pytest Tests/`: Run complete test suite with comprehensive markers
 - `python -m pytest Tests/ -m unit`: Run unit tests only
 - `python -m pytest Tests/ -m integration`: Run integration tests only
@@ -27,6 +33,7 @@ An AI-powered educational library management system focused on providing equitab
 - `python Scripts/CreateUserTestEnvironment.py`: Create isolated test environment
 
 ### Development Tools
+
 - `python Scripts/SimulateUserStartup.py`: Simulate user startup scenarios
 - `pytest Tests/test_startup.py`: Test application startup logic
 
@@ -37,21 +44,25 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 ### Core Components
 
 **Authentication & Security (`Source/Core/`)**:
+
 - `ModernSocialAuthManager.py`: OAuth 2.0 with PKCE, multi-provider support
 - `SocialAuthManager.py`: Legacy social authentication fallback
 - Uses Fernet encryption for token security, comprehensive security headers
 
 **Intelligence Layer (`Source/Core/`)**:
+
 - `IntelligentSearchEngine.py`: 7-type learning intent recognition, semantic search
 - `UserJourneyManager.py`: 5-stage educational journey management
 - `UserProgressManager.py`: Learning analytics and progress tracking
 
 **Data Layer (`Source/Core/`)**:
+
 - `DatabaseManager.py`: SQLite with async support, connection pooling
 - `Data/Databases/MyLibrary.db`: Main database with educational content metadata
 - `DriveManager.py` & `StudentGoogleDriveAPI.py`: Google Drive integration
 
 **Web Interface (`WebPages/`)**:
+
 - `auth.html`: Modern authentication interface with educational mission focus
 - `desktop-library-enhanced.html`: Main library interface with PWA features
 - `JS/GoogleDriveAuth.js`: Modern Google Identity Services integration
@@ -60,18 +71,21 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 ### Key Architecture Patterns
 
 **Multi-Layered Security**:
+
 - PKCE OAuth 2.0 flow with state validation
 - Token encryption and secure storage
 - Input validation and SQL injection prevention
 - Privacy-first analytics (GDPR/CCPA compliant)
 
 **Educational Intelligence**:
+
 - Learning intent classification (7 types: Discovery, Comprehension, Practice, etc.)
 - Academic level detection (Elementary through Graduate)
 - Multi-factor relevance scoring (educational value + accessibility)
 - Contextual adaptation based on user behavior
 
 **Robust Data Management**:
+
 - Async database operations with connection pooling
 - Comprehensive backup and recovery systems
 - Cross-platform compatibility (Windows/Linux)
@@ -80,6 +94,7 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 ## Testing Strategy
 
 ### Test Categories (pytest markers)
+
 - `unit`: Core logic and component tests
 - `integration`: Cross-component workflow tests  
 - `api`: FastAPI endpoint testing
@@ -90,6 +105,7 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 - `performance`: Benchmarking and optimization
 
 ### Critical Test Areas
+
 - **OAuth Security**: PKCE flow, token handling, multi-provider auth
 - **Intelligent Search**: Intent recognition, semantic matching, relevance scoring
 - **Database Integrity**: Transaction safety, backup/recovery, cross-platform compatibility
@@ -99,12 +115,14 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 ## Configuration Management
 
 ### Environment Configuration (`Config/`)
+
 - `ourlibrary_config.json`: Core application settings
 - `oauth_security_config.json`: OAuth provider credentials and security settings
 - `google_credentials.json.template`: Template for Google API credentials
 - `email_config.json`: Email service configuration for notifications
 
 ### Development vs Production
+
 - Environment-specific configuration loading via `Source/Utils/EnvironmentConfig.py`
 - Secure credential management with multiple backend support
 - Production deployment with comprehensive security headers
@@ -112,17 +130,20 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 ## Development Workflow
 
 ### Before Making Changes
+
 1. Run architecture validation: `python Scripts/ValidateRighteousArchitecture.py`
 2. Ensure test environment: `python Scripts/CreateUserTestEnvironment.py`
 3. Check startup scenarios: `python Scripts/SimulateUserStartup.py`
 
 ### After Making Changes
+
 1. Run full test suite: `python -m pytest Tests/`
 2. Test specific areas: `python -m pytest Tests/ -m <marker>`
 3. Validate workflows: `python Scripts/TestWorkflows.py`
 4. Performance check: `python -m pytest Tests/ -m performance`
 
 ### Key Implementation Notes
+
 - Follow AIDEV-PascalCase-2.1 standard for file headers and naming
 - All OAuth implementations must use PKCE for security
 - Educational features must maintain privacy-first approach
@@ -161,6 +182,7 @@ This is a FastAPI-based web application with modern OAuth 2.0 authentication, in
 5. Test database download and desktop application installation
 
 # important-instruction-reminders
+
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.

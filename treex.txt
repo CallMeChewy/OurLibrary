@@ -1,0 +1,169 @@
+Generating simplified gitignore-aware tree view using pathspec...
+. (OurLibrary)
+├── ..Exclude
+├── .git
+├── Config
+│   ├── .env.template
+│   ├── google_credentials.json.template
+│   ├── ourlibrary_config.json
+├── Data
+│   ├── Databases
+│   │   ├── MyLibrary.db-shm
+│   │   └── MyLibrary.db-wal
+│   ├── Local
+│   └── Logs
+├── Docs
+│   ├── Standards
+│   │   ├── Archive
+│   │   │   ├── Design Standard v1.8.md
+│   │   │   ├── Design Standard v1.8a.md
+│   │   │   ├── Design Standard v1.9.md
+│   │   │   ├── Design Standard v2.0.md
+│   │   │   ├── Design Standard v2.1.md
+│   │   │   ├── Design Standard v2.2.md
+│   │   │   └── Design Standard v2.3.md
+│   │   └── CurrentDesignStandard.md
+│   └── README.md
+├── Scripts
+│   ├── Common
+│   │   ├── DataBase
+│   │   │   ├── SQLiteToMySQL_DataDump.py
+│   │   │   ├── SQLiteToMySQL_GenericPort.py
+│   │   │   └── SQLiteToMySQL_GenericPort_Hardened.py
+│   │   ├── Deployment
+│   │   │   └── UpdateFiles.py
+│   │   ├── Development
+│   │   ├── FinderDisplay
+│   │   │   ├── AdvancedFileSearcher.py
+│   │   │   ├── FindText.py
+│   │   │   ├── FindTextTwo.py
+│   │   │   ├── ListFilesByDate.py
+│   │   │   ├── ListNewPy.py
+│   │   │   ├── NewPyDump.py
+│   │   │   └── SimpleTree.py
+│   │   ├── GitHub
+│   │   │   ├── BackToTheFuture.sh
+│   │   │   ├── GitHubAutoUpdate.py
+│   │   │   ├── GitHubInitialCommit.py
+│   │   │   ├── GitHubTimeMachine.py
+│   │   │   ├── GitHubUpdateSite.py
+│   │   │   ├── README.md
+│   │   │   └── TimeTraveiGitHub.py
+│   │   ├── System
+│   │   │   ├── BackupProject.py
+│   │   │   ├── BackupTemp.py
+│   │   │   └── CodebaseSum.py
+│   │   ├── Tests
+│   │   ├── Tools
+│   │   │   ├── ChangeBrowser.sh
+│   │   │   ├── GPUOCRSpeedTest.py
+│   │   │   ├── MarkdownToText.py
+│   │   │   └── VerifyIgnore.py
+│   │   ├── QuickLauncher.py
+│   │   ├── README-Quick.md
+│   │   ├── README.md
+│   │   └── ScriptMenu.py
+│   └── README.md
+├── Source
+│   ├── API
+│   │   ├── AdvancedSearchAPI.py
+│   │   ├── GoogleDriveAPI.py
+│   │   └── MainAPI.py
+│   ├── Core
+│   │   ├── ChunkedDownloader.py
+│   │   ├── DatabaseManager.py
+│   │   ├── DriveManager.py
+│   │   ├── EmailManager.py
+│   │   ├── IntelligentSearchEngine.py
+│   │   ├── ModernSocialAuthManager.py
+│   │   ├── SocialAuthManager.py
+│   │   ├── StudentBookDownloader.py
+│   │   ├── StudentGoogleDriveAPI.py
+│   │   ├── UserJourneyManager.py
+│   │   ├── UserProgressManager.py
+│   │   └── UserSetupManager.py
+│   ├── Middleware
+│   │   └── SecurityMiddleware.py
+│   ├── Tests
+│   └── Utils
+│       ├── DatabaseValidator.py
+│       ├── EnvironmentConfig.py
+│       ├── SecretManager.py
+│       ├── SheetsLogger.py
+│       └── WindowsDatabaseInit.py
+├── Tests
+│   ├── TestEducationalMission.py
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── conftest_root.py
+│   ├── demo_intelligent_search.py
+│   ├── run_automated_tests.py
+│   ├── run_benchmark_tests.py
+│   ├── test_api.py
+│   ├── test_api_core.py
+│   ├── test_api_endpoints.py
+│   ├── test_authentication_system.py
+│   ├── test_benchmark_integration.py
+│   ├── test_comprehensive_benchmark_validation.py
+│   ├── test_database_functionality.py
+│   ├── test_database_manager_isolated.py
+│   ├── test_drive_integration.py
+│   ├── test_email_service_integration.py
+│   ├── test_functional.py
+│   ├── test_integration_complete_workflow.py
+│   ├── test_intelligent_search.py
+│   ├── test_intelligent_search_api.py
+│   ├── test_modern_oauth.py
+│   ├── test_multi_user_scenarios.py
+│   ├── test_pdf_reader.py
+│   ├── test_performance_benchmarks.py
+│   ├── test_pwa_features.py
+│   ├── test_righteous_architecture.py
+│   ├── test_security_privacy_compliance.py
+│   ├── test_startup.py
+│   ├── test_user_environment_isolation.py
+│   └── test_user_environment_simple.py
+├── Updates
+├── WebPages
+│   ├── CSS
+│   ├── JS
+│   │   ├── GoogleDriveAuth.js
+│   │   └── library-api-client.js
+│   ├── assets
+│   │   ├── AndyLibrary.png
+│   │   └── BowersWorld.png
+│   ├── static
+│   │   ├── assets
+│   │   │   └── AndyLibrary.png
+│   │   ├── scripts
+│   │   │   ├── desktop-library.js
+│   │   │   └── library-api-client.js
+│   │   └── styles
+│   │       └── desktop-library.css
+│   ├── BowersWorld.png
+│   ├── SimpleGoogleDriveTest.html
+│   ├── auth-clean.html
+│   ├── auth.html
+│   ├── auth.html.backup
+│   ├── auth.html.layout_backup
+│   ├── bowersworld.html
+│   ├── category_test.html
+│   ├── debug_test.html
+│   ├── desktop-library-enhanced.html
+│   ├── desktop-library.html
+│   ├── direct-register.html
+│   ├── favicon.ico
+│   ├── gitup_workflow.mermaid
+│   ├── manifest.json
+│   ├── pdf-reader.html
+│   ├── service-worker.js
+│   ├── setup.html
+│   ├── setup.html.backup
+│   ├── simple-register.html
+│   └── verification-success.html
+├── .gitignore
+├── CLAUDE.md
+├── LICENSE
+├── StartOurLibrary.py
+├── requirements.txt
+└── treex.txt

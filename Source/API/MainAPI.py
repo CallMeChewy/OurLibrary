@@ -1,10 +1,10 @@
 # File: MainAPI.py
-# Path: /home/herb/Desktop/AndyLibrary/Source/API/MainAPI.py
+# Path: /home/herb/Desktop/OurLibrary/Source/API/MainAPI.py
 # Standard: AIDEV-PascalCase-2.1
 # Created: 2025-07-12
-# Last Modified: 2025-07-28 06:50AM
+# Last Modified: 2025-08-12 11:45AM
 """
-Description: Enhanced FastAPI main server for AndyLibrary with authentication
+Description: Enhanced FastAPI main server for OurLibrary with authentication
 Provides RESTful API endpoints for library management with user authentication and educational mission features
 """
 
