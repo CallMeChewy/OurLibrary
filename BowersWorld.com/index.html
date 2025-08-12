@@ -364,7 +364,7 @@
         
         // Form Validation Functions
         function validateEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^S@]+@[^S@]+\.[^S@]+$/;
             return emailRegex.test(email);
         }
         
@@ -444,6 +444,7 @@
                         });
                 })
                 .catch((error) => {
+                    console.error("Firebase registration error:", error);
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     showValidationError(errorMessage);
@@ -507,11 +508,11 @@
         window.showRegistrationFromLogin = showRegistrationFromLogin;
 
         function registerWithGitHub() {
-            alert('GitHub registration will be implemented in the next phase.\n\nThis will use GitHub OAuth for instant account creation.');
+            alert('GitHub registration will be implemented in the next phase.');
         }
         
         function registerWithFacebook() {
-            alert('Facebook registration will be implemented in the next phase.\n\nThis will use Facebook OAuth for instant account creation.');
+            alert('Facebook registration will be implemented in the next phase.');
         }
         
         function loginWithGoogle() {
@@ -528,7 +529,7 @@
         
         // Terms of Service
         function showTerms() {
-            alert(`OurLibrary Terms of Service\n\n1. This is a free educational service\n2. You must be 13+ years old to register\n3. Respect copyright laws in your region\n4. Books are for educational use only\n5. We protect your privacy and data\n6. Service provided "as-is"\n\nFull terms will be available on a dedicated page.`);
+            alert(`OurLibrary Terms of Service\n\n1. This is a free educational service\n2. You must be 13+ years old to register\n3. Respect copyright laws in your region\n4. Books are for educational use only\n5. We protect your privacy and data\n6. Service provided \"as-is\"\n\nFull terms will be available on a dedicated page.`);
         }
         
         // Keyboard shortcut to close modal
