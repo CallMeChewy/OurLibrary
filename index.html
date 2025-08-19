@@ -365,7 +365,6 @@
         // Modal Management - Make functions globally available
         window.showRegistration = function() {
             console.log('🔍 showRegistration() called');
-            alert('Join button clicked! Opening registration modal...');
             
             const modalBg = document.getElementById('modal-background');
             const regForm = document.getElementById('registration-form');
@@ -374,7 +373,7 @@
             console.log('Elements found:', {modalBg, regForm, loginForm});
             
             if (!modalBg || !regForm) {
-                alert('Error: Modal elements not found!');
+                console.error('❌ Modal elements not found!');
                 return;
             }
             
