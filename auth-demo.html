@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OurLibrary - Secure Authentication Demo (Working v2.1)</title>
+    <title>OurLibrary - Secure Authentication Demo (PRODUCTION v3.0)</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -281,9 +281,9 @@
                     <p class="text-gray-300 mb-4">Your account has been successfully created and verified.</p>
                     <div class="bg-green-500/20 border border-green-500/30 rounded-lg p-4 mb-4">
                         <p class="text-green-400 font-semibold">✅ Email verified securely</p>
-                        <p class="text-green-400 font-semibold">✅ Account created successfully</p>
-                        <p class="text-green-400 font-semibold">✅ Authentication flow complete</p>
-                        <p class="text-yellow-400 text-sm mt-2">🔧 Demo mode: Full Firebase integration requires API key</p>
+                        <p class="text-green-400 font-semibold">✅ REAL Firebase account created</p>
+                        <p class="text-green-400 font-semibold">✅ Full authentication system active</p>
+                        <p class="text-blue-400 text-sm mt-2">🔥 Production mode: Real Firebase integration</p>
                     </div>
                 </div>
                 
@@ -337,32 +337,43 @@
         </div>
     </div>
 
-    <!-- Firebase Functions Only (WORKING VERSION) -->
+    <!-- Firebase SDK with REAL AUTHENTICATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";
 
-        // Firebase configuration (minimal - same as working test-smtp.html)
+        // Firebase configuration (COMPLETE - from Firebase console)
         const firebaseConfig = {
-            projectId: "our-library-d7b60",
+            apiKey: "AIzaSyAsGn1eX4WRKGLcLdtWncNgtWNNGoNjck",
             authDomain: "our-library-d7b60.firebaseapp.com",
-            storageBucket: "our-library-d7b60.firebasestorage.app"
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.firebasestorage.app",
+            messagingSenderId: "712065864632",
+            appId: "1:712065864632:web:61e21f2d0Bb9e318dfc1cd"
         };
 
-        // Initialize Firebase Functions only
+        // Initialize Firebase with FULL authentication
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const functions = getFunctions(app);
 
-        // Make functions available globally (working pattern)
+        // Make Firebase services available globally
+        window.firebaseAuth = auth;
         window.firebaseFunctions = functions;
         window.httpsCallable = httpsCallable;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.GoogleAuthProvider = GoogleAuthProvider;
+        window.signInWithPopup = signInWithPopup;
         window.firebaseReady = true;
 
         // Demo state
         window.currentUserData = null;
         window.pendingVerificationCode = null;
 
-        console.log('✅ Firebase Functions initialized (FIXED VERSION)');
+        console.log('🔥 Firebase FULLY initialized with real authentication!');
+        console.log('✅ Auth:', auth);
         console.log('✅ Functions:', functions);
         console.log('✅ httpsCallable:', httpsCallable);
     </script>
@@ -528,28 +539,19 @@
                 // Simulate verification delay
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // Email verified - now create Firebase account
+                // Email verified - now create REAL Firebase account
                 showStatus('🔐 Creating Firebase account...', 'info');
                 
-                try {
-                    // For production: This requires full Firebase config with API key
-                    // For demo: Simulate account creation with realistic delay
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    const mockUser = {
-                        uid: 'demo_' + Date.now(),
-                        email: userRegistrationData.email,
-                        emailVerified: true,
-                        displayName: userRegistrationData.fullName,
-                        creationTime: new Date().toISOString()
-                    };
-                    
-                    console.log('✅ Firebase account created (demo):', mockUser);
-                    
-                } catch (error) {
-                    console.error('Firebase account creation error:', error);
-                    showStatus('⚠️ Account verification complete, Firebase creation pending full config', 'info');
-                }
+                const userCredential = await window.createUserWithEmailAndPassword(
+                    window.firebaseAuth, 
+                    userRegistrationData.email, 
+                    userRegistrationData.password
+                );
+                
+                console.log('🔥 REAL Firebase account created:', userCredential.user);
+                console.log('✅ User ID:', userCredential.user.uid);
+                console.log('✅ Email:', userCredential.user.email);
+                console.log('✅ Creation time:', userCredential.user.metadata.creationTime);
                 
                 // Show success
                 showStep('success');
@@ -583,17 +585,61 @@
             }
         }
 
-        // Google OAuth sign-in (temporarily disabled)
+        // Google OAuth sign-in (NOW WORKING)
         async function signInWithGoogle() {
-            showStatus('🔐 Google sign-in temporarily disabled (requires full Firebase config)', 'info');
-            console.log('Google OAuth requires complete Firebase configuration');
+            try {
+                showStatus('🔐 Signing in with Google...', 'info');
+                
+                const provider = new window.GoogleAuthProvider();
+                const result = await window.signInWithPopup(window.firebaseAuth, provider);
+                
+                console.log('🔥 REAL Google sign-in successful:', result.user);
+                console.log('✅ User ID:', result.user.uid);
+                console.log('✅ Email:', result.user.email);
+                console.log('✅ Display Name:', result.user.displayName);
+                
+                // Google users skip email verification (already verified by Google)
+                showStep('success');
+                showStatus('🎉 Signed in successfully with Google!', 'success');
+                
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
+            }
         }
 
-        // Regular login (temporarily disabled)
+        // Regular login (NOW WORKING)
         async function handleLogin(event) {
             event.preventDefault();
-            showStatus('🔐 Login temporarily disabled (requires full Firebase config)', 'info');
-            console.log('Login requires complete Firebase configuration');
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                showStatus('🔐 Signing in...', 'info');
+                
+                const userCredential = await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                
+                console.log('🔥 REAL login successful:', userCredential.user);
+                console.log('✅ User ID:', userCredential.user.uid);
+                console.log('✅ Email verified:', userCredential.user.emailVerified);
+                
+                showStep('success');
+                showStatus('🎉 Welcome back!', 'success');
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                if (error.code === 'auth/user-not-found') {
+                    showStatus('❌ No account found. Please sign up first.', 'error');
+                } else if (error.code === 'auth/wrong-password') {
+                    showStatus('❌ Incorrect password. Please try again.', 'error');
+                } else if (error.code === 'auth/invalid-email') {
+                    showStatus('❌ Invalid email format.', 'error');
+                } else {
+                    showStatus(`❌ Login failed: ${error.message}`, 'error');
+                }
+            }
         }
 
         // Demo actions
