@@ -172,6 +172,9 @@
 
             try {
                 console.log('Testing verification email for:', email);
+                console.log('Firebase project:', firebaseConfig.projectId);
+                console.log('Calling function with data:', { email });
+                
                 const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmail');
                 const result = await sendVerificationEmail({ email });
                 
@@ -179,6 +182,7 @@
                 showStatus(statusDiv, `✅ Success! Verification email sent to ${email}. Check your inbox!`, 'success');
             } catch (error) {
                 console.error('❌ Verification email error:', error);
+                console.error('Error details:', error.code, error.message, error.details);
                 showStatus(statusDiv, `❌ Error: ${error.message}`, 'error');
             } finally {
                 btn.disabled = false;
@@ -205,6 +209,9 @@
 
             try {
                 console.log('Testing password reset email for:', email);
+                console.log('Firebase project:', firebaseConfig.projectId);
+                console.log('Calling function with data:', { email });
+                
                 const sendPasswordResetEmail = httpsCallable(functions, 'sendPasswordResetEmail');
                 const result = await sendPasswordResetEmail({ email });
                 
@@ -212,6 +219,7 @@
                 showStatus(statusDiv, `✅ Success! Password reset email sent to ${email}. Check your inbox!`, 'success');
             } catch (error) {
                 console.error('❌ Password reset email error:', error);
+                console.error('Error details:', error.code, error.message, error.details);
                 showStatus(statusDiv, `❌ Error: ${error.message}`, 'error');
             } finally {
                 btn.disabled = false;
