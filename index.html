@@ -202,23 +202,19 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Email Address (User ID) *</label>
-                            <input type="email" name="email" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="your.email@example.com">
+                            <input type="email" name="email" id="email" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="your.email@example.com">
                         </div>
                         <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">First Name *</label>
-                            <input type="text" name="firstName" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        </div>
-                        <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">Last Name *</label>
-                            <input type="text" name="lastName" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-gray-300 text-sm font-bold mb-2">Full Name *</label>
+                            <input type="text" name="fullName" id="fullName" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter your full name">
                         </div>
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Password *</label>
-                            <input type="password" name="password" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Minimum 8 characters">
+                            <input type="password" name="password" id="password" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Minimum 8 characters">
                         </div>
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Confirm Password *</label>
-                            <input type="password" name="confirmPassword" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Re-enter your password">
+                            <input type="password" name="confirmPassword" id="confirmPassword" required class="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Re-enter your password">
                         </div>
                         <div>
                             <label class="block text-gray-300 text-sm font-bold mb-2">Zip Code</label>
@@ -234,7 +230,7 @@
                     
                     <div class="mt-6">
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">
-                            Register for Free Access
+                            Send Verification Code
                         </button>
                     </div>
                     
@@ -467,6 +463,7 @@
             
             const formData = new FormData(event.target);
             const email = formData.get('email').trim().toLowerCase();
+            const fullName = formData.get('fullName').trim();
             const password = formData.get('password');
             const confirmPassword = formData.get('confirmPassword');
             
@@ -475,11 +472,32 @@
                 showValidationError('Passwords do not match.');
                 return;
             }
+            
+            if (!validateName(fullName)) {
+                showValidationError('Please enter a valid full name (2-50 characters, letters and spaces only).');
+                return;
+            }
+
+            // Log incomplete email capture for analytics
+            if (window.registrationManager) {
+                window.registrationManager.logIncompleteEmail(email).catch(console.warn);
+            }
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Signed in 
                     const user = userCredential.user;
+                    
+                    // Log complete registration
+                    if (window.registrationManager) {
+                        window.registrationManager.logCompleteRegistration({
+                            email: email,
+                            fullName: fullName,
+                            userId: user.uid,
+                            method: 'email'
+                        }).catch(console.warn);
+                    }
+                    
                     sendEmailVerification(user)
                         .then(() => {
                             alert('Registration successful! A verification email has been sent to your email address. Please verify your email before signing in.');
