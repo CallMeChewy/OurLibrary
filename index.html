@@ -353,6 +353,33 @@
         window.googleAuth = googleAuth;
         window.registrationManager = registrationManager;
         
+        // Set up email blur tracking for incomplete email capture
+        function setupEmailTracking() {
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.addEventListener('blur', function(event) {
+                    const email = event.target.value.trim();
+                    if (email && email.length > 0) {
+                        console.log('📧 Email blur detected, logging incomplete email:', email);
+                        registrationManager.logIncompleteEmail(email, 'email_blur').catch(error => {
+                            console.warn('⚠️ Could not log incomplete email:', error);
+                        });
+                    }
+                });
+                console.log('✅ Email tracking set up');
+            } else {
+                console.warn('⚠️ Email input not found for tracking');
+            }
+        }
+        
+        // Setup tracking when modal is shown
+        window.showRegistrationOriginal = window.showRegistration;
+        window.showRegistration = function() {
+            window.showRegistrationOriginal();
+            // Setup email tracking after modal is shown
+            setTimeout(setupEmailTracking, 100);
+        }
+        
         // Initialize Google Sheets integration
         googleAuth.initialize().catch(error => {
             console.warn('⚠️ Google Sheets integration not available:', error);

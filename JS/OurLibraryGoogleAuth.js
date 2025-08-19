@@ -411,6 +411,26 @@ class OurLibraryRegistrationManager {
         this.pendingUserData = null;
     }
 
+    // Log incomplete email capture (exposed method)
+    async logIncompleteEmail(email, step = 'email_blur') {
+        try {
+            return await this.googleAuth.logIncompleteEmail(email, step);
+        } catch (error) {
+            console.error('❌ Error logging incomplete email:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Log complete registration (exposed method)
+    async logCompleteRegistration(userData) {
+        try {
+            return await this.googleAuth.completeUserRegistration(userData);
+        } catch (error) {
+            console.error('❌ Error logging complete registration:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
     // Start email registration process
     async startEmailRegistration(formData) {
         try {
