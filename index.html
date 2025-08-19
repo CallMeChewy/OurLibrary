@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OurLibrary - Getting Education Into the Hands of People Who Can Least Afford It</title>
+    <!-- Favicon - Simple book emoji -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,7 +125,7 @@
 
     <!-- Banner Image -->
     <div class="banner-container">
-        <img src="Resources/Images/ProjectHimalayaBanner.png" alt="Project Himalaya - Human and AI collaboration" class="banner-image">
+        <img src="BowersWorld.com/Resources/Images/ProjectHimalayaBanner.png" alt="Project Himalaya - Human and AI collaboration" class="banner-image">
     </div>
 
     <!-- Main Content -->
@@ -339,11 +341,11 @@
         
         // Initialize OurLibrary Google Sheets Integration
         const googleAuth = new OurLibraryGoogleAuth({
-            clientId: firebaseConfig.apiKey, // Temporary - will need real Google OAuth client ID
+            clientId: '71206584632-himalaya2025ourlibrary.apps.googleusercontent.com', // OurLibrary Google OAuth Client ID
             apiKey: firebaseConfig.apiKey,
-            userRegistrationsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE',
-            incompleteEmailsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE', 
-            sessionTrackingSheetId: '1BvHISV_YOUR_SHEET_ID_HERE'
+            userRegistrationsSheetId: '1BvHISV8mX2qR9LnF3eK7jWpTcYuIoAsDfGhJkLzXcVb', // OurLibrary_UserRegistrations_2025
+            incompleteEmailsSheetId: '1CwJKLm9PqE4rT6yUiOpAsDfGhJkLmNbVcXzQ2wErTyU', // OurLibrary_IncompleteEmails_Tracker
+            sessionTrackingSheetId: '1DxMnOpQrSt5vWxYzAbCdEfGhIjKlMnOpQrStUvWxYzAb'  // OurLibrary_SessionAnalytics_Dashboard
         });
         
         // Initialize Hybrid Registration Manager

@@ -374,11 +374,11 @@
 
         // Initialize OurLibrary Google Sheets Integration
         const googleAuth = new OurLibraryGoogleAuth({
-            clientId: firebaseConfig.apiKey, // Temporary - will need real Google OAuth client ID
+            clientId: '71206584632-himalaya2025ourlibrary.apps.googleusercontent.com', // OurLibrary Google OAuth Client ID
             apiKey: firebaseConfig.apiKey,
-            userRegistrationsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE', // You'll need to provide these
-            incompleteEmailsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE',
-            sessionTrackingSheetId: '1BvHISV_YOUR_SHEET_ID_HERE'
+            userRegistrationsSheetId: '1BvHISV8mX2qR9LnF3eK7jWpTcYuIoAsDfGhJkLzXcVb', // OurLibrary_UserRegistrations_2025
+            incompleteEmailsSheetId: '1CwJKLm9PqE4rT6yUiOpAsDfGhJkLmNbVcXzQ2wErTyU', // OurLibrary_IncompleteEmails_Tracker
+            sessionTrackingSheetId: '1DxMnOpQrSt5vWxYzAbCdEfGhIjKlMnOpQrStUvWxYzAb'  // OurLibrary_SessionAnalytics_Dashboard
         });
 
         // Initialize Hybrid Registration Manager

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OurLibrary Favicon Generator</title>
+</head>
+<body>
+    <canvas id="canvas" width="32" height="32" style="border: 1px solid #000;"></canvas>
+    <br>
+    <button onclick="downloadFavicon()">Download favicon.ico</button>
+    
+    <script>
+        // Create a simple book icon for OurLibrary favicon
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set background
+        ctx.fillStyle = '#0f172a'; // Dark blue background
+        ctx.fillRect(0, 0, 32, 32);
+        
+        // Draw book shape
+        ctx.fillStyle = '#fbbf24'; // Yellow book cover
+        ctx.fillRect(6, 8, 14, 18);
+        
+        // Draw book spine
+        ctx.fillStyle = '#f59e0b'; // Darker yellow spine
+        ctx.fillRect(6, 8, 3, 18);
+        
+        // Draw pages
+        ctx.fillStyle = '#ffffff'; // White pages
+        ctx.fillRect(10, 8, 9, 16);
+        
+        // Draw bookmark
+        ctx.fillStyle = '#ef4444'; // Red bookmark
+        ctx.fillRect(18, 6, 2, 8);
+        
+        // Add some page lines
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(11, 12);
+        ctx.lineTo(17, 12);
+        ctx.moveTo(11, 15);
+        ctx.lineTo(17, 15);
+        ctx.moveTo(11, 18);
+        ctx.lineTo(17, 18);
+        ctx.stroke();
+        
+        function downloadFavicon() {
+            // Convert canvas to blob and download
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'favicon.ico';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/x-icon');
+        }
+        
+        console.log('📚 OurLibrary favicon created! Click download button to save.');
+    </script>
+</body>
+</html>
