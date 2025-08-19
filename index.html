@@ -340,9 +340,29 @@
 
         // Modal Management
         function showRegistration() {
-            document.getElementById('modal-background').classList.remove('hidden');
-            document.getElementById('registration-form').classList.remove('hidden');
-            document.getElementById('login-form').classList.add('hidden');
+            console.log('🔍 showRegistration() called');
+            alert('Join button clicked! Opening registration modal...');
+            
+            const modalBg = document.getElementById('modal-background');
+            const regForm = document.getElementById('registration-form');
+            const loginForm = document.getElementById('login-form');
+            
+            console.log('Elements found:', {modalBg, regForm, loginForm});
+            
+            if (!modalBg || !regForm) {
+                alert('Error: Modal elements not found!');
+                return;
+            }
+            
+            modalBg.classList.remove('hidden');
+            regForm.classList.remove('hidden');
+            if (loginForm) loginForm.classList.add('hidden');
+            
+            console.log('✅ Modal should be visible now');
+            
+            // Force a reflow to ensure CSS changes take effect
+            modalBg.offsetHeight;
+            regForm.offsetHeight;
         }
         
         function showLogin() {
