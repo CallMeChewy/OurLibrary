@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Debug Test</title>
+</head>
+<body>
+    <h1>Firebase Configuration Debug</h1>
+    <button onclick="testFirebaseFunction()">Test Firebase Function</button>
+    <div id="results"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";
+
+        // Current minimal config (likely insufficient)
+        const firebaseConfig = {
+            projectId: "our-library-d7b60",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            storageBucket: "our-library-d7b60.firebasestorage.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const functions = getFunctions(app);
+
+        window.testFirebaseFunction = async function() {
+            const results = document.getElementById('results');
+            results.innerHTML = 'Testing...';
+            
+            try {
+                console.log('Testing Firebase callable function...');
+                const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmail');
+                const result = await sendVerificationEmail({ email: 'test@example.com' });
+                
+                results.innerHTML = `✅ Success: ${JSON.stringify(result.data)}`;
+                console.log('Success:', result.data);
+                
+            } catch (error) {
+                results.innerHTML = `❌ Error: ${error.code} - ${error.message}`;
+                console.error('Full error:', error);
+            }
+        };
+        
+        console.log('Firebase app initialized:', app);
+        console.log('Functions instance:', functions);
+    </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Firebase Account Creation Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #222; color: white; }
+        button { padding: 15px; background: #0066cc; color: white; border: none; cursor: pointer; margin: 10px; border-radius: 5px; }
+        .result { background: #333; padding: 15px; margin: 20px 0; border-radius: 5px; white-space: pre-wrap; }
+        .success { border-left: 4px solid #00cc66; }
+        .error { border-left: 4px solid #cc0000; }
+        input { padding: 10px; margin: 5px; background: #444; color: white; border: 1px solid #666; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔥 Direct Firebase Account Creation Test</h1>
+    <p>This will directly test Firebase account creation with real credentials.</p>
+    
+    <div>
+        <input type="email" id="testEmail" placeholder="test@example.com" value="test123@example.com">
+        <input type="password" id="testPassword" placeholder="password" value="password123">
+        <button onclick="createAccount()">Create Firebase Account</button>
+        <button onclick="listAllUsers()">List All Firebase Users</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsG8hleX4WRKCLcIJdWkcNptWNMGdNjzk",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.firebasestorage.app",
+            messagingSenderId: "71206584632",
+            appId: "1:71206584632:web:61a21f2d08b9e318dfc1cd",
+            measurementId: "G-XL47Q42LB8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Monitor auth state changes
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('✅ User signed in:', user.uid, user.email);
+                document.getElementById('results').innerHTML += `
+                    <div class="result success">🔥 AUTH STATE CHANGE: User signed in
+User ID: ${user.uid}
+Email: ${user.email}
+Creation Time: ${user.metadata.creationTime}
+Last Sign In: ${user.metadata.lastSignInTime}</div>
+                `;
+            } else {
+                console.log('User signed out');
+            }
+        });
+        
+        window.createAccount = async function() {
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                resultsDiv.innerHTML = '<div class="result">🔄 Creating Firebase account...</div>';
+                
+                console.log('🧪 Attempting to create account:', email);
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                console.log('🎉 SUCCESS! Account created:', user);
+                
+                resultsDiv.innerHTML = `<div class="result success">🎉 SUCCESS! Firebase account created:
+
+User ID: ${user.uid}
+Email: ${user.email}
+Email Verified: ${user.emailVerified}
+Creation Time: ${user.metadata.creationTime}
+Provider: ${user.providerData[0]?.providerId || 'password'}
+
+✅ Firebase Authentication is working perfectly!
+✅ Account has been added to Firebase Console -> Authentication -> Users</div>`;
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                let errorMessage = '';
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Try a different email.';
+                        break;
+                    case 'auth/operation-not-allowed':
+                        errorMessage = 'Email/Password authentication is not enabled in Firebase Console.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password is too weak. Use at least 6 characters.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email format.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                
+                resultsDiv.innerHTML = `<div class="result error">❌ ERROR:
+Code: ${error.code}
+Message: ${errorMessage}
+
+If you see 'email-already-in-use', that means Firebase IS working and the account already exists!</div>`;
+            }
+        };
+        
+        window.listAllUsers = function() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `<div class="result">📊 To see all users:
+1. Go to Firebase Console: https://console.firebase.google.com/
+2. Select project: our-library-d7b60
+3. Go to Authentication → Users
+4. You'll see all registered users there
+
+Current user: ${auth.currentUser ? auth.currentUser.email : 'None (not signed in)'}</div>`;
+        };
+        
+        console.log('🔥 Firebase initialized. Ready to test account creation.');
+        console.log('Auth instance:', auth);
+    </script>
+</body>
+</html>

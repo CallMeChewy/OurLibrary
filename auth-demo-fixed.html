@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OurLibrary - Email Verification Demo</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .success { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-4">📧 Email Verification Test</h1>
+            <p class="text-gray-300">Simple SMTP email verification demo</p>
+        </div>
+
+        <div class="card">
+            <h2 class="text-2xl font-bold text-white mb-6 text-center">Test Email Verification</h2>
+            
+            <form onsubmit="sendVerificationEmail(event)">
+                <input type="email" placeholder="Email Address" id="email" required>
+                <button type="submit">Send Verification Code</button>
+            </form>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <!-- Firebase Functions Only -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";
+
+        // Firebase configuration (minimal - same as working test-smtp.html)
+        const firebaseConfig = {
+            projectId: "our-library-d7b60",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            storageBucket: "our-library-d7b60.firebasestorage.app"
+        };
+
+        // Initialize Firebase Functions only
+        const app = initializeApp(firebaseConfig);
+        const functions = getFunctions(app);
+
+        // Make functions available globally
+        window.firebaseFunctions = functions;
+        window.httpsCallable = httpsCallable;
+        window.firebaseReady = true;
+
+        console.log('✅ Firebase Functions ready:', functions);
+        console.log('✅ httpsCallable ready:', httpsCallable);
+    </script>
+
+    <script>
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        async function sendVerificationEmail(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            // Wait for Firebase to be ready
+            if (!window.firebaseReady) {
+                showStatus('⏳ Initializing Firebase...', 'info');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            try {
+                showStatus('📧 Sending verification email...', 'info');
+                
+                console.log('Calling Firebase function for:', email);
+                const sendVerificationEmailFn = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                const result = await sendVerificationEmailFn({ email });
+                
+                console.log('✅ Success:', result.data);
+                showStatus(`✅ Verification email sent to ${email}! Check your inbox.`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

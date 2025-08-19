@@ -2,7 +2,7 @@
 
 # Path: /home/herb/Desktop/OurLibrary/CLAUDE.md
 
-# Standard: AIDEV-PascalCase-2.1
+# Standard: AIDEV-PascalCase-2.3
 
 # Created: 2025-08-05
 

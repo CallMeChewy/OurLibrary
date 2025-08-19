@@ -316,6 +316,9 @@
         </div>
     </footer>
 
+    <!-- OurLibrary Google Sheets Integration -->
+    <script src="JS/OurLibraryGoogleAuth.js"></script>
+    
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -337,6 +340,27 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        
+        // Initialize OurLibrary Google Sheets Integration
+        const googleAuth = new OurLibraryGoogleAuth({
+            clientId: firebaseConfig.apiKey, // Temporary - will need real Google OAuth client ID
+            apiKey: firebaseConfig.apiKey,
+            userRegistrationsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE',
+            incompleteEmailsSheetId: '1BvHISV_YOUR_SHEET_ID_HERE', 
+            sessionTrackingSheetId: '1BvHISV_YOUR_SHEET_ID_HERE'
+        });
+        
+        // Initialize Hybrid Registration Manager
+        const registrationManager = new OurLibraryRegistrationManager(auth, googleAuth);
+        
+        // Make globally available
+        window.googleAuth = googleAuth;
+        window.registrationManager = registrationManager;
+        
+        // Initialize Google Sheets integration
+        googleAuth.initialize().catch(error => {
+            console.warn('⚠️ Google Sheets integration not available:', error);
+        });
 
         // Modal Management - Make functions globally available
         window.showRegistration = function() {
@@ -497,26 +521,55 @@
         
         // Social Authentication Handlers
         window.registerWithGoogle = function() {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    const credential = GoogleAuthProvider.credentialFromResult(result);
-                    const token = credential.accessToken;
-                    // The signed-in user info.
-                    const user = result.user;
-                    alert('Signed in with Google!');
-                    hideModal();
-                }).catch((error) => {
-                    // Handle Errors here.
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // The email of the user's account used.
-                    const email = error.email;
-                    // The AuthCredential type that was used.
-                    const credential = GoogleAuthProvider.credentialFromError(error);
-                    alert(errorMessage);
+            if (window.googleAuth) {
+                // Set up event handler for successful Google OAuth
+                window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
+                    try {
+                        // Complete Google registration through hybrid manager
+                        const result = await window.registrationManager.completeGoogleRegistration(googleUser);
+                        
+                        if (result.success) {
+                            console.log('✅ Google OAuth + Sheets success:', result.user);
+                            alert(`✅ Welcome ${googleUser.name}! Account created successfully with Google and data saved to tracking system.`);
+                            hideModal();
+                            
+                            // Redirect to main app
+                            setTimeout(() => {
+                                window.location.href = 'auth-demo.html?success=google';
+                            }, 2000);
+                        } else {
+                            throw new Error(result.error);
+                        }
+                    } catch (error) {
+                        console.error('❌ Google registration completion error:', error);
+                        alert(`❌ Google registration failed: ${error.message}`);
+                    }
+                };
+                
+                // Request access token to trigger OAuth flow
+                window.googleAuth.requestAccessToken().catch(error => {
+                    console.error('❌ Google OAuth error:', error);
+                    alert(`❌ Google OAuth failed: ${error.message}`);
                 });
+                
+            } else {
+                // Fallback to direct Firebase Google OAuth
+                const provider = new GoogleAuthProvider();
+                signInWithPopup(auth, provider)
+                    .then((result) => {
+                        const user = result.user;
+                        console.log('✅ Google OAuth success (fallback):', user);
+                        alert(`✅ Welcome ${user.displayName}! Account created successfully with Google.`);
+                        hideModal();
+                        
+                        setTimeout(() => {
+                            window.location.href = 'auth-demo.html?success=google';
+                        }, 2000);
+                    }).catch((error) => {
+                        console.error('❌ Error:', error);
+                        alert(`❌ Google registration failed: ${error.message}`);
+                    });
+            }
         }
 
         window.handleRegistration = handleRegistration;
@@ -536,7 +589,22 @@
         }
         
         window.loginWithGoogle = function() {
-            alert('Google sign-in will be implemented in the next phase.');
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const user = result.user;
+                    console.log('✅ Google login success:', user);
+                    alert(`✅ Welcome back ${user.displayName}!`);
+                    hideModal();
+                    
+                    // Redirect to main app
+                    setTimeout(() => {
+                        window.location.href = 'auth-demo.html?success=login';
+                    }, 2000);
+                }).catch((error) => {
+                    console.error('Google login error:', error);
+                    alert(`❌ Google login failed: ${error.message}`);
+                });
         }
         
         window.loginWithGitHub = function() {
