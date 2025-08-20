@@ -49,6 +49,8 @@ class OurLibraryGoogleAuth {
                 return true;
             }
             
+            console.log('🎯 Using REAL OAuth Client ID - Live Google Sheets integration enabled');
+            
             // Load Google Identity Services
             await this.loadGoogleIdentityServices();
             
