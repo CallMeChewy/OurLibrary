@@ -620,61 +620,54 @@
             }
         }
 
-        // Google OAuth sign-in - REAL FIREBASE IMPLEMENTATION
+        // Google OAuth sign-in with hybrid Google Sheets tracking
         async function signInWithGoogle() {
             try {
-                showStatus('🔐 Connecting to Google...', 'info');
+                showStatus('🔐 Signing in with Google...', 'info');
                 
-                console.log('🔥 REAL GOOGLE OAUTH: Starting actual Firebase Google authentication');
+                // Use the Google Auth integration for OAuth
+                if (window.googleAuth) {
+                    // Set up event handler for successful Google OAuth
+                    window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
+                        try {
+                            // Complete Google registration through hybrid manager
+                            const result = await window.registrationManager.completeGoogleRegistration(googleUser);
+                            
+                            if (result.success) {
+                                console.log('🔥 REAL Google account created:', result.user);
+                                console.log('✅ User ID:', result.user.uid);
+                                console.log('✅ Email:', result.user.email);
+                                console.log('✅ Display Name:', result.user.displayName);
+                                console.log('📊 Registration data saved to Google Sheets');
+                                
+                                // Google users skip email verification (already verified by Google)
+                                showStep('success');
+                                showStatus('🎉 Signed in successfully with Google! Data saved to tracking system.', 'success');
+                            } else {
+                                throw new Error(result.error);
+                            }
+                        } catch (error) {
+                            console.error('Google registration completion error:', error);
+                            showStatus(`❌ Google registration failed: ${error.message}`, 'error');
+                        }
+                    };
+                    
+                    // Request access token to trigger OAuth flow
+                    await window.googleAuth.requestAccessToken();
+                    
+                } else {
+                    // Fallback to direct Firebase Google OAuth
+                    const provider = new window.GoogleAuthProvider();
+                    const result = await window.signInWithPopup(window.firebaseAuth, provider);
+                    
+                    console.log('🔥 REAL Google sign-in successful (fallback):', result.user);
+                    showStep('success');
+                    showStatus('🎉 Signed in successfully with Google!', 'success');
+                }
                 
-                // Create Google Auth Provider with scopes
-                const provider = new window.GoogleAuthProvider();
-                provider.addScope('email');
-                provider.addScope('profile');
-                
-                console.log('🔥 REAL GOOGLE OAUTH: Created GoogleAuthProvider');
-                
-                // Use Firebase signInWithPopup for REAL authentication
-                const result = await window.signInWithPopup(window.firebaseAuth, provider);
-                
-                console.log('🔥 REAL GOOGLE OAUTH: SUCCESS - Real Firebase account created/signed in');
-                console.log('✅ Firebase User UID:', result.user.uid);
-                console.log('✅ Email:', result.user.email);
-                console.log('✅ Display Name:', result.user.displayName);
-                console.log('✅ Provider:', result.user.providerData[0].providerId);
-                console.log('✅ Creation Time:', result.user.metadata.creationTime);
-                console.log('✅ Last Sign In:', result.user.metadata.lastSignInTime);
-                
-                // Store real user data for tracking
-                window.realGoogleFirebaseUser = {
-                    uid: result.user.uid,
-                    email: result.user.email,
-                    displayName: result.user.displayName,
-                    providerId: result.user.providerData[0].providerId,
-                    creationTime: result.user.metadata.creationTime,
-                    isRealFirebaseAccount: true
-                };
-                
-                // Show success
-                showStep('success');
-                showStatus('🎉 Signed in with Google! Real Firebase account active.', 'success');
-                
-                console.log('✅ REAL GOOGLE OAUTH: Complete - check Firebase Console for new user');
-                
-                return result;
             } catch (error) {
                 console.error('Google sign-in error:', error);
-                
-                // Enhanced error handling for different OAuth scenarios
-                if (error.code === 'auth/popup-blocked') {
-                    showStatus('❌ Popup blocked by browser. Please allow popups and try again.', 'error');
-                } else if (error.code === 'auth/popup-closed-by-user') {
-                    showStatus('ℹ️ Google sign-in was cancelled.', 'info');
-                } else if (error.code === 'auth/unauthorized-domain') {
-                    showStatus('❌ Domain not authorized for Google OAuth. Using popup mode to resolve.', 'error');
-                } else {
-                    showStatus('❌ Google sign-in temporarily unavailable. Please use email registration.', 'error');
-                }
+                showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
             }
         }
 
