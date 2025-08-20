@@ -842,12 +842,16 @@
         const urlParams = new URLSearchParams(window.location.search);
         const emailParam = urlParams.get('email');
         const nameParam = urlParams.get('name');
+        const passwordParam = urlParams.get('password');
         
-        if (emailParam && nameParam) {
+        if (emailParam && nameParam && passwordParam) {
             // Pre-fill form with data from main site
             document.getElementById('email').value = emailParam;
             document.getElementById('fullName').value = nameParam;
+            document.getElementById('password').value = passwordParam;
+            document.getElementById('confirmPassword').value = passwordParam;
             console.log('✅ Form pre-filled from main site registration');
+            console.log('✅ SINGLE VERIFICATION SYSTEM - no dual accounts');
         }
 
         // Initialize demo

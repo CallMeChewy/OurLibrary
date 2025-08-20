@@ -509,29 +509,11 @@
                 window.registrationManager.logIncompleteEmail(email).catch(console.warn);
             }
 
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed in 
-                    const user = userCredential.user;
-                    
-                    // Log complete registration
-                    if (window.registrationManager) {
-                        window.registrationManager.logCompleteRegistration({
-                            email: email,
-                            fullName: fullName,
-                            userId: user.uid,
-                            method: 'email'
-                        }).catch(console.warn);
-                    }
-                    
-                    // Redirect to our custom verification system
-                    alert('Registration successful! Redirecting to verification...');
-                    hideModal();
-                    setTimeout(() => {
-                        window.location.href = 'auth-demo.html?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(fullName);
-                    }, 1000);
-                })
-                .catch((error) => {
+            // DON'T create Firebase account here - let auth-demo.html handle it
+            // Just redirect to verification system with form data
+            hideModal();
+            window.location.href = 'auth-demo.html?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(fullName) + '&password=' + encodeURIComponent(password);
+        } catch (error) {
                     console.error("Firebase registration error:", error);
                     const errorCode = error.code;
                     const errorMessage = error.message;
