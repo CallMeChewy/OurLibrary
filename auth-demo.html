@@ -838,6 +838,18 @@
             }
         });
 
+        // Handle URL parameters from main site
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        const nameParam = urlParams.get('name');
+        
+        if (emailParam && nameParam) {
+            // Pre-fill form with data from main site
+            document.getElementById('email').value = emailParam;
+            document.getElementById('fullName').value = nameParam;
+            console.log('✅ Form pre-filled from main site registration');
+        }
+
         // Initialize demo
         console.log('🔐 Secure Authentication Demo Ready');
         console.log('Features: Manual verification codes, No phishing risk, Firebase integration');
