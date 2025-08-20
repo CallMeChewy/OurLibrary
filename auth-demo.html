@@ -583,8 +583,16 @@
                     
                     // TEMPORARY: Show the code to user since email isn't working
                     setTimeout(() => {
-                        showStatus(`🚨 TEMP: Your verification code is: ${verificationCode}`, 'info');
+                        showStatus(`🔑 YOUR VERIFICATION CODE: ${verificationCode}`, 'success');
                     }, 2000);
+                    
+                    // Also display it prominently in the verification email display
+                    setTimeout(() => {
+                        const emailDisplay = document.getElementById('verificationEmail');
+                        if (emailDisplay) {
+                            emailDisplay.innerHTML = `${formData.email}<br><strong style="color: #22c55e; font-size: 1.2em;">CODE: ${verificationCode}</strong>`;
+                        }
+                    }, 2500);
                 }
                 
                 // Show verification step only if successful
