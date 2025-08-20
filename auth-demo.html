@@ -620,62 +620,127 @@
             }
         }
 
-        // Google OAuth sign-in with hybrid Google Sheets tracking
+        // Google OAuth sign-in with popup mode (fixes redirect_uri_mismatch)
         async function signInWithGoogle() {
             try {
-                showStatus('🔐 Signing in with Google...', 'info');
+                showStatus('🔐 Connecting to Google (popup mode)...', 'info');
                 
-                // Check if redirect URIs are configured by attempting OAuth
-                // If redirect_uri_mismatch occurs, show helpful error message
-                
-                // Use the Google Auth integration for OAuth
-                if (window.googleAuth) {
-                    // Set up event handler for successful Google OAuth
-                    window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
+                // Use popup mode to avoid redirect_uri_mismatch errors
+                if (typeof google !== 'undefined' && google.accounts) {
+                    console.log('🔧 Using Google Identity Services with popup mode');
+                    
+                    // Initialize Google Identity Services with popup mode
+                    google.accounts.id.initialize({
+                        client_id: '71206584632-kocta4ifm4a1fm3ejmpkmvjc212jhnjs.apps.googleusercontent.com',
+                        callback: handleGoogleCredentialResponse,
+                        auto_select: false,
+                        ux_mode: 'popup',  // This avoids redirect issues
+                        context: 'signin'
+                    });
+                    
+                    // Handle the credential response
+                    window.handleGoogleCredentialResponse = function(response) {
+                        console.log('🎉 Google OAuth successful with popup mode!');
+                        
                         try {
-                            // Complete Google registration through hybrid manager
-                            const result = await window.registrationManager.completeGoogleRegistration(googleUser);
+                            // Decode the JWT token to get user info
+                            const payload = parseJWT(response.credential);
                             
-                            if (result.success) {
-                                console.log('🔥 REAL Google account created:', result.user);
-                                console.log('✅ User ID:', result.user.uid);
-                                console.log('✅ Email:', result.user.email);
-                                console.log('✅ Display Name:', result.user.displayName);
-                                console.log('📊 Registration data saved to Google Sheets');
-                                
-                                // Google users skip email verification (already verified by Google)
-                                showStep('success');
-                                showStatus('🎉 Signed in successfully with Google! Data saved to tracking system.', 'success');
-                            } else {
-                                throw new Error(result.error);
-                            }
+                            const googleUser = {
+                                id: payload.sub,
+                                email: payload.email,
+                                name: payload.name,
+                                imageUrl: payload.picture,
+                                emailVerified: payload.email_verified
+                            };
+                            
+                            console.log('✅ Google user authenticated:', googleUser.email);
+                            console.log('✅ User ID:', payload.sub);
+                            console.log('✅ Email verified:', payload.email_verified);
+                            
+                            // Show success page
+                            showStep('success');
+                            showStatus('🎉 Signed in successfully with Google! (Popup mode - no redirect issues)', 'success');
+                            
                         } catch (error) {
-                            console.error('Google registration completion error:', error);
-                            showStatus(`❌ Google registration failed: ${error.message}`, 'error');
+                            console.error('❌ Error processing Google credential:', error);
+                            showStatus('❌ Google sign-in processing failed', 'error');
                         }
                     };
                     
-                    // Request access token to trigger OAuth flow
-                    await window.googleAuth.requestAccessToken();
+                    // JWT parsing function
+                    window.parseJWT = function(token) {
+                        try {
+                            const base64Url = token.split('.')[1];
+                            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                            }).join(''));
+                            return JSON.parse(jsonPayload);
+                        } catch (error) {
+                            console.error('Error parsing JWT:', error);
+                            return {};
+                        }
+                    };
+                    
+                    // Trigger the sign-in flow with popup
+                    google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            // Manual trigger if auto-prompt doesn't work
+                            console.log('🔄 Manually triggering Google sign-in...');
+                            
+                            // Try direct OAuth popup as fallback
+                            fallbackToFirebaseOAuth();
+                        }
+                    });
                     
                 } else {
-                    // Fallback to direct Firebase Google OAuth
-                    const provider = new window.GoogleAuthProvider();
-                    const result = await window.signInWithPopup(window.firebaseAuth, provider);
-                    
-                    console.log('🔥 REAL Google sign-in successful (fallback):', result.user);
-                    showStep('success');
-                    showStatus('🎉 Signed in successfully with Google!', 'success');
+                    // Fallback to Firebase OAuth if Google Identity Services not available
+                    fallbackToFirebaseOAuth();
+                }
+                
+                // Fallback function using Firebase OAuth popup
+                async function fallbackToFirebaseOAuth() {
+                    try {
+                        console.log('🔄 Using Firebase OAuth popup fallback');
+                        showStatus('🔐 Opening Google sign-in popup...', 'info');
+                        
+                        const provider = new window.GoogleAuthProvider();
+                        const result = await window.signInWithPopup(window.firebaseAuth, provider);
+                        
+                        console.log('🔥 Firebase Google sign-in successful:', result.user);
+                        console.log('✅ User ID:', result.user.uid);
+                        console.log('✅ Email:', result.user.email);
+                        console.log('✅ Display Name:', result.user.displayName);
+                        
+                        showStep('success');
+                        showStatus('🎉 Signed in successfully with Google! (Firebase OAuth)', 'success');
+                        
+                    } catch (error) {
+                        console.error('❌ Firebase OAuth error:', error);
+                        
+                        if (error.code === 'auth/popup-blocked') {
+                            showStatus('❌ Popup blocked. Please allow popups and try again.', 'error');
+                        } else if (error.code === 'auth/popup-closed-by-user') {
+                            showStatus('ℹ️ Sign-in cancelled by user.', 'info');
+                        } else {
+                            showStatus('❌ Google sign-in failed. Please use email registration.', 'error');
+                        }
+                    }
                 }
                 
             } catch (error) {
                 console.error('Google sign-in error:', error);
                 
-                // Check for redirect_uri_mismatch error
-                if (error.message && error.message.includes('redirect_uri_mismatch')) {
-                    showStatus(`❌ Google OAuth Configuration Required: The OAuth Client ID needs redirect URIs configured in Google Cloud Console. Please see documentation for setup instructions.`, 'error');
+                // Enhanced error handling for different OAuth scenarios
+                if (error.code === 'auth/popup-blocked') {
+                    showStatus('❌ Popup blocked by browser. Please allow popups and try again.', 'error');
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    showStatus('ℹ️ Google sign-in was cancelled.', 'info');
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    showStatus('❌ Domain not authorized for Google OAuth. Using popup mode to resolve.', 'error');
                 } else {
-                    showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
+                    showStatus('❌ Google sign-in temporarily unavailable. Please use email registration.', 'error');
                 }
             }
         }
