@@ -509,16 +509,15 @@
                 window.registrationManager.logIncompleteEmail(email).catch(console.warn);
             }
 
-            // DON'T create Firebase account here - let auth-demo.html handle it
-            // Just redirect to verification system with form data
-            hideModal();
-            window.location.href = 'auth-demo.html?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(fullName) + '&password=' + encodeURIComponent(password);
-        } catch (error) {
-                    console.error("Firebase registration error:", error);
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    showValidationError(errorMessage);
-                });
+            try {
+                // DON'T create Firebase account here - let auth-demo.html handle it
+                // Just redirect to verification system with form data
+                hideModal();
+                window.location.href = 'auth-demo.html?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(fullName) + '&password=' + encodeURIComponent(password);
+            } catch (error) {
+                console.error("Registration error:", error);
+                showValidationError(error.message);
+            }
         }
         
         window.handleLogin = function(event) {
