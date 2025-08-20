@@ -136,7 +136,8 @@ class OurLibraryGoogleAuth {
                 email: payload.email,
                 name: payload.name,
                 imageUrl: payload.picture,
-                emailVerified: payload.email_verified
+                emailVerified: payload.email_verified,
+                credential: response.credential
             };
 
             this.isSignedIn = true;
@@ -564,9 +565,14 @@ class OurLibraryRegistrationManager {
     // Handle Google OAuth registration
     async completeGoogleRegistration(googleUser, additionalData = {}) {
         try {
-            // Create Firebase account with Google
-            const provider = new window.GoogleAuthProvider();
-            const userCredential = await window.signInWithPopup(this.firebaseAuth, provider);
+            // Get the ID token from the googleUser object
+            const idToken = googleUser.credential;
+
+            // Create a Google credential with the token
+            const credential = window.GoogleAuthProvider.credential(idToken);
+
+            // Sign in to Firebase with the credential
+            const userCredential = await window.signInWithCredential(this.firebaseAuth, credential);
             const firebaseUser = userCredential.user;
 
             // Complete registration in Google Sheets

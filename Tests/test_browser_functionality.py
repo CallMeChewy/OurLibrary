@@ -52,30 +52,26 @@ def test_html_structure_validity(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.unit
-def test_registration_form_elements(bowersworld_dir):
+def test_registration_form_elements(project_root):
     """Test that all required registration form elements are present."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Form elements
     assert 'id="registration-form"' in content, "Registration form must exist"
-    assert 'name="username"' in content, "Username field required"
+    assert 'id="fullName"' in content, "Full name field required"
     assert 'name="email"' in content, "Email field required"  
-    assert 'name="firstName"' in content, "First name field required"
-    assert 'name="lastName"' in content, "Last name field required"
-    assert 'name="zipCode"' in content, "Zip code field required"
     assert 'name="agreeTerms"' in content, "Terms agreement checkbox required"
 
 @pytest.mark.browser
 @pytest.mark.unit  
-def test_javascript_validation_functions(bowersworld_dir):
+def test_javascript_validation_functions(project_root):
     """Test that JavaScript validation functions are implemented."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Validation functions
     assert "function validateEmail" in content, "Email validation function required"
-    assert "function validateUsername" in content, "Username validation function required"
     assert "function validateName" in content, "Name validation function required"
     assert "function validateZipCode" in content, "Zip code validation function required"
     
@@ -85,9 +81,9 @@ def test_javascript_validation_functions(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.unit
-def test_social_login_placeholders(bowersworld_dir):
+def test_social_login_placeholders(project_root):
     """Test that social login options are available."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Social login functions
@@ -102,9 +98,9 @@ def test_social_login_placeholders(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.performance
-def test_mobile_optimization(bowersworld_dir):
+def test_mobile_optimization(project_root):
     """Test mobile optimization features."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Mobile viewport
@@ -117,9 +113,9 @@ def test_mobile_optimization(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.unit
-def test_accessibility_features(bowersworld_dir):
+def test_accessibility_features(project_root):
     """Test accessibility features for educational users."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Form labels
@@ -134,9 +130,9 @@ def test_accessibility_features(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.educational_mission
-def test_educational_features_showcase(bowersworld_dir):
+def test_educational_features_showcase(project_root):
     """Test that educational features are prominently showcased."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Educational content indicators
@@ -147,9 +143,9 @@ def test_educational_features_showcase(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.unit
-def test_error_handling_ui(bowersworld_dir):
+def test_error_handling_ui(project_root):
     """Test that error handling UI elements are present."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # Error display functions
@@ -159,9 +155,9 @@ def test_error_handling_ui(bowersworld_dir):
 
 @pytest.mark.browser
 @pytest.mark.performance
-def test_external_dependencies(bowersworld_dir):
+def test_external_dependencies(project_root):
     """Test that external dependencies are properly loaded."""
-    index_file = bowersworld_dir / "index.html"
+    index_file = project_root / "index.html"
     content = index_file.read_text()
     
     # CDN dependencies

@@ -1,0 +1,18 @@
+{
+  "email_registration": {
+    "attempted": true,
+    "firebase_account_created": true,
+    "firebase_uid": "trjk1UwNCefSplWhG5wnMwAEHuh2",
+    "provider": "password",
+    "email": "firebase_email_test_1755703202@example.com"
+  },
+  "google_oauth": {
+    "attempted": false,
+    "firebase_account_created": false,
+    "firebase_uid": null,
+    "provider": null,
+    "email": null,
+    "popup_blocked": false,
+    "domain_error": false
+  }
+}

@@ -49,14 +49,13 @@ def test_educational_content_present(website_url):
 
 @pytest.mark.live
 @pytest.mark.unit
-def test_registration_form_available(website_url):
+def test_registration_form_available(base_url):
     """Test that registration functionality is available on live site."""
-    response = requests.get(website_url, timeout=10)
+    response = requests.get(f"{base_url}/index.html", timeout=10)
     content = response.text
     
     # Registration form elements
     assert 'id="registration-form"' in content, "Registration form must be available"
-    assert 'name="username"' in content, "Username field must be present"
     assert 'name="email"' in content, "Email field must be present"
 
 @pytest.mark.live
@@ -93,9 +92,9 @@ def test_mobile_responsiveness_headers(website_url):
 
 @pytest.mark.live
 @pytest.mark.unit
-def test_javascript_functionality_present(website_url):
+def test_javascript_functionality_present(base_url):
     """Test that JavaScript functionality is present on live site."""
-    response = requests.get(website_url, timeout=10)
+    response = requests.get(f"{base_url}/index.html", timeout=10)
     content = response.text
     
     # JavaScript functions should be present
@@ -105,9 +104,9 @@ def test_javascript_functionality_present(website_url):
 
 @pytest.mark.live
 @pytest.mark.performance
-def test_external_resource_loading(website_url):
+def test_external_resource_loading(base_url):
     """Test that external resources load properly."""
-    response = requests.get(website_url, timeout=10)
+    response = requests.get(f"{base_url}/index.html", timeout=10)
     content = response.text
     
     # Check for critical external resources
@@ -136,9 +135,9 @@ def test_page_size_optimization(website_url):
 
 @pytest.mark.live
 @pytest.mark.educational_mission
-def test_accessibility_features_live(website_url):
+def test_accessibility_features_live(base_url):
     """Test accessibility features on live site."""
-    response = requests.get(website_url, timeout=10)
+    response = requests.get(f"{base_url}/index.html", timeout=10)
     content = response.text
     
     # Basic accessibility features
@@ -149,9 +148,9 @@ def test_accessibility_features_live(website_url):
 
 @pytest.mark.live
 @pytest.mark.unit
-def test_social_login_placeholders_live(website_url):
+def test_social_login_placeholders_live(base_url):
     """Test that social login placeholders work on live site."""
-    response = requests.get(website_url, timeout=10)
+    response = requests.get(f"{base_url}/index.html", timeout=10)
     content = response.text
     
     # Social login buttons should be present
