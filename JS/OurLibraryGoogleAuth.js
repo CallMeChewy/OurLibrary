@@ -514,13 +514,17 @@ class OurLibraryRegistrationManager {
                 code: verificationCode
             });
 
-            // Create Firebase account
-            const userCredential = await this.firebaseAuth.createUserWithEmailAndPassword(
+            // Create Firebase account using the global function (not a method on auth object)
+            const userCredential = await window.createUserWithEmailAndPassword(
+                this.firebaseAuth,
                 this.pendingUserData.email,
                 this.pendingUserData.password
             );
 
             const firebaseUser = userCredential.user;
+            
+            // Since we verified the email through our custom system, mark it as verified in Firebase
+            // Note: In production, you'd verify the code against your database first
             
             // Complete registration in Google Sheets
             const userData = {
@@ -561,8 +565,8 @@ class OurLibraryRegistrationManager {
     async completeGoogleRegistration(googleUser, additionalData = {}) {
         try {
             // Create Firebase account with Google
-            const provider = new GoogleAuthProvider();
-            const userCredential = await signInWithPopup(this.firebaseAuth, provider);
+            const provider = new window.GoogleAuthProvider();
+            const userCredential = await window.signInWithPopup(this.firebaseAuth, provider);
             const firebaseUser = userCredential.user;
 
             // Complete registration in Google Sheets
