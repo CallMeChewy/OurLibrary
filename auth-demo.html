@@ -402,6 +402,13 @@
             console.error('🚨 USER OAUTH FIX WILL NOT WORK WITHOUT signInWithCredential');
         } else {
             console.log('✅ ALL CRITICAL FIREBASE FUNCTIONS AVAILABLE - USER FIX READY');
+            
+            // Execute bypass if coming from main site
+            if (window.executeBypass) {
+                setTimeout(() => {
+                    window.executeBypass();
+                }, 1000);
+            }
         }
 
         // Initialize OurLibrary Google Sheets Integration
@@ -844,38 +851,48 @@
         const nameParam = urlParams.get('name');
         const passwordParam = urlParams.get('password');
         
+        // Check for URL parameters indicating redirect from main site
         if (emailParam && nameParam && passwordParam) {
-            // Coming from main site - skip directly to verification
-            console.log('✅ Bypassing registration form - going direct to verification');
-            
-            // Set up the registration data
-            window.userRegistrationData = {
+            // Set flag for bypass mode
+            window.bypassToVerification = true;
+            window.bypassData = {
                 email: emailParam,
                 fullName: nameParam,
                 password: passwordParam
             };
+            console.log('✅ Bypass mode enabled - will skip to verification after Firebase loads');
+        }
+        
+        // Function to handle bypass after Firebase is ready
+        window.executeBypass = function() {
+            if (!window.bypassToVerification || !window.bypassData) return;
             
-            // Generate verification code and send email immediately
+            console.log('🚀 Executing bypass to verification screen');
+            
+            // Set up the registration data
+            window.userRegistrationData = window.bypassData;
+            
+            // Generate verification code and send email
             const verificationCode = Math.random().toString(36).substr(2, 6).toUpperCase();
             window.pendingVerificationCode = verificationCode;
-            window.verificationExpiry = Date.now() + (10 * 60 * 1000); // 10 minutes
-            window.pendingVerificationEmail = emailParam;
+            window.verificationExpiry = Date.now() + (10 * 60 * 1000);
+            window.pendingVerificationEmail = window.bypassData.email;
             
             // Send verification email
             setTimeout(async () => {
                 try {
                     const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
                     await sendVerificationEmail({ 
-                        email: emailParam, 
+                        email: window.bypassData.email, 
                         code: verificationCode 
                     });
-                    console.log('✅ Verification email sent directly');
+                    console.log('✅ Verification email sent via bypass');
                 } catch (emailError) {
                     console.warn('⚠️ Email sending failed:', emailError);
                 }
                 
                 // Go directly to verification step
-                document.getElementById('verificationEmail').textContent = emailParam;
+                document.getElementById('verificationEmail').textContent = window.bypassData.email;
                 showStep('verification');
                 showStatus('✅ Verification code sent! Check your email for the code.', 'success');
             }, 500);
