@@ -852,6 +852,12 @@
             document.getElementById('confirmPassword').value = passwordParam;
             console.log('✅ Form pre-filled from main site registration');
             console.log('✅ SINGLE VERIFICATION SYSTEM - no dual accounts');
+            
+            // Auto-submit to go directly to verification code entry
+            setTimeout(() => {
+                console.log('🚀 Auto-submitting registration for seamless flow');
+                document.getElementById('register-form').dispatchEvent(new Event('submit'));
+            }, 1000);
         }
 
         // Initialize demo
