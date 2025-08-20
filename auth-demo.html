@@ -628,10 +628,23 @@
                 let codeVerified = false;
                 
                 // Check if we have a pending verification code (local fallback)
-                if (window.pendingVerificationCode && window.pendingVerificationEmail === userRegistrationData.email) {
+                console.log('🔍 DEBUG: Checking verification conditions...');
+                console.log('  pendingVerificationCode:', window.pendingVerificationCode);
+                console.log('  pendingVerificationEmail:', window.pendingVerificationEmail);
+                console.log('  userRegistrationData.email:', userRegistrationData?.email);
+                console.log('  Current time:', Date.now());
+                console.log('  Expiry time:', window.verificationExpiry);
+                console.log('  Entered code:', enteredCode);
+                
+                if (window.pendingVerificationCode && window.pendingVerificationEmail === userRegistrationData?.email) {
+                    console.log('✅ Email match confirmed');
+                    
                     if (Date.now() > window.verificationExpiry) {
+                        console.log('❌ Code expired');
                         throw new Error('Verification code has expired. Please request a new one.');
                     }
+                    
+                    console.log('✅ Code not expired');
                     
                     if (enteredCode === window.pendingVerificationCode) {
                         codeVerified = true;
@@ -640,7 +653,11 @@
                         window.pendingVerificationCode = null;
                         window.pendingVerificationEmail = null;
                         window.verificationExpiry = null;
+                    } else {
+                        console.log('❌ Code mismatch:', enteredCode, 'vs', window.pendingVerificationCode);
                     }
+                } else {
+                    console.log('❌ Email mismatch or missing data');
                 }
                 
                 // Try Firebase Function verification as backup
