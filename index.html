@@ -374,14 +374,6 @@
             }
         }
         
-        // Setup tracking when modal is shown
-        window.showRegistrationOriginal = window.showRegistration;
-        window.showRegistration = function() {
-            window.showRegistrationOriginal();
-            // Setup email tracking after modal is shown
-            setTimeout(setupEmailTracking, 100);
-        }
-        
         // Initialize Google Sheets integration
         googleAuth.initialize().catch(error => {
             console.warn('⚠️ Google Sheets integration not available:', error);
@@ -411,6 +403,9 @@
             // Force a reflow to ensure CSS changes take effect
             modalBg.offsetHeight;
             regForm.offsetHeight;
+            
+            // Setup email tracking after modal is shown
+            setTimeout(setupEmailTracking, 100);
         }
         
         window.showLogin = function() {
