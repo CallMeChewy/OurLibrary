@@ -622,7 +622,14 @@
                 
                 // CRITICAL FIX: Real verification code check
                 console.log('Code entered:', enteredCode);
-                console.log('User data:', userRegistrationData);
+                
+                // Get user data from global or form
+                const userData = window.userRegistrationData || {
+                    email: document.getElementById('email').value,
+                    fullName: document.getElementById('fullName').value,
+                    password: document.getElementById('password').value
+                };
+                console.log('User data:', userData);
                 
                 // CRITICAL FIX: Verify the actual code
                 let codeVerified = false;
@@ -631,12 +638,12 @@
                 console.log('🔍 DEBUG: Checking verification conditions...');
                 console.log('  pendingVerificationCode:', window.pendingVerificationCode);
                 console.log('  pendingVerificationEmail:', window.pendingVerificationEmail);
-                console.log('  userRegistrationData.email:', userRegistrationData?.email);
+                console.log('  userData.email:', userData?.email);
                 console.log('  Current time:', Date.now());
                 console.log('  Expiry time:', window.verificationExpiry);
                 console.log('  Entered code:', enteredCode);
                 
-                if (window.pendingVerificationCode && window.pendingVerificationEmail === userRegistrationData?.email) {
+                if (window.pendingVerificationCode && window.pendingVerificationEmail === userData?.email) {
                     console.log('✅ Email match confirmed');
                     
                     if (Date.now() > window.verificationExpiry) {
