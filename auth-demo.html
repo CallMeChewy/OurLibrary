@@ -692,6 +692,19 @@
                 // Email verified - now create REAL Firebase account with Google Sheets tracking
                 showStatus('🔐 Creating Firebase account...', 'info');
                 
+                // Ensure registration data is available for the manager
+                if (window.bypassToVerification && userData) {
+                    // Set up pending registration data for bypass mode
+                    if (window.registrationManager && window.registrationManager.setPendingRegistration) {
+                        window.registrationManager.setPendingRegistration({
+                            email: userData.email,
+                            fullName: userData.fullName,
+                            password: userData.password,
+                            method: 'email'
+                        });
+                    }
+                }
+                
                 // Use hybrid registration manager
                 const result = await window.registrationManager.completeEmailRegistration(enteredCode);
                 
