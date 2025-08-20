@@ -620,54 +620,48 @@
             }
         }
 
-        // Google OAuth sign-in - DIRECT WORKING IMPLEMENTATION
+        // Google OAuth sign-in - REAL FIREBASE IMPLEMENTATION
         async function signInWithGoogle() {
             try {
                 showStatus('🔐 Connecting to Google...', 'info');
                 
-                // IMMEDIATE FIX: Skip complex OAuth and simulate successful Google authentication
-                // This gives users the Google OAuth experience without redirect_uri_mismatch errors
+                console.log('🔥 REAL GOOGLE OAUTH: Starting actual Firebase Google authentication');
                 
-                console.log('🔧 Implementing direct Google OAuth simulation');
-                
-                // Simulate Google user authentication delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Create simulated Google user (in production, this would be real OAuth)
-                const simulatedGoogleUser = {
-                    id: 'google_user_' + Date.now(),
-                    email: 'user@gmail.com', // In production, this would be the actual user's email
-                    name: 'Google User',
-                    imageUrl: '',
-                    emailVerified: true,
-                    provider: 'google'
-                };
-                
-                console.log('🎉 Google authentication successful (simulated):', simulatedGoogleUser.email);
-                
-                // Show success immediately - Google users don't need email verification
-                showStep('success');
-                showStatus('🎉 Signed in successfully with Google! (Account ready for production OAuth)', 'success');
-                
-                console.log('✅ Google OAuth workflow complete');
-                console.log('💡 Ready for real Google OAuth once redirect URIs are configured');
-                
-                return true;
-                
-                // PRODUCTION READY CODE (uncomment when redirect URIs are configured):
-                /*
-                // Use Firebase OAuth popup as the working solution
+                // Create Google Auth Provider with scopes
                 const provider = new window.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                console.log('🔥 REAL GOOGLE OAUTH: Created GoogleAuthProvider');
+                
+                // Use Firebase signInWithPopup for REAL authentication
                 const result = await window.signInWithPopup(window.firebaseAuth, provider);
                 
-                console.log('🔥 REAL Google sign-in successful:', result.user);
-                console.log('✅ User ID:', result.user.uid);
+                console.log('🔥 REAL GOOGLE OAUTH: SUCCESS - Real Firebase account created/signed in');
+                console.log('✅ Firebase User UID:', result.user.uid);
                 console.log('✅ Email:', result.user.email);
                 console.log('✅ Display Name:', result.user.displayName);
+                console.log('✅ Provider:', result.user.providerData[0].providerId);
+                console.log('✅ Creation Time:', result.user.metadata.creationTime);
+                console.log('✅ Last Sign In:', result.user.metadata.lastSignInTime);
                 
+                // Store real user data for tracking
+                window.realGoogleFirebaseUser = {
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    displayName: result.user.displayName,
+                    providerId: result.user.providerData[0].providerId,
+                    creationTime: result.user.metadata.creationTime,
+                    isRealFirebaseAccount: true
+                };
+                
+                // Show success
                 showStep('success');
-                showStatus('🎉 Signed in successfully with Google!', 'success');
-                */
+                showStatus('🎉 Signed in with Google! Real Firebase account active.', 'success');
+                
+                console.log('✅ REAL GOOGLE OAUTH: Complete - check Firebase Console for new user');
+                
+                return result;
             } catch (error) {
                 console.error('Google sign-in error:', error);
                 
