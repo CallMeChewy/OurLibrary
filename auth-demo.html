@@ -343,7 +343,7 @@
     <!-- Firebase SDK with REAL AUTHENTICATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithCredential } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";
 
         // Firebase configuration (COMPLETE - from Firebase console)
@@ -370,7 +370,39 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.GoogleAuthProvider = GoogleAuthProvider;
         window.signInWithPopup = signInWithPopup;
+        window.signInWithCredential = signInWithCredential;
+        
+        // CRITICAL FIX: Ensure signInWithCredential is truly available
+        console.log('🔥 FIREBASE GLOBAL EXPORTS CHECK:');
+        console.log('   signInWithCredential available:', !!window.signInWithCredential);
+        console.log('   signInWithCredential type:', typeof window.signInWithCredential);
+        
+        // Double-check and force export if needed
+        if (typeof signInWithCredential === 'function' && !window.signInWithCredential) {
+            window.signInWithCredential = signInWithCredential;
+            console.log('🔧 FORCED signInWithCredential export');
+        }
+        
         window.firebaseReady = true;
+        
+        // Verify all critical functions are available
+        const criticalFunctions = {
+            firebaseAuth: !!window.firebaseAuth,
+            createUserWithEmailAndPassword: !!window.createUserWithEmailAndPassword,
+            signInWithCredential: !!window.signInWithCredential,
+            GoogleAuthProvider: !!window.GoogleAuthProvider
+        };
+        
+        console.log('🔥 CRITICAL FIREBASE FUNCTIONS CHECK:', criticalFunctions);
+        
+        // Alert if any critical function is missing
+        const missing = Object.entries(criticalFunctions).filter(([key, available]) => !available).map(([key]) => key);
+        if (missing.length > 0) {
+            console.error('❌ MISSING CRITICAL FIREBASE FUNCTIONS:', missing);
+            console.error('🚨 USER OAUTH FIX WILL NOT WORK WITHOUT signInWithCredential');
+        } else {
+            console.log('✅ ALL CRITICAL FIREBASE FUNCTIONS AVAILABLE - USER FIX READY');
+        }
 
         // Initialize OurLibrary Google Sheets Integration
         const googleAuth = new OurLibraryGoogleAuth({
@@ -529,12 +561,31 @@
                     throw new Error('httpsCallable function not available. Please refresh the page.');
                 }
                 
-                // Call our SMTP function
-                const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
-                console.log('🔍 Debug: sendVerificationEmail function created =', sendVerificationEmail);
+                // Generate and store verification code locally for now
+                const verificationCode = Math.random().toString(36).substr(2, 6).toUpperCase();
+                window.pendingVerificationCode = verificationCode;
+                window.pendingVerificationEmail = formData.email;
+                window.verificationExpiry = Date.now() + (10 * 60 * 1000); // 10 minutes
                 
-                const result = await sendVerificationEmail({ email: formData.email });
-                console.log('✅ Verification email result:', result);
+                console.log('🔍 TEMPORARY: Generated verification code:', verificationCode);
+                console.log('🔍 TEMPORARY: Code will expire at:', new Date(window.verificationExpiry));
+                
+                // Try to call Firebase Function for real email sending
+                try {
+                    const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                    const result = await sendVerificationEmail({ 
+                        email: formData.email, 
+                        code: verificationCode 
+                    });
+                    console.log('✅ Real email sent via Firebase Functions:', result);
+                } catch (emailError) {
+                    console.warn('⚠️ Firebase Functions email failed, using local verification:', emailError);
+                    
+                    // TEMPORARY: Show the code to user since email isn't working
+                    setTimeout(() => {
+                        showStatus(`🚨 TEMP: Your verification code is: ${verificationCode}`, 'info');
+                    }, 2000);
+                }
                 
                 // Show verification step only if successful
                 document.getElementById('verificationEmail').textContent = formData.email;
@@ -564,13 +615,50 @@
             try {
                 showStatus('🔍 Verifying code...', 'info');
                 
-                // In a real implementation, you'd verify the code against your database
-                // For demo purposes, we'll simulate verification
+                // CRITICAL FIX: Real verification code check
                 console.log('Code entered:', enteredCode);
                 console.log('User data:', userRegistrationData);
                 
-                // Simulate verification delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // CRITICAL FIX: Verify the actual code
+                let codeVerified = false;
+                
+                // Check if we have a pending verification code (local fallback)
+                if (window.pendingVerificationCode && window.pendingVerificationEmail === userRegistrationData.email) {
+                    if (Date.now() > window.verificationExpiry) {
+                        throw new Error('Verification code has expired. Please request a new one.');
+                    }
+                    
+                    if (enteredCode === window.pendingVerificationCode) {
+                        codeVerified = true;
+                        console.log('✅ Local verification code matched');
+                        // Clear the used code
+                        window.pendingVerificationCode = null;
+                        window.pendingVerificationEmail = null;
+                        window.verificationExpiry = null;
+                    }
+                }
+                
+                // Try Firebase Function verification as backup
+                if (!codeVerified && window.firebaseFunctions && window.httpsCallable) {
+                    try {
+                        const verifyEmailCode = window.httpsCallable(window.firebaseFunctions, 'verifyEmailCode');
+                        const verificationResult = await verifyEmailCode({ 
+                            email: userRegistrationData.email, 
+                            code: enteredCode 
+                        });
+                        
+                        if (verificationResult.data && verificationResult.data.verified) {
+                            codeVerified = true;
+                            console.log('✅ Firebase Function verification succeeded');
+                        }
+                    } catch (fbError) {
+                        console.warn('⚠️ Firebase Function verification failed:', fbError);
+                    }
+                }
+                
+                if (!codeVerified) {
+                    throw new Error('Invalid verification code. Please check your email and try again.');
+                }
                 
                 // Email verified - now create REAL Firebase account with Google Sheets tracking
                 showStatus('🔐 Creating Firebase account...', 'info');
