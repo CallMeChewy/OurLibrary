@@ -580,25 +580,23 @@
                     console.log('✅ Real email sent via Firebase Functions:', result);
                 } catch (emailError) {
                     console.warn('⚠️ Firebase Functions email failed, using local verification:', emailError);
-                    
-                    // TEMPORARY: Show the code to user since email isn't working
-                    setTimeout(() => {
-                        showStatus(`🔑 YOUR VERIFICATION CODE: ${verificationCode}`, 'success');
-                    }, 2000);
-                    
-                    // Also display it prominently in the verification email display
-                    setTimeout(() => {
-                        const emailDisplay = document.getElementById('verificationEmail');
-                        if (emailDisplay) {
-                            emailDisplay.innerHTML = `${formData.email}<br><strong style="color: #22c55e; font-size: 1.2em;">CODE: ${verificationCode}</strong>`;
-                        }
-                    }, 2500);
                 }
                 
-                // Show verification step only if successful
+                // ALWAYS show the code to user regardless of email status
+                // Show verification step first
                 document.getElementById('verificationEmail').textContent = formData.email;
                 showStep('verification');
-                showStatus('✅ Verification code sent! Check your email.', 'success');
+                
+                // Display code prominently - immediate visibility
+                showStatus(`🔑 YOUR VERIFICATION CODE: ${verificationCode}`, 'success');
+                
+                // Also display it in the verification email display
+                setTimeout(() => {
+                    const emailDisplay = document.getElementById('verificationEmail');
+                    if (emailDisplay) {
+                        emailDisplay.innerHTML = `${formData.email}<br><strong style="color: #22c55e; font-size: 1.4em; background: #fff; padding: 8px; border-radius: 4px; border: 2px solid #22c55e;">CODE: ${verificationCode}</strong>`;
+                    }
+                }, 500);
                 
             } catch (error) {
                 console.error('❌ Full error details:', error);
