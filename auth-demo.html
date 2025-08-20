@@ -625,6 +625,9 @@
             try {
                 showStatus('🔐 Signing in with Google...', 'info');
                 
+                // Check if redirect URIs are configured by attempting OAuth
+                // If redirect_uri_mismatch occurs, show helpful error message
+                
                 // Use the Google Auth integration for OAuth
                 if (window.googleAuth) {
                     // Set up event handler for successful Google OAuth
@@ -667,7 +670,13 @@
                 
             } catch (error) {
                 console.error('Google sign-in error:', error);
-                showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
+                
+                // Check for redirect_uri_mismatch error
+                if (error.message && error.message.includes('redirect_uri_mismatch')) {
+                    showStatus(`❌ Google OAuth Configuration Required: The OAuth Client ID needs redirect URIs configured in Google Cloud Console. Please see documentation for setup instructions.`, 'error');
+                } else {
+                    showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
+                }
             }
         }
 
