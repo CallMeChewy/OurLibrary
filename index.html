@@ -546,7 +546,7 @@
         
         // Social Authentication Handlers
         window.registerWithGoogle = function() {
-            if (window.googleAuth) {
+            if (window.googleAuth && !window.googleAuth.simulateMode) {
                 // Set up event handler for successful Google OAuth
                 window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
                     try {
