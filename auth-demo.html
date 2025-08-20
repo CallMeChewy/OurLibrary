@@ -689,24 +689,34 @@
                     throw new Error('Invalid verification code. Please check your email and try again.');
                 }
                 
-                // Email verified - now create REAL Firebase account with Google Sheets tracking
+                // Email verified - now create REAL Firebase account
                 showStatus('🔐 Creating Firebase account...', 'info');
                 
-                // Ensure registration data is available for the manager
-                if (window.bypassToVerification && userData) {
-                    // Set up pending registration data for bypass mode
-                    if (window.registrationManager && window.registrationManager.setPendingRegistration) {
-                        window.registrationManager.setPendingRegistration({
+                // Create Firebase account directly since verification is complete
+                const userCredential = await window.createUserWithEmailAndPassword(window.firebaseAuth, userData.email, userData.password);
+                const user = userCredential.user;
+                
+                console.log('🔥 REAL Firebase account created:', user);
+                console.log('✅ User ID:', user.uid);
+                console.log('✅ Email:', user.email);
+                console.log('✅ Creation time:', user.metadata.creationTime);
+                
+                // Log registration activity if available
+                if (window.registrationManager) {
+                    try {
+                        await window.registrationManager.logCompleteRegistration({
                             email: userData.email,
                             fullName: userData.fullName,
-                            password: userData.password,
+                            userId: user.uid,
                             method: 'email'
                         });
+                        console.log('📊 Registration data logged to Google Sheets');
+                    } catch (logError) {
+                        console.warn('⚠️ Google Sheets logging failed:', logError);
                     }
                 }
                 
-                // Use hybrid registration manager
-                const result = await window.registrationManager.completeEmailRegistration(enteredCode);
+                const result = { success: true, user: user };
                 
                 if (result.success) {
                     console.log('🔥 REAL Firebase account created:', result.user);
