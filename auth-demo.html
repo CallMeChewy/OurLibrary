@@ -197,7 +197,7 @@
                 <li>• No clickable links in emails (prevents phishing)</li>
                 <li>• Manual code entry (user stays in control)</li>
                 <li>• Firebase account created only AFTER email verification</li>
-                <li>• Google OAuth bypasses email verification (already verified)</li>
+                <li>• Google OAuth requires profile completion after authentication</li>
             </ul>
         </div>
 
@@ -206,6 +206,7 @@
             <div class="step active" id="step1">1</div>
             <div class="step inactive" id="step2">2</div>
             <div class="step inactive" id="step3">3</div>
+            <div class="step inactive" id="step4">4</div>
         </div>
 
         <!-- Auth Card -->
@@ -272,7 +273,58 @@
                 </div>
             </div>
 
-            <!-- Step 3: Success / Dashboard -->
+            <!-- Step 3: Google OAuth Completion -->
+            <div class="auth-step" id="google-completion-step">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">🎉 Almost Done!</h2>
+                
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-4">🔐</div>
+                    <p class="text-gray-300 mb-2">Successfully signed in with Google:</p>
+                    <p class="text-blue-400 font-semibold" id="googleEmail"></p>
+                    <p class="text-sm text-gray-400 mt-2">Complete your profile with the required information</p>
+                </div>
+                
+                <form onsubmit="completeGoogleRegistration(event)">
+                    <!-- Pre-populated from Google if available -->
+                    <input type="text" 
+                           placeholder="Full Name" 
+                           id="googleFullName" 
+                           required
+                           class="mb-4">
+                    
+                    <!-- Required additional fields -->
+                    <input type="text" 
+                           placeholder="Zip Code (for content localization)" 
+                           id="zipCode" 
+                           required
+                           pattern="[0-9]{5}(-[0-9]{4})?"
+                           class="mb-4">
+                    
+                    <!-- Terms acceptance -->
+                    <div class="mb-4">
+                        <label class="flex items-start space-x-3 text-gray-300">
+                            <input type="checkbox" 
+                                   id="acceptTerms" 
+                                   required
+                                   class="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                            <span class="text-sm">
+                                I accept the <a href="#" class="text-blue-400 hover:underline">Terms of Service</a> 
+                                and <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Complete Profile</button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <button onclick="signOutAndRestart()" class="text-gray-400 hover:underline text-sm">
+                        Use different account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Success / Dashboard -->
             <div class="auth-step" id="success-step">
                 <h2 class="text-2xl font-bold text-white mb-6 text-center">Welcome to OurLibrary!</h2>
                 
@@ -463,19 +515,21 @@
         }
 
         function updateStepIndicators(activeStep) {
-            const steps = ['registration', 'verification', 'success'];
+            const steps = ['registration', 'verification', 'google-completion', 'success'];
             const activeIndex = steps.indexOf(activeStep);
             
             steps.forEach((step, index) => {
                 const indicator = document.getElementById(`step${index + 1}`);
-                indicator.classList.remove('active', 'completed', 'inactive');
-                
-                if (index < activeIndex) {
-                    indicator.classList.add('completed');
-                } else if (index === activeIndex) {
-                    indicator.classList.add('active');
-                } else {
-                    indicator.classList.add('inactive');
+                if (indicator) {
+                    indicator.classList.remove('active', 'completed', 'inactive');
+                    
+                    if (index < activeIndex) {
+                        indicator.classList.add('completed');
+                    } else if (index === activeIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.add('inactive');
+                    }
                 }
             });
         }
@@ -502,6 +556,79 @@
         function showRegistration() {
             showStep('registration');
             updateStepIndicators('registration');
+        }
+
+        // Google OAuth completion functions
+        function showGoogleCompletion(user) {
+            // Pre-populate form with Google data
+            document.getElementById('googleEmail').textContent = user.email;
+            document.getElementById('googleFullName').value = user.displayName || '';
+            
+            // Show the Google completion step
+            showStep('google-completion');
+            updateStepIndicators('google-completion');
+        }
+
+        async function completeGoogleRegistration(event) {
+            event.preventDefault();
+            
+            try {
+                showStatus('📝 Completing your profile...', 'info');
+                
+                // Get form data
+                const fullName = document.getElementById('googleFullName').value.trim();
+                const zipCode = document.getElementById('zipCode').value.trim();
+                const acceptTerms = document.getElementById('acceptTerms').checked;
+                
+                // Validate required fields
+                if (!fullName) {
+                    throw new Error('Full name is required');
+                }
+                if (!zipCode) {
+                    throw new Error('Zip code is required');
+                }
+                if (!acceptTerms) {
+                    throw new Error('You must accept the Terms of Service');
+                }
+                
+                // In a real implementation, you would save this additional data
+                // to your user profile system (Firebase Firestore, Google Sheets, etc.)
+                console.log('📝 Additional user data:', {
+                    fullName,
+                    zipCode,
+                    acceptTerms,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Show success
+                showStep('success');
+                showStatus('🎉 Profile completed successfully! Welcome to OurLibrary!', 'success');
+                
+            } catch (error) {
+                console.error('Google registration completion error:', error);
+                showStatus(`❌ ${error.message}`, 'error');
+            }
+        }
+
+        function signOutAndRestart() {
+            // Sign out from Firebase if authenticated
+            if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                window.firebaseAuth.signOut().then(() => {
+                    console.log('🔓 User signed out');
+                }).catch((error) => {
+                    console.error('Sign out error:', error);
+                });
+            }
+            
+            // Reset form and go back to registration
+            document.querySelectorAll('input').forEach(input => {
+                input.value = '';
+                input.checked = false;
+            });
+            
+            showStep('registration');
+            updateStepIndicators('registration');
+            showStatus('🔄 Signed out. Please choose an authentication method.', 'info');
         }
 
         // Email registration process
@@ -780,9 +907,9 @@
                                 console.log('✅ Display Name:', result.user.displayName);
                                 console.log('📊 Registration data saved to Google Sheets');
                                 
-                                // Google users skip email verification (already verified by Google)
-                                showStep('success');
-                                showStatus('🎉 Signed in successfully with Google! Data saved to tracking system.', 'success');
+                                // Google users need to complete profile information
+                                showGoogleCompletion(result.user);
+                                showStatus('🎉 Google authentication successful! Please complete your profile.', 'success');
                             } else {
                                 throw new Error(result.error);
                             }
@@ -801,8 +928,8 @@
                     const result = await window.signInWithPopup(window.firebaseAuth, provider);
                     
                     console.log('🔥 REAL Google sign-in successful (fallback):', result.user);
-                    showStep('success');
-                    showStatus('🎉 Signed in successfully with Google!', 'success');
+                    showGoogleCompletion(result.user);
+                    showStatus('🎉 Google authentication successful! Please complete your profile.', 'success');
                 }
                 
             } catch (error) {
