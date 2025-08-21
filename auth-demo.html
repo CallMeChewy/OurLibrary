@@ -532,7 +532,7 @@
 
         // Initialize OurLibrary Google Sheets Integration
         const googleAuth = new OurLibraryGoogleAuth({
-            clientId: '71206584632-kocta4ifm4a1fm3ejmpkmvjc212jhnjs.apps.googleusercontent.com', // REAL OurLibrary Google OAuth Client ID
+            clientId: '71206584632-q40tcfnhmjvtj2mlikc8lakk9vrhkngi.apps.googleusercontent.com', // CORRECT OurLibrary Google OAuth Client ID
             apiKey: 'AIzaSyAsG8hleX4WRKCLcIJdWkcNptWNMGdNjzk', // REAL Google API Key for Sheets/Drive
             userRegistrationsSheetId: '1lhdKnjyltHHQaDSfAfQ9Vcog40vsnFTqzDFxa9sEBFE', // OurLibrary_UserRegistrations_2025
             incompleteEmailsSheetId: '197Qu-GeIYaL2CyiFArhgM9GJbuyGCUK4JZjxWXsAHaI', // OurLibrary_IncompleteEmails_Tracker
@@ -1127,7 +1127,7 @@
                 showStatus('🔐 Signing in with Google...', 'info');
                 
                 // Use the Google Auth integration for OAuth
-                if (false && window.googleAuth) { // Temporarily disabled for GitHub Pages testing
+                if (window.googleAuth) { // Re-enabled with correct client ID
                     // Set up event handler for successful Google OAuth
                     window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
                         try {
