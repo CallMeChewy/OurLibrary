@@ -584,7 +584,7 @@
         }
 
         function updateStepIndicators(activeStep) {
-            const steps = ['registration', 'verification', 'google-completion', 'success'];
+            const steps = ['registration', 'email-registration', 'verification', 'google-completion', 'success'];
             const activeIndex = steps.indexOf(activeStep);
             
             steps.forEach((step, index) => {
@@ -799,7 +799,9 @@
 
         function showEmailRegistration() {
             console.log('📧 Showing email registration form...');
+            console.log('📧 Looking for element:', document.getElementById('email-registration-step'));
             showStep('email-registration');
+            console.log('📧 Current active step:', document.querySelector('.auth-step.active')?.id);
         }
 
         // DEBUG: Test function to manually trigger Google completion form
