@@ -374,3 +374,6 @@ __pycache__/
 UserEnvironments/
 user_data/
 GooglePagesDeployment/Config/google_token.json
+
+# ..Exclude/ - CYA backups and development artifacts (not pushed to GitHub)
+..Exclude/
