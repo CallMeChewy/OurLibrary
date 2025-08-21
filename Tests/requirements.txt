@@ -1,0 +1,29 @@
+# File: requirements.txt
+# Path: /home/herb/Desktop/OurLibrary/Tests/requirements.txt
+# Standard: AIDEV-PascalCase-2.1
+# Created: 2025-08-12
+# Last Modified: 2025-08-12 01:35PM
+
+# Testing framework dependencies for OurLibrary
+# Install with: pip install -r Tests/requirements.txt
+
+# Core testing framework
+pytest>=7.0.0
+pytest-html>=3.1.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# HTTP testing for live website tests
+requests>=2.28.0
+
+# JSON validation and parsing
+jsonschema>=4.0.0
+
+# Performance testing
+pytest-benchmark>=4.0.0
+
+# Parallel test execution
+pytest-xdist>=3.0.0
+
+# Test reporting and documentation
+pytest-json-report>=1.5.0

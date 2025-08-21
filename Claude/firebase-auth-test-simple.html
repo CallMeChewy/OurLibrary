@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Firebase Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #222; color: white; }
+        button { padding: 15px; background: #0066cc; color: white; border: none; cursor: pointer; margin: 10px; border-radius: 5px; }
+        .result { background: #333; padding: 15px; margin: 20px 0; border-radius: 5px; white-space: pre-wrap; }
+        .success { border-left: 4px solid #00cc66; }
+        .error { border-left: 4px solid #cc0000; }
+    </style>
+</head>
+<body>
+    <h1>🔥 Quick Firebase Auth Test</h1>
+    
+    <button onclick="testCreateAccount()">Test Create Account (test1@example.com)</button>
+    <button onclick="testCreateAccount2()">Test Create Account (test2@example.com)</button>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsG8hleX4WRKCLcIJdWkcNptWNMGdNjzk",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.firebasestorage.app",
+            messagingSenderId: "71206584632",
+            appId: "1:71206584632:web:61a21f2d08b9e318dfc1cd",
+            measurementId: "G-XL47Q42LB8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        window.testCreateAccount = async function() {
+            const email = "test1@example.com";
+            const password = "test123456";
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                resultsDiv.innerHTML = '<div class="result">🔄 Creating Firebase account...</div>';
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                resultsDiv.innerHTML = `<div class="result success">✅ SUCCESS! 
+User ID: ${user.uid}
+Email: ${user.email}
+Created: ${user.metadata.creationTime}</div>`;
+                
+                console.log('✅ Firebase account created:', user);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                resultsDiv.innerHTML = `<div class="result error">❌ ERROR:
+Code: ${error.code}
+Message: ${error.message}
+
+${error.code === 'auth/email-already-in-use' ? 
+  'This email already exists - try test2@example.com button' : 
+  'Unexpected error - check console'}</div>`;
+            }
+        };
+        
+        window.testCreateAccount2 = async function() {
+            const email = "test2@example.com";
+            const password = "test123456";
+            const resultsDiv = document.getElementById('results');
+            
+            try {
+                resultsDiv.innerHTML = '<div class="result">🔄 Creating Firebase account with test2...</div>';
+                
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                resultsDiv.innerHTML = `<div class="result success">✅ SUCCESS! 
+User ID: ${user.uid}
+Email: ${user.email}
+Created: ${user.metadata.creationTime}</div>`;
+                
+                console.log('✅ Firebase account created:', user);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                resultsDiv.innerHTML = `<div class="result error">❌ ERROR:
+Code: ${error.code}
+Message: ${error.message}</div>`;
+            }
+        };
+        
+        console.log('🔥 Firebase test ready');
+    </script>
+</body>
+</html>
