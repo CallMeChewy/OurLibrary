@@ -1127,7 +1127,7 @@
                 showStatus('🔐 Signing in with Google...', 'info');
                 
                 // Use the Google Auth integration for OAuth
-                if (window.googleAuth) { // Re-enabled with correct client ID
+                if (false && window.googleAuth) { // Temporarily use Firebase OAuth for immediate testing
                     // Set up event handler for successful Google OAuth
                     window.googleAuth.onGoogleRegistrationSuccess = async (googleUser) => {
                         try {
