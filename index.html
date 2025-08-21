@@ -151,7 +151,7 @@
                 <!-- Call to Action Button -->
                 <div class="mb-12">
                     <button onclick="showRegistration()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-                        📚 Join Our Library - It's Free!
+                        🚀 Get Started - Join OurLibrary!
                     </button>
                     <p class="text-gray-400 mt-4 text-sm">
                         Already a member? <a href="#" onclick="showLogin()" class="text-blue-400 hover:text-blue-300 underline">Sign in here</a>
@@ -383,31 +383,8 @@
 
         // Modal Management - Make functions globally available
         window.showRegistration = function() {
-            console.log('🔍 showRegistration() called');
-            
-            const modalBg = document.getElementById('modal-background');
-            const regForm = document.getElementById('registration-form');
-            const loginForm = document.getElementById('login-form');
-            
-            console.log('Elements found:', {modalBg, regForm, loginForm});
-            
-            if (!modalBg || !regForm) {
-                console.error('❌ Modal elements not found!');
-                return;
-            }
-            
-            modalBg.classList.remove('hidden');
-            regForm.classList.remove('hidden');
-            if (loginForm) loginForm.classList.add('hidden');
-            
-            console.log('✅ Modal should be visible now');
-            
-            // Force a reflow to ensure CSS changes take effect
-            modalBg.offsetHeight;
-            regForm.offsetHeight;
-            
-            // Setup email tracking after modal is shown
-            setTimeout(setupEmailTracking, 100);
+            console.log('🔍 Redirecting to unified registration page...');
+            window.location.href = 'auth-demo.html';
         }
         
         window.showLogin = function() {
