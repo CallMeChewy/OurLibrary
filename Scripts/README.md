@@ -1,10 +1,10 @@
 # File: README.md
-# Path: {{project_name}}/Scripts/README.md  
+# Path: OurLibrary/Scripts/README.md  
 # Standard: AIDEV-PascalCase-2.3
-# Created: {{creation_date}}
-# Last Modified: {{current_time}}
+# Created: 2025-08-21
+# Last Modified: 2025-08-21 05:08PM
 
-# {{project_name}} Scripts Directory
+# OurLibrary Scripts Directory
 
 ## Structure
 
@@ -25,7 +25,7 @@ Add your project-specific scripts directly to this folder:
 Scripts/
 ├── my_custom_tool.py        # ← Project-specific
 ├── data_processor.py        # ← Project-specific  
-├── deploy_{{project_name}}.py   # ← Project-specific
+├── deploy_ourlibrary.py     # ← Project-specific
 └── Common/                  # ← Shared utilities (symlinked)
 ```
 
@@ -52,4 +52,4 @@ python Scripts/my_custom_tool.py
 
 ---
 
-*Project-specific scripts stay private to {{project_name}}. Shared utilities are accessible but remain centrally managed.*
+*Project-specific scripts stay private to OurLibrary. Shared utilities are accessible but remain centrally managed.*

@@ -171,7 +171,7 @@ Path: ~/Desktop/Project_BaseFiles/Scripts/ScriptMenu.py  # ❌ Wrong
 
 ```python
 # Templates should use placeholder for project name
-Path: {{project_name}}/README.md               # ✅ Template
+Path: {% raw %}{{project_name}}{% endraw %}/README.md               # ✅ Template
 Path: Project_BaseFiles/templates/README_template.md  # ✅ Template source
 ```
 
@@ -180,7 +180,7 @@ Path: Project_BaseFiles/templates/README_template.md  # ✅ Template source
 1. **Project Base**: The directory containing the project (e.g., `Project_Startup/`)
 2. **Relative Reference**: All paths relative to their project base
 3. **Cross-Project Links**: Use full project name as base (e.g., `Project_BaseFiles/`)
-4. **Template Variables**: Use `{{project_name}}/` for generated content
+4. **Template Variables**: Use `{% raw %}{{project_name}}{% endraw %}/` for generated content
 
 ---
 
@@ -213,7 +213,7 @@ Path: Project_BaseFiles/templates/README_template.md  # ✅ Template source
 #### **Template File Standards:**
 
 - All template files include proper headers
-- Template variables clearly marked with `{{variable_name}}`
+- Template variables clearly marked with `{% raw %}{{variable_name}}{% endraw %}`
 - Generated files automatically get correct relative paths
 - Progressive timestamp injection during project creation
 
