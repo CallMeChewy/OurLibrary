@@ -558,15 +558,70 @@
             updateStepIndicators('registration');
         }
 
+        // Check for Google OAuth redirect on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Page loaded, checking for Google OAuth redirect...');
+            
+            // Check URL parameters for Google OAuth redirect
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            console.log('🔍 URL params:', Object.fromEntries(urlParams));
+            console.log('🔍 Hash params:', Object.fromEntries(hashParams));
+            
+            // Check if this is a Google OAuth redirect
+            if (urlParams.has('code') || hashParams.has('access_token') || window.location.hash.includes('access_token')) {
+                console.log('🎯 Detected Google OAuth redirect! Checking Firebase auth state...');
+                
+                // Wait for Firebase auth to initialize and check for user
+                setTimeout(() => {
+                    if (window.firebaseAuth && window.firebaseAuth.currentUser) {
+                        const user = window.firebaseAuth.currentUser;
+                        console.log('🔥 Firebase user found after OAuth redirect:', user);
+                        
+                        // Check if this is a Google provider
+                        const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+                        if (isGoogleUser) {
+                            console.log('🎯 Google user detected, showing completion form...');
+                            showGoogleCompletion(user);
+                        }
+                    }
+                }, 1000);
+            }
+            
+            // Also listen for Firebase auth state changes
+            if (window.firebaseAuth) {
+                window.firebaseAuth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log('🔥 Firebase auth state changed:', user);
+                        const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+                        if (isGoogleUser) {
+                            console.log('🎯 Google user detected via auth state change');
+                            // Only show completion if we're still on registration step
+                            if (document.getElementById('registration-step').classList.contains('active')) {
+                                console.log('🎯 Currently on registration step, redirecting to completion...');
+                                showGoogleCompletion(user);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
         // Google OAuth completion functions
         function showGoogleCompletion(user) {
+            console.log('🎯 showGoogleCompletion called with user:', user);
+            
             // Pre-populate form with Google data
             document.getElementById('googleEmail').textContent = user.email;
             document.getElementById('googleFullName').value = user.displayName || '';
             
             // Show the Google completion step
+            console.log('🎯 Calling showStep("google-completion")');
             showStep('google-completion');
             updateStepIndicators('google-completion');
+            
+            console.log('🎯 Google completion step should now be visible');
         }
 
         async function completeGoogleRegistration(event) {
