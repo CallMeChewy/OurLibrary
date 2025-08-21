@@ -776,12 +776,25 @@
         }
 
         // New simplified registration functions
-        function startGoogleAuth() {
-            console.log('🚀 Starting Google OAuth (no form required)...');
-            showStatus('🔐 Signing in with Google...', 'info');
-            
-            // Direct Google OAuth without form validation
-            signInWithGoogle();
+        async function startGoogleAuth() {
+            try {
+                console.log('🚀 Starting Google OAuth (no form required)...');
+                showStatus('🔐 Signing in with Google...', 'info');
+                
+                // Direct Firebase Google OAuth (bypass all form validation)
+                const provider = new window.GoogleAuthProvider();
+                const result = await window.signInWithPopup(window.firebaseAuth, provider);
+                
+                console.log('🔥 Google OAuth successful:', result.user);
+                
+                // Show completion form for missing data
+                showGoogleCompletion(result.user);
+                showStatus('🎉 Google authentication successful! Complete your profile below.', 'success');
+                
+            } catch (error) {
+                console.error('Google OAuth error:', error);
+                showStatus(`❌ Google sign-in failed: ${error.message}`, 'error');
+            }
         }
 
         function showEmailRegistration() {
