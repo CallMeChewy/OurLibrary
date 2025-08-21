@@ -196,10 +196,44 @@
         <!-- Registration/Login Modal Background -->
         <div id="modal-background" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="hideModal()"></div>
         
-        <!-- Registration Form -->
-        <div id="registration-form" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-            <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full mx-4 max-h-screen overflow-y-auto">
+        <!-- Registration Choice Screen -->
+        <div id="registration-choice" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full mx-4">
                 <h2 class="text-2xl font-bold text-white mb-6 text-center">Join OurLibrary</h2>
+                <p class="text-gray-300 text-center mb-8">Choose how you'd like to create your account:</p>
+                
+                <div class="space-y-4">
+                    <button type="button" onclick="startGoogleRegistration()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                        📧 Continue with Google (Instant)
+                    </button>
+                    
+                    <div class="text-center text-gray-400 my-4">or</div>
+                    
+                    <button type="button" onclick="showEmailRegistrationForm()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                        📧 Register with Email & Password
+                    </button>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-gray-400 text-sm mb-2">
+                        Already have an account? 
+                        <a href="#" onclick="showLoginFromChoice()" class="text-blue-400 hover:text-blue-300 underline">Sign in here</a>
+                    </p>
+                    <button onclick="hideModal()" class="text-gray-400 hover:text-gray-300 underline">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Registration Form -->
+        <div id="email-registration-form" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full mx-4 max-h-screen overflow-y-auto">
+                <div class="flex items-center mb-6">
+                    <button onclick="backToRegistrationChoice()" class="text-gray-400 hover:text-white mr-3">
+                        ← Back
+                    </button>
+                    <h2 class="text-2xl font-bold text-white">Email Registration</h2>
+                </div>
+                
                 <form id="register-form" onsubmit="handleRegistration(event)">
                     <div class="space-y-4">
                         <div>
@@ -232,23 +266,8 @@
                     
                     <div class="mt-6">
                         <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">
-                            Send Verification Code
+                            Create Account & Send Verification
                         </button>
-                    </div>
-                    
-                    <div class="mt-4 text-center">
-                        <p class="text-gray-400 text-sm mb-4">Or register with:</p>
-                        <div class="space-y-2">
-                            <button type="button" onclick="registerWithGoogle()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">
-                                📧 Register with Google
-                            </button>
-                            <button type="button" onclick="registerWithGitHub()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-all duration-300">
-                                🐙 Register with GitHub
-                            </button>
-                            <button type="button" onclick="registerWithFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-all duration-300">
-                                📘 Register with Facebook
-                            </button>
-                        </div>
                     </div>
                 </form>
                 
@@ -390,29 +409,57 @@
 
         // Modal Management - Make functions globally available
         window.showRegistration = function() {
-            console.log('📝 Showing registration modal...');
+            console.log('📝 Showing registration choice...');
             document.getElementById('modal-background').classList.remove('hidden');
-            document.getElementById('registration-form').classList.remove('hidden');
+            document.getElementById('registration-choice').classList.remove('hidden');
+            document.getElementById('email-registration-form').classList.add('hidden');
             document.getElementById('login-form').classList.add('hidden');
-            setupEmailTracking();
         }
         
         window.showLogin = function() {
             console.log('🔑 Showing login modal...');
             document.getElementById('modal-background').classList.remove('hidden');
             document.getElementById('login-form').classList.remove('hidden');
-            document.getElementById('registration-form').classList.add('hidden');
+            document.getElementById('registration-choice').classList.add('hidden');
+            document.getElementById('email-registration-form').classList.add('hidden');
         }
         
         window.showRegistrationFromLogin = function() {
             document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('registration-form').classList.remove('hidden');
+            document.getElementById('registration-choice').classList.remove('hidden');
         }
         
         window.hideModal = function() {
             document.getElementById('modal-background').classList.add('hidden');
-            document.getElementById('registration-form').classList.add('hidden');
+            document.getElementById('registration-choice').classList.add('hidden');
+            document.getElementById('email-registration-form').classList.add('hidden');
             document.getElementById('login-form').classList.add('hidden');
+        }
+        
+        // New modal navigation functions
+        window.startGoogleRegistration = function() {
+            console.log('🚀 Starting Google registration...');
+            // Use the existing registerWithGoogle function
+            registerWithGoogle();
+        }
+        
+        window.showEmailRegistrationForm = function() {
+            console.log('📧 Showing email registration form...');
+            document.getElementById('registration-choice').classList.add('hidden');
+            document.getElementById('email-registration-form').classList.remove('hidden');
+            setupEmailTracking();
+        }
+        
+        window.backToRegistrationChoice = function() {
+            console.log('⬅️ Back to registration choice...');
+            document.getElementById('email-registration-form').classList.add('hidden');
+            document.getElementById('registration-choice').classList.remove('hidden');
+        }
+        
+        window.showLoginFromChoice = function() {
+            console.log('🔑 Switching to login...');
+            document.getElementById('registration-choice').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
         }
         
         // Form Validation Functions
