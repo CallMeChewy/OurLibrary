@@ -359,7 +359,7 @@
                     <!-- Required additional fields -->
                     <input type="text" 
                            placeholder="Zip Code (for content localization)" 
-                           id="zipCode" 
+                           id="googleZipCode" 
                            required
                            pattern="[0-9]{5}(-[0-9]{4})?"
                            class="mb-4">
@@ -368,7 +368,7 @@
                     <div class="mb-4">
                         <label class="flex items-start space-x-3 text-gray-300">
                             <input type="checkbox" 
-                                   id="acceptTerms" 
+                                   id="googleAcceptTerms" 
                                    required
                                    class="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
                             <span class="text-sm">
@@ -721,8 +721,8 @@
                 
                 // Get form data
                 const fullName = document.getElementById('googleFullName').value.trim();
-                const zipCode = document.getElementById('zipCode').value.trim();
-                const acceptTerms = document.getElementById('acceptTerms').checked;
+                const zipCode = document.getElementById('googleZipCode').value.trim();
+                const acceptTerms = document.getElementById('googleAcceptTerms').checked;
                 
                 // Validate required fields
                 if (!fullName) {
