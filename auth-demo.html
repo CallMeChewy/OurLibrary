@@ -346,6 +346,11 @@
                 <button onclick="resetDemo()" class="btn btn-secondary">
                     🔄 Try Demo Again
                 </button>
+                
+                <!-- DEBUG: Manual completion form trigger -->
+                <button onclick="testGoogleCompletion()" class="btn btn-secondary" style="margin-top: 1rem;">
+                    🧪 Test Google Completion Form
+                </button>
             </div>
 
             <!-- Login Form (Hidden by default) -->
@@ -589,23 +594,43 @@
                 }, 1000);
             }
             
-            // Also listen for Firebase auth state changes
-            if (window.firebaseAuth) {
-                window.firebaseAuth.onAuthStateChanged((user) => {
-                    if (user) {
+            // Set up Firebase auth state listener after a delay to ensure Firebase is loaded
+            setTimeout(() => {
+                if (window.firebaseAuth) {
+                    console.log('🔗 Setting up Firebase auth state listener...');
+                    
+                    window.firebaseAuth.onAuthStateChanged((user) => {
                         console.log('🔥 Firebase auth state changed:', user);
-                        const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
-                        if (isGoogleUser) {
-                            console.log('🎯 Google user detected via auth state change');
-                            // Only show completion if we're still on registration step
-                            if (document.getElementById('registration-step').classList.contains('active')) {
-                                console.log('🎯 Currently on registration step, redirecting to completion...');
-                                showGoogleCompletion(user);
+                        
+                        if (user) {
+                            console.log('👤 User authenticated:', {
+                                uid: user.uid,
+                                email: user.email,
+                                displayName: user.displayName,
+                                providers: user.providerData.map(p => p.providerId)
+                            });
+                            
+                            const isGoogleUser = user.providerData.some(provider => provider.providerId === 'google.com');
+                            console.log('🔍 Is Google user?', isGoogleUser);
+                            
+                            if (isGoogleUser) {
+                                console.log('🎯 Google user detected! Current step:', 
+                                    document.querySelector('.auth-step.active')?.id);
+                                
+                                // Force show completion form for Google users
+                                setTimeout(() => {
+                                    console.log('🚀 Forcing Google completion form...');
+                                    showGoogleCompletion(user);
+                                }, 500);
                             }
+                        } else {
+                            console.log('🔓 User signed out or not authenticated');
                         }
-                    }
-                });
-            }
+                    });
+                } else {
+                    console.error('❌ Firebase auth not available');
+                }
+            }, 2000);
         });
 
         // Google OAuth completion functions
@@ -684,6 +709,21 @@
             showStep('registration');
             updateStepIndicators('registration');
             showStatus('🔄 Signed out. Please choose an authentication method.', 'info');
+        }
+
+        // DEBUG: Test function to manually trigger Google completion form
+        function testGoogleCompletion() {
+            console.log('🧪 Testing Google completion form manually...');
+            
+            // Create mock Google user data
+            const mockUser = {
+                uid: 'test-google-user-123',
+                email: 'test.user@gmail.com',
+                displayName: 'Test Google User',
+                providerData: [{ providerId: 'google.com' }]
+            };
+            
+            showGoogleCompletion(mockUser);
         }
 
         // Email registration process
