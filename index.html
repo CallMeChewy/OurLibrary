@@ -125,7 +125,7 @@
 
     <!-- Banner Image -->
     <div class="banner-container">
-        <img src="https://BowersWorld.com/Resources/Images/ProjectHimalayaBanner.png" alt="Project Himalaya - Human and AI collaboration" class="banner-image">
+        <img src="https://BowersWorld.com/Resources/Images/ProjectHimalayaBanner.png" alt="Project Himalaya - Human and AI collaboration" class="banner-image" loading="lazy">
     </div>
 
     <!-- Main Content -->
@@ -340,8 +340,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithCredential } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-        // https://firebase.google.com/docs/web/setup#available-libraries
+        // Firebase SDKs configured for OurLibrary authentication system
 
         // Your web app's Firebase configuration - Our Library Project
         const firebaseConfig = {

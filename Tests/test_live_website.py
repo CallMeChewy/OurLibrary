@@ -117,7 +117,8 @@ def test_external_resource_loading(base_url):
         for link in tailwind_links:
             try:
                 resource_response = requests.head(link, timeout=5)
-                assert resource_response.status_code == 200, f"Tailwind CSS should be accessible: {link}"
+                # Accept 200 (OK) or 302 (redirect) as successful responses for CDNs
+                assert resource_response.status_code in [200, 302], f"Tailwind CSS should be accessible: {link} (got {resource_response.status_code})"
             except requests.exceptions.RequestException:
                 pytest.skip(f"External resource temporarily unavailable: {link}")
 
