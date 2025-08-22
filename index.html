@@ -420,7 +420,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const functions = getFunctions(app);
+        const functions = getFunctions(app, 'us-central1'); // Specify region
         window.firebaseFunctions = functions;
         window.httpsCallable = httpsCallable;
         
