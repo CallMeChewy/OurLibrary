@@ -550,8 +550,8 @@
                 const userCredential = await window.createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Send email verification
-                await window.sendEmailVerification(user);
+                // Skip Firebase email verification - using 6-digit code system instead
+                console.log('✅ Firebase account created, skipping automatic email verification');
                 
                 // Log registration completion
                 if (window.registrationManager) {
