@@ -395,9 +395,6 @@
         </div>
     </footer>
 
-    <!-- EmailJS for reliable email delivery -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
     <!-- OurLibrary Google Sheets Integration -->
     <script src="JS/OurLibraryGoogleAuth.js"></script>
     <script src="JS/EmailManager.js"></script>
@@ -912,123 +909,32 @@
             console.log('📧 Sending verification email to:', window.currentUserEmail);
             console.log('🔑 Verification code:', window.currentVerificationCode);
             
-            // Show on-screen verification code as primary method (most reliable)
-            showVerificationCodeOnScreen();
-            
-            // Try to send actual email as secondary method
+            // Send verification code via email ONLY - no on-screen display for security
             try {
-                await sendEmailViaMultipleMethods();
+                await sendVerificationEmail();
             } catch (error) {
                 console.error('📧 Email sending failed:', error);
-                console.log('📧 Using on-screen display as primary method');
+                throw new Error('Email verification required but email delivery failed');
             }
         }
         
-        // Show verification code on screen for reliable user experience
-        function showVerificationCodeOnScreen() {
-            // Remove any existing code display
-            const existingDisplay = document.getElementById('code-display');
-            if (existingDisplay) existingDisplay.remove();
-            
-            // Create on-screen code display
-            const codeDisplay = document.createElement('div');
-            codeDisplay.id = 'code-display';
-            codeDisplay.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #10B981, #059669);
-                color: white;
-                padding: 20px;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-                z-index: 1001;
-                font-family: monospace;
-                text-align: center;
-                border: 2px solid #34D399;
-                min-width: 200px;
-            `;
-            
-            codeDisplay.innerHTML = `
-                <div style="font-size: 14px; margin-bottom: 10px;">📧 Verification Code</div>
-                <div style="font-size: 24px; font-weight: bold; letter-spacing: 3px; margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 6px;">
-                    ${window.currentVerificationCode}
-                </div>
-                <div style="font-size: 12px; opacity: 0.9;">Enter this code to verify</div>
-                <button onclick="document.getElementById('code-display').remove()" style="margin-top: 10px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">✕ Close</button>
-            `;
-            
-            document.body.appendChild(codeDisplay);
-            
-            // Auto-remove after 5 minutes
-            setTimeout(() => {
-                if (codeDisplay.parentNode) {
-                    codeDisplay.remove();
-                }
-            }, 300000);
-        }
-        
-        // Try multiple email delivery methods
-        async function sendEmailViaMultipleMethods() {
-            // Method 1: Try EmailJS (free email service)
-            try {
-                await sendViaEmailJS();
-                console.log('✅ Email sent successfully via EmailJS');
-                return;
-            } catch (error) {
-                console.warn('❌ EmailJS failed:', error.message);
+        // Simple email sending using EmailManager only
+        async function sendVerificationEmail() {
+            if (!window.currentUserEmail || !window.currentVerificationCode) {
+                throw new Error('Missing email or verification code');
             }
             
-            // Method 2: Try EmailManager (Firebase/SMTP)
-            try {
-                if (window.EmailManager) {
-                    const emailManager = new window.EmailManager();
-                    const result = await emailManager.sendVerificationEmail(window.currentUserEmail, window.currentVerificationCode);
-                    console.log('✅ Email sent via EmailManager:', result);
-                    return;
-                }
-            } catch (error) {
-                console.warn('❌ EmailManager failed:', error.message);
+            console.log('📧 Sending verification email to:', window.currentUserEmail);
+            console.log('🔑 Verification code:', window.currentVerificationCode);
+            
+            if (!window.EmailManager) {
+                throw new Error('EmailManager not available');
             }
             
-            // Method 3: Console logging as fallback
-            console.log('📧 Using console logging as final fallback');
-            console.log('📧 EMAIL DETAILS:');
-            console.log('📧 To:', window.currentUserEmail);
-            console.log('📧 Subject: OurLibrary - Email Verification Code');
-            console.log('📧 Code:', window.currentVerificationCode);
-        }
-        
-        // EmailJS implementation (free email service)
-        async function sendViaEmailJS() {
-            // Initialize EmailJS if not already done
-            if (!window.emailjsInitialized && window.emailjs) {
-                window.emailjs.init("GEgR6-QcfwbfQX9_W"); // Public key for free tier
-                window.emailjsInitialized = true;
-            }
-            
-            if (!window.emailjs) {
-                throw new Error('EmailJS not loaded');
-            }
-            
-            // Email template parameters
-            const templateParams = {
-                to_email: window.currentUserEmail,
-                to_name: 'OurLibrary User',
-                verification_code: window.currentVerificationCode,
-                from_name: 'OurLibrary Team',
-                message: `Your OurLibrary verification code is: ${window.currentVerificationCode}. This code expires in 15 minutes. Welcome to our mission of getting education into the hands of people who can least afford it!`
-            };
-            
-            // Send via EmailJS
-            const response = await window.emailjs.send(
-                'service_ourlibrary', // Service ID
-                'template_verification', // Template ID
-                templateParams
-            );
-            
-            console.log('📧 EmailJS response:', response);
-            return response;
+            const emailManager = new window.EmailManager();
+            const result = await emailManager.sendVerificationEmail(window.currentUserEmail, window.currentVerificationCode);
+            console.log('✅ Email sent via EmailManager:', result);
+            return result;
         }
         
         // Keyboard shortcuts
