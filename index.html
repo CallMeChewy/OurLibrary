@@ -740,13 +740,7 @@
                 });
         }
 
-        window.handleRegistration = handleRegistration;
-        window.handleLogin = handleLogin;
-        window.registerWithGoogle = registerWithGoogle;
-        window.showRegistration = showRegistration;
-        window.showLogin = showLogin;
-        window.hideModal = hideModal;
-        window.showRegistrationFromLogin = showRegistrationFromLogin;
+        // Functions already assigned to window object above
 
         window.registerWithGitHub = function() {
             alert('GitHub registration will be implemented in the next phase.');
@@ -898,25 +892,6 @@
         
         // Initialize EmailJS with public key
         window.emailjsInitialized = false;
-        
-        // Email sending function with multiple delivery methods
-        async function sendVerificationEmail() {
-            if (!window.currentUserEmail || !window.currentVerificationCode) {
-                console.warn('⚠️ Missing email or verification code');
-                return;
-            }
-            
-            console.log('📧 Sending verification email to:', window.currentUserEmail);
-            console.log('🔑 Verification code:', window.currentVerificationCode);
-            
-            // Send verification code via email ONLY - no on-screen display for security
-            try {
-                await sendVerificationEmail();
-            } catch (error) {
-                console.error('📧 Email sending failed:', error);
-                throw new Error('Email verification required but email delivery failed');
-            }
-        }
         
         // Simple email sending using EmailManager only
         async function sendVerificationEmail() {
