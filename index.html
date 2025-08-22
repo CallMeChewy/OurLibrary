@@ -403,6 +403,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signInWithCredential } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js";
         // Firebase SDKs configured for OurLibrary authentication system
 
         // Your web app's Firebase configuration - Our Library Project
@@ -419,6 +420,9 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const functions = getFunctions(app);
+        window.firebaseFunctions = functions;
+        window.httpsCallable = httpsCallable;
         
         // Export Firebase functions to global scope
         window.signInWithCredential = signInWithCredential;

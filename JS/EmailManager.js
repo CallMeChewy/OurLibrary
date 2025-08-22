@@ -15,7 +15,7 @@ class EmailManager {
     async initialize() {
         try {
             // Load email configuration
-            const response = await fetch('Config/email_config.json');
+            const response = await fetch('email_config.json');
             this.config = await response.json();
             this.initialized = true;
             
