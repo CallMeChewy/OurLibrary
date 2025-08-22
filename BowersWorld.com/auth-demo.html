@@ -525,15 +525,26 @@
                 document.getElementById('verificationEmail').textContent = formData.email;
                 showStep('verification');
                 
-                // Show persistent demo code message
+                // Show persistent demo code message with debugging
                 const container = document.getElementById('statusContainer');
-                container.innerHTML = `<div class="status-message success">✅ DEMO MODE: Your verification code is <strong style="font-size: 1.5em; color: #22c55e;">${sentVerificationCode}</strong><br>In production, this would be sent to your email from HimalayaProject1@gmail.com</div>`;
+                console.log('Status container found:', !!container);
+                
+                if (container) {
+                    const statusHTML = `<div class="status-message success">✅ DEMO MODE: Your verification code is <strong style="font-size: 1.5em; color: #22c55e;">${sentVerificationCode}</strong><br>In production, this would be sent to your email from HimalayaProject1@gmail.com</div>`;
+                    container.innerHTML = statusHTML;
+                    console.log('Status message set:', statusHTML);
+                } else {
+                    console.error('❌ Status container not found!');
+                }
                 
                 console.log('✅ Verification screen ready with code:', sentVerificationCode);
                 
             } catch (error) {
-                console.error('Error sending verification email:', error);
+                console.error('Error in verification process:', error);
                 showStatus('❌ Failed to send verification code. Please try again.', 'error');
+                
+                // Debug: show the exact error for troubleshooting
+                console.error('Full error details:', error.message, error.stack);
             }
         }
 
