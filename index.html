@@ -565,13 +565,18 @@
                     });
                 }
                 
-                alert(`✅ Registration successful! Please check ${email} for verification link.`);
+                // Generate 6-character verification code instead of Firebase link
+                const verificationCode = Math.random().toString().substr(2, 6).toUpperCase();
+                
+                // Show modal with 6-digit code (DEMO MODE)
+                alert(`✅ DEMO MODE: Your verification code is ${verificationCode}\n\nIn production, this would be sent to ${email} from HimalayaProject1@gmail.com\n\nFor now, the system will proceed to the library.`);
+                
                 hideModal();
                 
-                // Redirect to main library
+                // Continue to main library (code verification would happen here in production)
                 setTimeout(() => {
                     window.location.href = 'desktop-library-enhanced.html';
-                }, 1500);
+                }, 2000);
                 
             } catch (error) {
                 console.error("Registration error:", error);
