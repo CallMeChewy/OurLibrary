@@ -29,14 +29,17 @@ class EmailManager {
         }
     }
 
-    async sendVerificationEmail(email) {
+    async sendVerificationEmail(email, verificationCode = null) {
         if (!this.initialized) {
             await this.initialize();
         }
 
+        // Use provided code or generate one
+        const code = verificationCode || this.generateVerificationCode();
+        
         const methods = [
-            { name: 'custom_smtp', fn: () => this.sendViaCustomSMTP(email) },
-            { name: 'firebase', fn: () => this.sendViaFirebase(email) }
+            { name: 'custom_smtp', fn: () => this.sendViaCustomSMTP(email, code) },
+            { name: 'firebase', fn: () => this.sendViaFirebase(email, code) }
         ];
 
         // Try methods in order of preference
@@ -50,6 +53,7 @@ class EmailManager {
                     return {
                         success: true,
                         method: method.name,
+                        code: code,
                         data: result.data,
                         deliverability: method.name === 'custom_smtp' ? 'high' : 'medium'
                     };
@@ -63,7 +67,7 @@ class EmailManager {
         throw new Error('All email delivery methods failed');
     }
 
-    async sendViaCustomSMTP(email) {
+    async sendViaCustomSMTP(email, code) {
         // Note: Direct SMTP from browser has limitations
         // This is a placeholder for the custom SMTP implementation
         
@@ -73,6 +77,7 @@ class EmailManager {
 
         console.log('🔧 Custom SMTP: This would use ProjectHimalaya@BowersWorld.com');
         console.log('📧 Target email:', email);
+        console.log('🔑 Verification code:', code);
         console.log('⚙️  SMTP Config:', {
             host: this.config.providers.smtp.host,
             port: this.config.providers.smtp.port,
@@ -84,26 +89,32 @@ class EmailManager {
         throw new Error('Custom SMTP requires server-side implementation');
     }
 
-    async sendViaFirebase(email) {
+    async sendViaFirebase(email, code) {
         try {
             if (!window.firebaseFunctions || !window.httpsCallable) {
                 throw new Error('Firebase Functions not available');
             }
 
             console.log('🔥 Using Firebase Functions for email delivery');
+            console.log('🔑 Sending verification code:', code);
             
             const sendVerificationEmail = window.httpsCallable(
                 window.firebaseFunctions, 
                 'sendVerificationEmail'
             );
             
-            const result = await sendVerificationEmail({ email });
+            const result = await sendVerificationEmail({ 
+                email, 
+                code,
+                template: this.createVerificationEmailHtml(email, code)
+            });
             
             return {
                 success: true,
                 data: {
                     ...result.data,
                     provider: 'firebase',
+                    code: code,
                     deliverability: 'medium' // Firebase emails go to spam
                 }
             };
