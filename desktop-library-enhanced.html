@@ -1530,6 +1530,106 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             }
         }
     </script>
+    
+    <!-- Phase 2: Enhanced Analytics Integration -->
+    <script type="module">
+        // Import Firebase for authentication context
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        
+        // Firebase configuration (same as main site)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsG8hleX4WRKCLcIJdWkcNptWNMGdNjzk",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.firebasestorage.app",
+            messagingSenderId: "71206584632",
+            appId: "1:71206584632:web:8b22b7c97bf7b4a6f82d9a",
+            measurementId: "G-J1VZ2KCQH6"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // User context for analytics
+        let currentUser = null;
+        let libraryStartTime = new Date();
+        
+        // Listen for authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                console.log('📚 Library accessed by authenticated user:', user.email);
+                
+                // Log library access
+                if (window.OurLibraryAnalytics) {
+                    window.OurLibraryAnalytics.logLibraryAccess(user.uid, user.email);
+                }
+            } else {
+                console.log('📚 Library accessed by anonymous user');
+                currentUser = null;
+            }
+        });
+        
+        // Enhanced search tracking
+        const originalPerformSearch = window.performSearch;
+        window.performSearch = function() {
+            const searchQuery = document.getElementById('searchInput').value;
+            
+            // Call original search function
+            if (originalPerformSearch) {
+                originalPerformSearch();
+            }
+            
+            // Track search analytics
+            if (currentUser && searchQuery && window.OurLibraryAnalytics) {
+                // Count results (simplified - in real implementation, get actual count)
+                const resultsCount = document.querySelectorAll('.book-card:not([style*="display: none"])').length;
+                window.OurLibraryAnalytics.logBookSearch(currentUser.uid, currentUser.email, searchQuery, resultsCount);
+            }
+        };
+        
+        // Enhanced book opening tracking
+        const originalOpenBook = window.openBook;
+        window.openBook = function(bookId, bookTitle) {
+            // Call original open book function
+            if (originalOpenBook) {
+                originalOpenBook(bookId, bookTitle);
+            }
+            
+            // Track book view analytics
+            if (currentUser && window.OurLibraryAnalytics) {
+                window.OurLibraryAnalytics.logBookView(currentUser.uid, currentUser.email, bookTitle, bookId);
+            }
+        };
+        
+        // Session duration tracking
+        window.addEventListener('beforeunload', function() {
+            if (currentUser && window.OurLibraryAnalytics) {
+                const sessionDuration = Math.round((new Date() - libraryStartTime) / 1000);
+                console.log(`📊 Library session duration: ${sessionDuration} seconds`);
+                // Note: In a full implementation, you'd send this to analytics here
+            }
+        });
+        
+        console.log('✅ OurLibrary Enhanced Analytics initialized for desktop library');
+    </script>
+    
+    <!-- Load analytics module -->
+    <script>
+        // Load the analytics module from the main site
+        const analyticsScript = document.createElement('script');
+        analyticsScript.src = 'JS/OurLibraryGoogleAuth.js';
+        analyticsScript.onload = function() {
+            console.log('📊 Analytics module loaded in library');
+        };
+        analyticsScript.onerror = function() {
+            console.warn('⚠️ Could not load analytics module in library');
+        };
+        document.head.appendChild(analyticsScript);
+    </script>
+    
     <script src="/static/JS/library-api-client.js?v=3"></script>
 </body>
 </html>

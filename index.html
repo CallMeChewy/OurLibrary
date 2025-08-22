@@ -390,8 +390,17 @@
 
     <!-- Footer -->
     <footer class="bg-gray-900 py-4 border-t border-gray-800">
-        <div class="container mx-auto px-4 text-center text-gray-500">
-            &copy; 2025 OurLibrary - Getting education into the hands of people who can least afford it. Sponsored by BowersWorld.com
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center text-gray-500">
+                <div class="text-center md:text-left">
+                    &copy; 2025 OurLibrary - Getting education into the hands of people who can least afford it. Sponsored by BowersWorld.com
+                </div>
+                <div class="mt-2 md:mt-0">
+                    <a href="analytics-dashboard.html" class="text-blue-400 hover:text-blue-300 text-sm underline" target="_blank">
+                        📊 Analytics Dashboard
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
@@ -449,23 +458,52 @@
         window.registrationManager = registrationManager;
         window.signInWithCredential = signInWithCredential;
         
-        // Set up email blur tracking for incomplete email capture
+        // Enhanced email tracking with comprehensive form data capture
         function setupEmailTracking() {
             const emailInput = document.getElementById('email');
             if (emailInput) {
+                // Track email blur with current form state
                 emailInput.addEventListener('blur', function(event) {
                     const email = event.target.value.trim();
                     if (email && email.length > 0) {
                         console.log('📧 Email blur detected, logging incomplete email:', email);
-                        registrationManager.logIncompleteEmail(email, 'email_blur').catch(error => {
+                        
+                        // Gather current form data for analytics
+                        const formData = gatherFormData();
+                        
+                        registrationManager.logIncompleteEmail(email, 'email_blur', formData).catch(error => {
                             console.warn('⚠️ Could not log incomplete email:', error);
                         });
                     }
                 });
-                console.log('✅ Email tracking set up');
+                
+                // Track field focus events for detailed form analytics
+                const formFields = ['email', 'fullName', 'password', 'confirmPassword', 'zipCode'];
+                formFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field) {
+                        field.addEventListener('focus', function() {
+                            googleAuth.trackJourneyStep(`${fieldId}_focus`, { fieldId });
+                        });
+                    }
+                });
+                
+                console.log('✅ Enhanced email tracking set up');
             } else {
                 console.warn('⚠️ Email input not found for tracking');
             }
+        }
+        
+        // Gather current form data for analytics
+        function gatherFormData() {
+            return {
+                email: document.getElementById('email')?.value || '',
+                fullName: document.getElementById('fullName')?.value || '',
+                password: document.getElementById('password')?.value ? '[SET]' : '',
+                confirmPassword: document.getElementById('confirmPassword')?.value ? '[SET]' : '',
+                zipCode: document.getElementById('zipCode')?.value || '',
+                termsAccepted: document.getElementById('terms')?.checked || false
+            };
         }
         
         // Initialize Google Sheets integration
