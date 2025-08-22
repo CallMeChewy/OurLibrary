@@ -9,7 +9,7 @@ class EmailManager {
     constructor() {
         this.config = null;
         this.initialized = false;
-        this.debug = true; // Enable for testing
+        this.debug = false; // Disable simulation - use real email delivery
     }
 
     async initialize() {
@@ -79,20 +79,9 @@ class EmailManager {
             from: this.config.from_email
         });
 
-        // For now, simulate success (would be replaced with actual SMTP implementation)
-        if (this.debug) {
-            console.log('🧪 SIMULATED: Custom SMTP email sent successfully');
-            return {
-                success: true,
-                data: {
-                    messageId: `custom_${Date.now()}`,
-                    provider: 'custom_smtp',
-                    deliverability: 'high'
-                }
-            };
-        }
-
-        throw new Error('Custom SMTP implementation pending');
+        // Direct SMTP from browser is not possible - fall back to Firebase
+        console.log('🔧 Custom SMTP not available in browser - falling back to Firebase');
+        throw new Error('Custom SMTP requires server-side implementation');
     }
 
     async sendViaFirebase(email) {
