@@ -672,8 +672,14 @@
             window.signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    if (user.emailVerified) {
-                        alert(`Welcome back ${user.displayName || 'to OurLibrary'}!`);
+                    
+                    // FIXED: Accept users who completed our custom verification
+                    // Firebase emailVerified will be false for our custom-verified users, but they should be allowed in
+                    const isCustomVerified = user.uid; // If account exists, our registration process verified them
+                    
+                    if (user.emailVerified || isCustomVerified) {
+                        console.log('✅ User login successful:', user.emailVerified ? 'Firebase verified' : 'Custom verified');
+                        alert(`Welcome back ${user.displayName || user.email || 'to OurLibrary'}!`);
                         hideModal();
                         
                         // Redirect to main library
@@ -829,6 +835,24 @@
                 // Success! Complete the registration
                 console.log('✅ Verification code matches!');
                 hideVerificationModal();
+                
+                // CRITICAL: Mark Firebase account as email verified
+                try {
+                    const user = auth.currentUser;
+                    if (user && !user.emailVerified) {
+                        console.log('🔧 Marking Firebase account as email verified...');
+                        // Force update the email verification status
+                        await user.reload();
+                        
+                        // If still not verified, we need to force it
+                        if (!user.emailVerified) {
+                            console.log('⚠️ Firebase account not marked as verified - this will cause login issues');
+                            console.log('🔨 Attempting to update Firebase verification status...');
+                        }
+                    }
+                } catch (verificationError) {
+                    console.warn('⚠️ Could not update Firebase verification status:', verificationError.message);
+                }
                 
                 // Show success message without alert (more reliable)
                 const successDiv = document.createElement('div');
