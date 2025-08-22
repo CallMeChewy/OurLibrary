@@ -206,6 +206,7 @@
             <div class="step active" id="step1">1</div>
             <div class="step inactive" id="step2">2</div>
             <div class="step inactive" id="step3">3</div>
+            <div class="step inactive" id="step4">4</div>
         </div>
 
         <!-- Auth Card -->
@@ -252,7 +253,7 @@
                     <div class="text-6xl mb-4">📧</div>
                     <p class="text-gray-300 mb-2">We sent a verification code to:</p>
                     <p class="text-blue-400 font-semibold" id="verificationEmail"></p>
-                    <p class="text-sm text-gray-400 mt-2">From: ProjectHimalaya@BowersWorld.com</p>
+                    <p class="text-sm text-gray-400 mt-2">From: ProjectHimalaya@BowersWorld.com (Custom SMTP)</p>
                 </div>
                 
                 <form onsubmit="verifyEmailCode(event)">
@@ -272,7 +273,51 @@
                 </div>
             </div>
 
-            <!-- Step 3: Success / Dashboard -->
+            <!-- Step 3: Google OAuth Finishing Screen -->
+            <div class="auth-step" id="google-finishing-step">
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">Complete Your Registration</h2>
+                
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">👤</div>
+                    <p class="text-gray-300 mb-4">Just a few more details to complete your setup</p>
+                </div>
+
+                <form onsubmit="completeGoogleRegistration(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
+                        <input type="text" id="googleDisplayName" 
+                               placeholder="How should we display your name?" 
+                               class="w-full p-3 border border-gray-600 rounded-lg bg-gray-800 text-white"
+                               required>
+                        <div class="text-xs text-gray-400 mt-1">This will be shown in your library activity</div>
+                    </div>
+
+                    <div class="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
+                        <label class="flex items-start space-x-3">
+                            <input type="checkbox" id="acceptTermsGoogle" 
+                                   class="mt-1 w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded" 
+                                   required>
+                            <div class="text-sm text-gray-300">
+                                <div class="font-medium mb-1">Terms & Privacy Agreement</div>
+                                <div>I agree to the <a href="#" class="text-blue-400 hover:underline">Terms of Service</a> 
+                                and <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full">
+                        🎉 Complete Registration
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <button onclick="resetDemo()" class="text-gray-400 hover:text-white text-sm">
+                        ← Start Over
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Success / Dashboard -->
             <div class="auth-step" id="success-step">
                 <h2 class="text-2xl font-bold text-white mb-6 text-center">Welcome to OurLibrary!</h2>
                 
@@ -336,6 +381,9 @@
         </div>
     </div>
 
+    <!-- EmailManager for hybrid email delivery -->
+    <script src="../JS/EmailManager.js"></script>
+
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -344,9 +392,13 @@
 
         // Firebase configuration
         const firebaseConfig = {
-            projectId: "our-library-d7b60",
+            apiKey: "AIzaSyAsG8hleX4WRKCLcIJdWkcNptWNMGdNjzk",
             authDomain: "our-library-d7b60.firebaseapp.com",
-            storageBucket: "our-library-d7b60.firebasestorage.app"
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.firebasestorage.app",
+            messagingSenderId: "71206584632",
+            appId: "1:71206584632:web:61a21f2d08b9e318dfc1cd",
+            measurementId: "G-XL47Q42LB8"
         };
 
         // Initialize Firebase
@@ -366,6 +418,34 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.GoogleAuthProvider = GoogleAuthProvider;
         window.signInWithPopup = signInWithPopup;
+
+        // Initialize EmailManager with hybrid email delivery after Firebase is ready
+        setTimeout(() => {
+            window.emailManager = new EmailManager();
+            window.emailManager.initialize().then((configLoaded) => {
+                if (configLoaded) {
+                    console.log('📧 EmailManager: Custom SMTP + Firebase fallback ready');
+                } else {
+                    console.log('📧 EmailManager: Firebase fallback only');
+                }
+            }).catch(error => {
+                console.warn('📧 EmailManager initialization failed:', error);
+                // Create a fallback instance that only uses Firebase
+                window.emailManager = { 
+                    initialized: false,
+                    sendVerificationEmail: async (email) => {
+                        const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                        const result = await sendVerificationEmail({ email });
+                        return {
+                            success: true,
+                            method: 'firebase',
+                            data: result.data,
+                            deliverability: 'medium'
+                        };
+                    }
+                };
+            });
+        }, 1000);
 
         console.log('🔐 Secure Auth Demo initialized');
     </script>
@@ -393,7 +473,7 @@
         }
 
         function updateStepIndicators(activeStep) {
-            const steps = ['registration', 'verification', 'success'];
+            const steps = ['registration', 'verification', 'google-finishing', 'success'];
             const activeIndex = steps.indexOf(activeStep);
             
             steps.forEach((step, index) => {
@@ -462,16 +542,33 @@
             try {
                 showStatus('📧 Sending verification code...', 'info');
                 
-                // Call our SMTP function
-                const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
-                const result = await sendVerificationEmail({ email: formData.email });
+                // Ensure EmailManager is available, with fallback
+                if (!window.emailManager) {
+                    console.warn('EmailManager not ready, using direct Firebase fallback');
+                    const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                    const firebaseResult = await sendVerificationEmail({ email: formData.email });
+                    var result = {
+                        success: true,
+                        method: 'firebase_direct',
+                        data: firebaseResult.data,
+                        deliverability: 'medium'
+                    };
+                } else {
+                    // Use EmailManager for hybrid email delivery (Custom SMTP + Firebase fallback)
+                    var result = await window.emailManager.sendVerificationEmail(formData.email);
+                }
                 
-                console.log('Verification email sent:', result.data);
+                console.log('Verification email sent via:', result.method, result.data);
                 
                 // Show verification step
                 document.getElementById('verificationEmail').textContent = formData.email;
                 showStep('verification');
-                showStatus('✅ Verification code sent! Check your email.', 'success');
+                
+                // Show success with delivery method info
+                const deliveryInfo = result.deliverability === 'high' ? 
+                    ' (High deliverability - Custom SMTP)' : 
+                    ' (Medium deliverability - Firebase)';
+                showStatus(`✅ Verification code sent via ${result.method}! Check your email.${deliveryInfo}`, 'success');
                 
             } catch (error) {
                 console.error('Error sending verification email:', error);
@@ -533,10 +630,29 @@
             try {
                 showStatus('📧 Resending verification code...', 'info');
                 
-                const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
-                await sendVerificationEmail({ email: userRegistrationData.email });
+                // Ensure EmailManager is available, with fallback
+                if (!window.emailManager) {
+                    console.warn('EmailManager not ready, using direct Firebase fallback');
+                    const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                    const firebaseResult = await sendVerificationEmail({ email: userRegistrationData.email });
+                    var result = {
+                        success: true,
+                        method: 'firebase_direct',
+                        data: firebaseResult.data,
+                        deliverability: 'medium'
+                    };
+                } else {
+                    // Use EmailManager for hybrid email delivery
+                    var result = await window.emailManager.sendVerificationEmail(userRegistrationData.email);
+                }
                 
-                showStatus('✅ New verification code sent!', 'success');
+                console.log('Verification code resent via:', result.method, result.data);
+                
+                // Show success with delivery method info
+                const deliveryInfo = result.deliverability === 'high' ? 
+                    ' (High deliverability - Custom SMTP)' : 
+                    ' (Medium deliverability - Firebase)';
+                showStatus(`✅ New verification code sent via ${result.method}!${deliveryInfo}`, 'success');
                 
             } catch (error) {
                 console.error('Error resending code:', error);
@@ -554,13 +670,83 @@
                 
                 console.log('✅ Google sign-in successful:', result.user);
                 
-                // Google users skip email verification (already verified by Google)
-                showStep('success');
-                showStatus('🎉 Signed in successfully with Google!', 'success');
+                // Store Google user data for finishing screen
+                window.googleUserData = {
+                    user: result.user,
+                    credential: result.credential,
+                    email: result.user.email,
+                    name: result.user.displayName || result.user.email
+                };
+                
+                // Pre-fill display name from Google profile
+                document.getElementById('googleDisplayName').value = window.googleUserData.name;
+                
+                // Show Google finishing screen to collect additional data
+                showStep('google-finishing');
+                showStatus('📝 Please complete your registration details', 'info');
                 
             } catch (error) {
                 console.error('Google sign-in error:', error);
                 showStatus('❌ Google sign-in failed. Please try again.', 'error');
+            }
+        }
+
+        // Complete Google OAuth registration with additional user data
+        async function completeGoogleRegistration(event) {
+            event.preventDefault();
+            
+            if (!window.googleUserData) {
+                showStatus('❌ Google authentication data not found. Please try again.', 'error');
+                return;
+            }
+            
+            const displayName = document.getElementById('googleDisplayName').value.trim();
+            const acceptedTerms = document.getElementById('acceptTermsGoogle').checked;
+            
+            // Validation
+            if (!displayName) {
+                showStatus('❌ Please enter a display name', 'error');
+                return;
+            }
+            
+            if (!acceptedTerms) {
+                showStatus('❌ Please accept the Terms of Service and Privacy Policy', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('🔐 Completing your registration...', 'info');
+                
+                // Prepare user data for registration manager
+                const googleUser = {
+                    email: window.googleUserData.email,
+                    name: displayName,
+                    credential: window.googleUserData.credential
+                };
+                
+                const additionalData = {
+                    consent: acceptedTerms,
+                    location: '', // Could be collected if needed
+                    displayName: displayName
+                };
+                
+                // TODO: Call registration manager when available
+                // For now, simulate the completion
+                console.log('Google registration data:', { googleUser, additionalData });
+                
+                // Firebase account already exists from OAuth, just log the completion
+                console.log('✅ Google registration completed with additional data');
+                
+                // Show success
+                showStep('success');
+                showStatus('🎉 Registration completed successfully!', 'success');
+                
+                // Clear temporary data
+                window.googleUserData = null;
+                
+            } catch (error) {
+                console.error('Error completing Google registration:', error);
+                showStatus('❌ Failed to complete registration. Please try again.', 'error');
             }
         }
 
