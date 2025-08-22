@@ -381,9 +381,6 @@
         </div>
     </div>
 
-    <!-- EmailManager for hybrid email delivery -->
-    <script src="../JS/EmailManager.js"></script>
-
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
@@ -419,33 +416,8 @@
         window.GoogleAuthProvider = GoogleAuthProvider;
         window.signInWithPopup = signInWithPopup;
 
-        // Initialize EmailManager with hybrid email delivery after Firebase is ready
-        setTimeout(() => {
-            window.emailManager = new EmailManager();
-            window.emailManager.initialize().then((configLoaded) => {
-                if (configLoaded) {
-                    console.log('📧 EmailManager: Custom SMTP + Firebase fallback ready');
-                } else {
-                    console.log('📧 EmailManager: Firebase fallback only');
-                }
-            }).catch(error => {
-                console.warn('📧 EmailManager initialization failed:', error);
-                // Create a fallback instance that only uses Firebase
-                window.emailManager = { 
-                    initialized: false,
-                    sendVerificationEmail: async (email) => {
-                        const sendVerificationEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
-                        const result = await sendVerificationEmail({ email });
-                        return {
-                            success: true,
-                            method: 'firebase',
-                            data: result.data,
-                            deliverability: 'medium'
-                        };
-                    }
-                };
-            });
-        }, 1000);
+        // Simple 6-digit code system - no complex email managers needed
+        console.log('📧 Simple verification code system ready');
 
         console.log('🔐 Secure Auth Demo initialized');
     </script>
@@ -546,36 +518,18 @@
                 sentVerificationCode = Math.random().toString().substr(2, 6).toUpperCase();
                 console.log('🔑 Generated verification code:', sentVerificationCode);
                 
-                // For demo: simulate sending email with 6-character code
-                // In production, this would send via actual email service
-                console.log(`📧 DEMO: Verification code ${sentVerificationCode} would be sent to ${formData.email}`);
-                console.log(`📧 From: HimalayaProject1@gmail.com`);
-                
-                var result = {
-                    success: true,
-                    method: '6_digit_code_demo',
-                    data: { code: sentVerificationCode },
-                    deliverability: 'demo_mode'
-                };
-                
-                console.log('Verification email sent via:', result.method, result.data);
+                // DEMO MODE: Show the code directly (in production, send via HimalayaProject1@gmail.com)
+                console.log(`📧 DEMO: Code ${sentVerificationCode} for ${formData.email}`);
                 
                 // Show verification step
                 document.getElementById('verificationEmail').textContent = formData.email;
                 showStep('verification');
                 
-                // Show success with code for demo
-                if (result.method === '6_digit_code_demo') {
-                    // Show persistent demo code message
-                    const container = document.getElementById('statusContainer');
-                    container.innerHTML = `<div class="status-message success">✅ DEMO MODE: Verification code is <strong>${sentVerificationCode}</strong>. In production, this would be sent to your email.</div>`;
-                    // Don't auto-clear demo messages so users can see the code
-                } else {
-                    const deliveryInfo = result.deliverability === 'high' ? 
-                        ' (High deliverability - Custom SMTP)' : 
-                        ' (Medium deliverability - Firebase)';
-                    showStatus(`✅ Verification code sent via ${result.method}! Check your email.${deliveryInfo}`, 'success');
-                }
+                // Show persistent demo code message
+                const container = document.getElementById('statusContainer');
+                container.innerHTML = `<div class="status-message success">✅ DEMO MODE: Your verification code is <strong style="font-size: 1.5em; color: #22c55e;">${sentVerificationCode}</strong><br>In production, this would be sent to your email from HimalayaProject1@gmail.com</div>`;
+                
+                console.log('✅ Verification screen ready with code:', sentVerificationCode);
                 
             } catch (error) {
                 console.error('Error sending verification email:', error);
@@ -644,30 +598,14 @@
                 sentVerificationCode = Math.random().toString().substr(2, 6).toUpperCase();
                 console.log('🔑 Generated new verification code:', sentVerificationCode);
                 
-                // For demo: simulate resending email with new code
-                console.log(`📧 DEMO: New verification code ${sentVerificationCode} would be sent to ${userRegistrationData.email}`);
+                // DEMO MODE: Show new code directly
+                console.log(`📧 DEMO: New code ${sentVerificationCode} for ${userRegistrationData.email}`);
                 
-                var result = {
-                    success: true,
-                    method: '6_digit_code_demo',
-                    data: { code: sentVerificationCode },
-                    deliverability: 'demo_mode'
-                };
+                // Show persistent demo code message
+                const container = document.getElementById('statusContainer');
+                container.innerHTML = `<div class="status-message success">✅ DEMO MODE: Your NEW verification code is <strong style="font-size: 1.5em; color: #22c55e;">${sentVerificationCode}</strong><br>In production, this would be sent to your email from HimalayaProject1@gmail.com</div>`;
                 
-                console.log('Verification code resent via:', result.method, result.data);
-                
-                // Show success with new code for demo
-                if (result.method === '6_digit_code_demo') {
-                    // Show persistent demo code message
-                    const container = document.getElementById('statusContainer');
-                    container.innerHTML = `<div class="status-message success">✅ DEMO MODE: New verification code is <strong>${sentVerificationCode}</strong>. In production, this would be sent to your email.</div>`;
-                    // Don't auto-clear demo messages so users can see the code
-                } else {
-                    const deliveryInfo = result.deliverability === 'high' ? 
-                        ' (High deliverability - Custom SMTP)' : 
-                        ' (Medium deliverability - Firebase)';
-                    showStatus(`✅ New verification code sent via ${result.method}!${deliveryInfo}`, 'success');
-                }
+                console.log('✅ New verification code ready:', sentVerificationCode);
                 
             } catch (error) {
                 console.error('Error resending code:', error);
