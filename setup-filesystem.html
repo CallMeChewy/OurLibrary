@@ -163,7 +163,7 @@
     </div>
 
     <!-- Import File System Manager -->
-    <script src="filesystem-library-manager.js?v=real-directory-fix"></script>
+    <script src="filesystem-library-manager.js?v=database-404-fix"></script>
     
     <script>
         // Setup process controller
@@ -242,8 +242,8 @@
 
                     // Step 2: Database Download
                     await this.executeStep(2, "Downloading book catalog database...", async () => {
-                        // Use local database file for now (Google Drive has CORS issues)
-                        const result = await this.fileManager.downloadAndSaveDatabase('P2/Data/Databases/OurLibrary.db');
+                        // Use available database file
+                        const result = await this.fileManager.downloadAndSaveDatabase('library_web.db');
                         return result;
                     });
 
