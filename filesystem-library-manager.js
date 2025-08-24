@@ -36,24 +36,34 @@ class OurLibraryFileManager {
      */
     async initializeLibraryDirectory() {
         try {
-            console.log('🏠 Auto-initializing OurLibrary directory...');
+            console.log('🏠 Requesting permission to create OurLibrary directory...');
             
-            // Use browser storage as primary method (no user prompts)
-            const virtualPath = this.getDefaultLibraryPath();
-            console.log(`📍 Using library path: ${virtualPath}`);
+            if (!this.isSupported) {
+                throw new Error('File System Access API not supported in this browser');
+            }
+
+            // Request directory access with platform-specific suggested location
+            const platformPath = this.getDefaultLibraryPath();
+            console.log(`💡 Recommended location: ${platformPath}`);
             
-            // Initialize virtual file system using browser storage
-            await this.initializeVirtualFileSystem();
-            
-            // Create subdirectories in storage
-            await this.createVirtualSubdirectories();
-            
-            console.log('✅ OurLibrary initialized successfully in browser storage');
+            this.directoryHandle = await window.showDirectoryPicker({
+                mode: 'readwrite',
+                startIn: 'desktop',
+                suggestedName: this.baseDirectoryName
+            });
+
+            console.log(`✅ Directory access granted: ${this.directoryHandle.name}`);
+
+            // Create subdirectories
+            await this.createSubdirectories();
+
+            // Store directory handle reference
+            await this.saveDirectoryReference();
 
             return {
                 success: true,
-                path: virtualPath,
-                message: `OurLibrary directory created successfully`
+                path: `${platformPath}/${this.directoryHandle.name}`,
+                message: `OurLibrary directory created successfully at ${this.directoryHandle.name}`
             };
 
         } catch (error) {
@@ -67,12 +77,24 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Create the standard OurLibrary subdirectory structure (DEPRECATED - replaced by createVirtualSubdirectories)
-     * Kept for backward compatibility
+     * Create the standard OurLibrary subdirectory structure
      */
     async createSubdirectories() {
-        // Redirect to virtual subdirectory creation
-        return await this.createVirtualSubdirectories();
+        const directories = [
+            { name: this.subdirectories.database, purpose: 'Book catalog database' },
+            { name: this.subdirectories.downloads, purpose: 'Downloaded books for offline reading' },
+            { name: this.subdirectories.userData, purpose: 'Reading progress and preferences' },
+            { name: this.subdirectories.cache, purpose: 'Temporary files and thumbnails' }
+        ];
+
+        for (const dir of directories) {
+            try {
+                await this.directoryHandle.getDirectoryHandle(dir.name, { create: true });
+                console.log(`📁 Created subdirectory: ${dir.name} (${dir.purpose})`);
+            } catch (error) {
+                console.warn(`⚠️  Could not create ${dir.name}:`, error);
+            }
+        }
     }
 
     /**
@@ -113,31 +135,22 @@ class OurLibraryFileManager {
                 offset += chunk.length;
             }
 
-            console.log('💾 Saving database to virtual storage...');
+            console.log('💾 Saving database to file system...');
 
-            // Save to virtual database directory using browser storage
-            const dbKey = `ourLibrary_db_library_catalog`;
-            const dbData = {
-                filename: 'library_catalog.db',
-                size: downloadedSize,
-                data: Array.from(databaseData), // Convert to array for storage
-                timestamp: Date.now(),
-                directory: this.subdirectories.database
-            };
+            // Save to database subdirectory
+            const dbDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.database);
+            const dbFile = await dbDir.getFileHandle('library_catalog.db', { create: true });
+            const writable = await dbFile.createWritable();
             
-            // Store in localStorage (for small files) or IndexedDB (for large files)
-            if (downloadedSize > 5 * 1024 * 1024) { // > 5MB, use IndexedDB
-                await this.saveToIndexedDB(dbKey, dbData);
-            } else {
-                localStorage.setItem(dbKey, JSON.stringify(dbData));
-            }
+            await writable.write(databaseData);
+            await writable.close();
 
-            console.log('✅ Database saved to virtual storage successfully');
+            console.log('✅ Database saved successfully');
 
             return {
                 success: true,
                 size: downloadedSize,
-                location: `${this.getDefaultLibraryPath()}/${this.subdirectories.database}/library_catalog.db`
+                location: `${this.directoryHandle.name}/${this.subdirectories.database}/library_catalog.db`
             };
 
         } catch (error) {
