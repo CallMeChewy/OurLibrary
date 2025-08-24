@@ -242,8 +242,8 @@
 
                     // Step 2: Database Download
                     await this.executeStep(2, "Downloading book catalog database...", async () => {
-                        // Google Drive direct download link for OurLibrary.db
-                        const result = await this.fileManager.downloadAndSaveDatabase('https://drive.google.com/uc?export=download&id=1qzJQXO_wLd5cxVrMJGU_lIOCOKRhNe5Q');
+                        // Use local database file for now (Google Drive has CORS issues)
+                        const result = await this.fileManager.downloadAndSaveDatabase('P2/Data/Databases/OurLibrary.db');
                         return result;
                     });
 
