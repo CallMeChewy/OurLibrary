@@ -46,11 +46,29 @@ class OurLibraryFileManager {
             const platformPath = this.getDefaultLibraryPath();
             console.log(`💡 Recommended location: ${platformPath}`);
             
-            this.directoryHandle = await window.showDirectoryPicker({
-                mode: 'readwrite',
-                startIn: 'desktop',
-                suggestedName: this.baseDirectoryName
-            });
+            // Try different picker options if first fails
+            try {
+                this.directoryHandle = await window.showDirectoryPicker({
+                    mode: 'readwrite',
+                    startIn: 'desktop',
+                    suggestedName: this.baseDirectoryName
+                });
+            } catch (pickerError) {
+                console.warn('⚠️ Desktop picker failed, trying Documents folder...');
+                try {
+                    this.directoryHandle = await window.showDirectoryPicker({
+                        mode: 'readwrite',
+                        startIn: 'documents',
+                        suggestedName: this.baseDirectoryName
+                    });
+                } catch (documentsError) {
+                    console.warn('⚠️ Documents picker failed, trying default picker...');
+                    this.directoryHandle = await window.showDirectoryPicker({
+                        mode: 'readwrite',
+                        suggestedName: this.baseDirectoryName
+                    });
+                }
+            }
 
             console.log(`✅ Directory access granted: ${this.directoryHandle.name}`);
 
@@ -68,9 +86,26 @@ class OurLibraryFileManager {
 
         } catch (error) {
             console.error('❌ Failed to initialize directory:', error);
+            
+            // Provide specific error messages based on error type
+            let errorMessage = error.message;
+            let recommendation = 'Please try again or use a different browser.';
+            
+            if (error.name === 'AbortError' || error.message.includes('aborted')) {
+                errorMessage = 'Directory picker was cancelled or blocked by browser security settings.';
+                recommendation = 'Try: 1) Enable file system access in browser settings, 2) Use Chrome/Edge browser, 3) Disable popup blockers';
+            } else if (error.message.includes('not supported')) {
+                errorMessage = 'Your browser does not support file system access.';
+                recommendation = 'Please use Chrome, Edge, or another Chromium-based browser for full functionality.';
+            } else if (error.message.includes('permission')) {
+                errorMessage = 'File system permission denied.';
+                recommendation = 'Please allow file system access when prompted, or check browser security settings.';
+            }
+            
             return {
                 success: false,
-                error: error.message,
+                error: errorMessage,
+                recommendation: recommendation,
                 fallback: 'browser-storage'
             };
         }
