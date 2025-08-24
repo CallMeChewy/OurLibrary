@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndyLibrary Accurate User Flow - Based on Real Application</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+        }
+        
+        .header {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: 3px solid #4a5568;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #e2e8f0;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .accuracy-badge {
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        .flowchart-container {
+            flex: 1;
+            width: 100%;
+            background: #ffffff;
+            overflow: auto;
+            position: relative;
+            padding: 20px;
+        }
+        
+        .mermaid {
+            width: 100%;
+            min-height: 100%;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+        }
+        
+        .mermaid svg {
+            width: 100% !important;
+            height: auto !important;
+            max-width: none !important;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+        }
+        
+        .mermaid .node text,
+        .mermaid .edgeLabel text,
+        .mermaid tspan {
+            font-family: 'Arial', sans-serif !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            fill: #000000 !important;
+            stroke: none !important;
+        }
+        
+        .mermaid .edgeLabel rect {
+            fill: #ffffff !important;
+            stroke: #333333 !important;
+            stroke-width: 1px !important;
+            opacity: 1.0 !important;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            margin: 2px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media print {
+            .container {
+                height: auto;
+                overflow: visible;
+            }
+            .flowchart-container {
+                overflow: visible;
+                height: auto;
+            }
+            .controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 AndyLibrary - ACCURATE User Flow</h1>
+            <p>Based on Real Application Testing & Code Analysis</p>
+            <div class="accuracy-badge">✅ VERIFIED ACCURATE - Fixed Registration Issues</div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="downloadSVG()">📥 Download SVG</button>
+            <button class="btn btn-secondary" onclick="printPDF()">🖨️ Print PDF</button>
+            <button class="btn btn-secondary" onclick="resetZoom()">🔍 Reset Zoom</button>
+        </div>
+        
+        <div class="flowchart-container" id="flowchart-container">
+            <div class="mermaid" id="mermaidDiagram">
+
+flowchart TD
+    %% ACCURATE ANDYLIBRARY USER FLOW - BASED ON REAL APPLICATION
+    %% From actual testing and code analysis
+    
+    %% === USER ENTRY POINT ===
+    START([USER OPENS BROWSER<br/>andylibrary.com or 127.0.0.1:8080])
+    
+    LOAD_LANDING[LOAD BOWERSWORLD.HTML<br/>Project Himalaya landing page<br/>Purple gradient background<br/>Mission statement displayed<br/>PWA service worker registers]
+    
+    LANDING_DISPLAYED[SHOW PROJECT HIMALAYA LANDING<br/>Header: BowersWorld.com branding<br/>Mission: Getting education into hands of people who can least afford it<br/>Features: AI-Powered Curation, Human Expertise, Global Access<br/>Three call-to-action buttons displayed]
+    
+    USER_CLICKS{USER CLICKS WHICH BUTTON?<br/>Access AndyLibrary Now?<br/>Try PDF Reader Demo?<br/>Learn More About Project Himalaya?}
+    
+    %% === PDF READER DEMO FLOW ===
+    PDF_DEMO[OPEN PDF READER DEMO<br/>URL: /pdf-reader.html?id=1<br/>Opens in new tab<br/>Demonstrates tablet-optimized reading]
+    
+    %% === LEARN MORE FLOW ===
+    SCROLL_INFO[SCROLL TO INFO SECTION<br/>AI-Human Synergy explanation<br/>Project Himalaya impact statistics<br/>Final CTA section shown]
+    
+    %% === MAIN AUTHENTICATION FLOW ===
+    ACCESS_LIBRARY[CLICK ACCESS ANDYLIBRARY NOW<br/>Redirects to /auth.html<br/>Purple gradient auth page loads<br/>AndyLibrary branding shown]
+    
+    AUTH_PAGE_LOADED[AUTH PAGE DISPLAYED<br/>Two tabs: Login and Join Us<br/>Login tab active by default<br/>Social login options shown<br/>Mission statement: Getting education into hands...]
+    
+    TAB_CHOICE{USER INTERACTION?<br/>Stay on Login tab?<br/>Click Join Us tab?<br/>Click Continue as Guest?}
+    
+    %% === LOGIN FLOW ===
+    LOGIN_FORM[LOGIN FORM ACTIVE<br/>Social login buttons: Google, GitHub, Facebook<br/>Email address field<br/>Password field<br/>Enter Library button<br/>Forgot Password link available]
+    
+    LOGIN_SUBMIT[USER SUBMITS LOGIN<br/>JavaScript handleLogin function called<br/>POST /api/auth/login<br/>Loading spinner shown<br/>Form disabled during submission]
+    
+    LOGIN_RESULT{LOGIN VALIDATION RESULT?}
+    
+    LOGIN_SUCCESS[LOGIN SUCCESSFUL<br/>Store auth_token in localStorage<br/>Store refresh_token and user_info<br/>Show success message<br/>Redirect to /library after 1 second]
+    
+    LOGIN_ERROR[LOGIN FAILED<br/>Show error message<br/>Check verification_required flag<br/>Re-enable form for retry<br/>Focus on error field]
+    
+    %% === REGISTRATION FLOW ===
+    CLICK_JOIN_US[CLICK JOIN US TAB<br/>JavaScript switchTab('register') called<br/>Hide login form with fade<br/>Show registration form with slide animation<br/>Focus on email field]
+    
+    REGISTRATION_FORM[REGISTRATION FORM DISPLAYED<br/>Blue info banner: New to AndyLibrary?<br/>Email field (required)<br/>Username field (optional)<br/>Password field (required, min 8 chars)<br/>Subscription tier selection<br/>Mission acknowledgment checkbox (required)]
+    
+    ADDITIONAL_FIELDS[OPTIONAL SECTIONS VISIBLE<br/>Data consent preferences<br/>Academic level and institution type<br/>Geographic region selection<br/>Subjects of interest<br/>Publication requests<br/>Add request functionality]
+    
+    FORM_VALIDATION{FORM VALIDATION STATE?<br/>All required fields filled?<br/>Mission acknowledgment checked?<br/>Password meets requirements?}
+    
+    VALIDATION_ERRORS[SHOW VALIDATION ERRORS<br/>Red error messages displayed<br/>Invalid fields highlighted<br/>Form remains editable<br/>Submit button stays enabled]
+    
+    REGISTRATION_SUBMIT[USER CLICKS JOIN ANDYLIBRARY<br/>JavaScript handleRegistration called<br/>Show loading spinner<br/>Disable form during submission<br/>POST /api/auth/register with all data]
+    
+    %% === SERVER PROCESSING ===
+    SERVER_VALIDATION[SERVER VALIDATES REGISTRATION<br/>Email format validation<br/>Password strength check<br/>Mission acknowledgment required<br/>Check for duplicate email/username<br/>Rate limiting applied]
+    
+    SERVER_RESULT{SERVER VALIDATION RESULT?}
+    
+    DUPLICATE_ERROR[DUPLICATE EMAIL/USERNAME<br/>HTTP 409 Conflict returned<br/>Show specific error message<br/>Suggest Sign In Instead<br/>Clear password field only]
+    
+    VALIDATION_ERROR[VALIDATION FAILED<br/>HTTP 422 Unprocessable Entity<br/>Show field-specific errors<br/>Re-enable form for editing<br/>Focus on first error field]
+    
+    %% === ACCOUNT CREATION ===
+    CREATE_USER[CREATE USER ACCOUNT<br/>Generate bcrypt password hash<br/>Generate UUID verification token<br/>Insert into SQLite database<br/>Set email_verified to FALSE<br/>Store user preferences if provided]
+    
+    SEND_VERIFICATION[SEND VERIFICATION EMAIL<br/>SMTP to Gmail configured<br/>Template: Welcome to AndyLibrary<br/>Verification link with token<br/>24-hour expiration<br/>Backup manual instructions]
+    
+    EMAIL_RESULT{EMAIL SEND RESULT?}
+    
+    REGISTRATION_SUCCESS[REGISTRATION COMPLETE<br/>HTTP 200 Success response<br/>Green success message shown<br/>Email verification instructions<br/>Auto-switch to login tab after 3 seconds<br/>Pre-fill email in login form]
+    
+    EMAIL_FAILED[EMAIL SEND FAILED<br/>Account created but email failed<br/>Show warning about manual verification<br/>Provide support contact info<br/>Still redirect to login]
+    
+    %% === EMAIL VERIFICATION ===
+    CHECK_EMAIL[USER CHECKS EMAIL<br/>Find Welcome to AndyLibrary email<br/>Click Verify Email button<br/>GET /verify-email?token=abc123<br/>Token validation performed]
+    
+    VERIFICATION_RESULT{TOKEN VALIDATION?}
+    
+    EMAIL_VERIFIED[EMAIL VERIFICATION SUCCESS<br/>Update email_verified to TRUE<br/>Set account to active<br/>Show success page<br/>Auto-redirect to library<br/>User can now login]
+    
+    VERIFICATION_FAILED[VERIFICATION FAILED<br/>Token expired or invalid<br/>Show error with recovery options<br/>Request new verification email<br/>Contact support options]
+    
+    %% === GUEST ACCESS ===
+    GUEST_CONTINUE[CONTINUE AS GUEST<br/>Skip authentication<br/>Direct to /library<br/>Limited access enabled<br/>Registration prompts shown<br/>Sample content only]
+    
+    %% === MAIN LIBRARY ===
+    LIBRARY_ACCESS[MAIN LIBRARY APPLICATION<br/>URL: /library<br/>Full AndyLibrary interface<br/>Search functionality<br/>Book downloads available<br/>User preferences applied]
+    
+    %% === FLOW CONNECTIONS ===
+    START --> LOAD_LANDING
+    LOAD_LANDING --> LANDING_DISPLAYED
+    LANDING_DISPLAYED --> USER_CLICKS
+    
+    USER_CLICKS -->|ACCESS ANDYLIBRARY NOW| ACCESS_LIBRARY
+    USER_CLICKS -->|TRY PDF READER DEMO| PDF_DEMO
+    USER_CLICKS -->|LEARN MORE| SCROLL_INFO
+    
+    PDF_DEMO --> LANDING_DISPLAYED
+    SCROLL_INFO --> USER_CLICKS
+    
+    ACCESS_LIBRARY --> AUTH_PAGE_LOADED
+    AUTH_PAGE_LOADED --> TAB_CHOICE
+    
+    TAB_CHOICE -->|STAY ON LOGIN| LOGIN_FORM
+    TAB_CHOICE -->|CLICK JOIN US| CLICK_JOIN_US
+    TAB_CHOICE -->|CONTINUE AS GUEST| GUEST_CONTINUE
+    
+    %% Login Flow
+    LOGIN_FORM --> LOGIN_SUBMIT
+    LOGIN_SUBMIT --> LOGIN_RESULT
+    LOGIN_RESULT -->|SUCCESS| LOGIN_SUCCESS
+    LOGIN_RESULT -->|FAILED| LOGIN_ERROR
+    LOGIN_SUCCESS --> LIBRARY_ACCESS
+    LOGIN_ERROR --> LOGIN_FORM
+    
+    %% Registration Flow
+    CLICK_JOIN_US --> REGISTRATION_FORM
+    REGISTRATION_FORM --> ADDITIONAL_FIELDS
+    ADDITIONAL_FIELDS --> FORM_VALIDATION
+    FORM_VALIDATION -->|INVALID| VALIDATION_ERRORS
+    FORM_VALIDATION -->|VALID| REGISTRATION_SUBMIT
+    VALIDATION_ERRORS --> REGISTRATION_FORM
+    
+    REGISTRATION_SUBMIT --> SERVER_VALIDATION
+    SERVER_VALIDATION --> SERVER_RESULT
+    SERVER_RESULT -->|DUPLICATE| DUPLICATE_ERROR
+    SERVER_RESULT -->|VALIDATION ERROR| VALIDATION_ERROR
+    SERVER_RESULT -->|SUCCESS| CREATE_USER
+    
+    DUPLICATE_ERROR --> REGISTRATION_FORM
+    VALIDATION_ERROR --> REGISTRATION_FORM
+    
+    CREATE_USER --> SEND_VERIFICATION
+    SEND_VERIFICATION --> EMAIL_RESULT
+    EMAIL_RESULT -->|SUCCESS| REGISTRATION_SUCCESS
+    EMAIL_RESULT -->|FAILED| EMAIL_FAILED
+    
+    REGISTRATION_SUCCESS --> LOGIN_FORM
+    EMAIL_FAILED --> LOGIN_FORM
+    
+    %% Email Verification
+    REGISTRATION_SUCCESS --> CHECK_EMAIL
+    CHECK_EMAIL --> VERIFICATION_RESULT
+    VERIFICATION_RESULT -->|SUCCESS| EMAIL_VERIFIED
+    VERIFICATION_RESULT -->|FAILED| VERIFICATION_FAILED
+    EMAIL_VERIFIED --> LOGIN_FORM
+    VERIFICATION_FAILED --> LOGIN_FORM
+    
+    %% Guest Flow
+    GUEST_CONTINUE --> LIBRARY_ACCESS
+    
+    %% === STYLING ===
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000000,font-weight:bold
+    classDef pageClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000,font-weight:bold
+    classDef processClass fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000,font-weight:bold
+    classDef decisionClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000000,font-weight:bold
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000,font-weight:bold
+    classDef successClass fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000000,font-weight:bold
+    classDef userActionClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000000,font-weight:bold
+    
+    class START,LIBRARY_ACCESS startEndClass
+    class LANDING_DISPLAYED,AUTH_PAGE_LOADED,LOGIN_FORM,REGISTRATION_FORM pageClass
+    class LOAD_LANDING,ACCESS_LIBRARY,LOGIN_SUBMIT,SERVER_VALIDATION,CREATE_USER,SEND_VERIFICATION processClass
+    class USER_CLICKS,TAB_CHOICE,LOGIN_RESULT,FORM_VALIDATION,SERVER_RESULT,EMAIL_RESULT,VERIFICATION_RESULT decisionClass
+    class LOGIN_ERROR,DUPLICATE_ERROR,VALIDATION_ERROR,VALIDATION_ERRORS,EMAIL_FAILED,VERIFICATION_FAILED errorClass
+    class LOGIN_SUCCESS,REGISTRATION_SUCCESS,EMAIL_VERIFIED successClass
+    class CLICK_JOIN_US,REGISTRATION_SUBMIT,CHECK_EMAIL,GUEST_CONTINUE userActionClass
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/panzoom@9.4.0/dist/panzoom.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 30,
+                nodeSpacing: 100,
+                rankSpacing: 80
+            },
+            themeVariables: {
+                primaryColor: '#f3e5f5',
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#4a148c',
+                lineColor: '#333333',
+                fontSize: '12px',
+                fontFamily: 'Arial, sans-serif',
+                background: '#ffffff'
+            }
+        });
+        
+        // Initialize pan and zoom after Mermaid renders
+        setTimeout(() => {
+            const container = document.getElementById('flowchart-container');
+            const mermaidElement = container.querySelector('.mermaid');
+            
+            if (mermaidElement) {
+                const panzoom = Panzoom(mermaidElement, {
+                    maxScale: 3,
+                    minScale: 0.3,
+                    startScale: 0.8,
+                    contain: 'outside'
+                });
+                
+                container.addEventListener('wheel', panzoom.zoomWithWheel);
+                
+                window.resetZoom = function() {
+                    panzoom.reset();
+                };
+            }
+            
+            // Ensure proper styling
+            const svg = mermaidElement.querySelector('svg');
+            if (svg) {
+                svg.style.background = '#ffffff';
+                svg.style.fontFamily = 'Arial, sans-serif';
+            }
+        }, 2000);
+        
+        function downloadSVG() {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg) {
+                // Create a copy and ensure it has proper styling
+                const svgCopy = svg.cloneNode(true);
+                svgCopy.style.background = '#ffffff';
+                
+                // Add white background rectangle
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('width', '100%');
+                rect.setAttribute('height', '100%');
+                rect.setAttribute('fill', '#ffffff');
+                svgCopy.insertBefore(rect, svgCopy.firstChild);
+                
+                const serializer = new XMLSerializer();
+                const svgString = serializer.serializeToString(svgCopy);
+                
+                const blob = new Blob([svgString], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.download = 'AndyLibrary_Accurate_User_Flow.svg';
+                a.href = url;
+                a.click();
+                
+                URL.revokeObjectURL(url);
+            }
+        }
+        
+        function printPDF() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

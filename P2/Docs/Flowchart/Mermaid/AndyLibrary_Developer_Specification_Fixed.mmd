@@ -1,0 +1,181 @@
+
+flowchart TD
+    %% CLEAN DETAILED DEVELOPER SPECIFICATION FLOWCHART
+    %% Visual Code Review Quality - Every UI Element Documented
+    
+    %% === INITIAL PAGE LOAD ===
+    START([USER OPENS BROWSER<br/>URL: andylibrary.com])
+    
+    LOAD_ASSETS[LOAD WEBSITE ASSETS<br/>index.html loads<br/>CSS JS Service Worker<br/>Show loading spinner]
+    
+    CHECK_SESSION[CHECK EXISTING SESSION<br/>GET /api/auth/session<br/>Read sessionStorage.authToken<br/>Validate session server-side]
+    
+    SESSION_DECISION{SESSION VALID?<br/>Token exists and not expired?}
+    
+    %% === MAIN LANDING PAGE ===
+    SHOW_LANDING[DISPLAY LANDING PAGE<br/>HEADER: Logo Navigation Theme<br/>MAIN: Hero Search Auth Section<br/>FOOTER: Privacy Terms Support<br/>BUTTONS: Sign In Register Guest]
+    
+    AUTH_CHOICE{USER CLICKS?<br/>Sign In Register or Guest?}
+    
+    %% === REGISTRATION FORM ===
+    SHOW_REGISTER_FORM[SHOW REGISTRATION FORM<br/>Header: Create Your Account<br/>Email field with validation<br/>Username field with availability<br/>Password field with strength meter<br/>Confirm Password with match check<br/>Mission and Terms checkboxes<br/>Optional: Name Org Country Newsletter<br/>Create Account button disabled initially]
+    
+    %% === REAL-TIME VALIDATION ===
+    USER_TYPES[USER TYPES IN FIELDS<br/>Email onBlur format validation<br/>Username onKeyup availability check<br/>Password onKeyup strength calculation<br/>Confirm Password match indicator<br/>Form button enabled when all valid]
+    
+    VALIDATION_STATE{ALL FIELDS VALID?<br/>Real-time validation passed?}
+    
+    SHOW_FIELD_ERRORS[DISPLAY FIELD ERRORS<br/>Email: Please enter valid email<br/>Username: Too short or already taken<br/>Password: Too weak add uppercase<br/>Confirm: Passwords do not match<br/>Terms: Please accept Terms<br/>Red borders and error messages]
+    
+    %% === FORM SUBMISSION ===
+    USER_SUBMITS[USER CLICKS CREATE ACCOUNT<br/>Show loading spinner on button<br/>Disable all form fields<br/>Button text: Creating Account<br/>POST /api/auth/register<br/>Include CSRF token<br/>30 second timeout]
+    
+    %% === SERVER PROCESSING ===
+    SERVER_VALIDATE[SERVER-SIDE VALIDATION<br/>Strip HTML escape characters<br/>Email RFC 5322 validation<br/>Username 3-20 chars alphanumeric<br/>Password 8+ chars mixed case<br/>Rate limiting max 5 per hour<br/>SQL injection prevention]
+    
+    VALIDATION_RESULT{SERVER VALIDATION PASSED?}
+    
+    RETURN_VALIDATION_ERROR[RETURN VALIDATION ERRORS<br/>HTTP 422 Unprocessable Entity<br/>JSON errors mapped to fields<br/>Re-enable form for editing<br/>Focus on first error field<br/>Button text back to Create Account]
+    
+    %% === DUPLICATE CHECK ===
+    CHECK_DUPLICATES[CHECK FOR DUPLICATES<br/>SELECT id FROM users<br/>WHERE email = ? OR username = ?<br/>Case-insensitive email check<br/>Case-sensitive username check<br/>Response time under 100ms]
+    
+    DUPLICATES_FOUND{DUPLICATES EXIST?<br/>Email or username taken?}
+    
+    RETURN_DUPLICATE_ERROR[RETURN DUPLICATE ERROR<br/>HTTP 409 Conflict<br/>Email already registered<br/>Username already taken<br/>Suggest alternative usernames<br/>Sign In Instead button<br/>Clear sensitive fields only]
+    
+    %% === ACCOUNT CREATION ===
+    CREATE_ACCOUNT[CREATE USER ACCOUNT<br/>Generate salt crypto.randomBytes<br/>Hash password bcrypt cost 12<br/>Generate verification token UUID<br/>INSERT INTO users table<br/>email_verified FALSE<br/>is_active FALSE<br/>Store IP and user agent]
+    
+    ACCOUNT_CREATED[ACCOUNT CREATION SUCCESS<br/>User ID generated auto-increment<br/>Transaction committed<br/>Audit log entry created<br/>Generate session token<br/>Prepare user object response]
+    
+    %% === EMAIL VERIFICATION ===
+    PREPARE_EMAIL[PREPARE VERIFICATION EMAIL<br/>Template: verification_email.html<br/>From: AndyLibrary noreply<br/>Subject: Welcome Verify Email<br/>Verification URL with token<br/>Expiration: 24 hours<br/>Support contact info included]
+    
+    SEND_EMAIL[SEND VERIFICATION EMAIL<br/>SMTP: smtp.gmail.com:465<br/>SSL authentication<br/>App password auth<br/>Timeout: 30 seconds<br/>Retry: 3 attempts<br/>Delivery confirmation requested]
+    
+    EMAIL_RESULT{EMAIL SENT SUCCESSFULLY?}
+    
+    EMAIL_SUCCESS[EMAIL SENT SUCCESSFULLY<br/>SMTP Status: 250 OK<br/>Message-ID recorded<br/>Delivery timestamp logged<br/>Update email_sent_at in database<br/>Increment success metrics]
+    
+    EMAIL_FAILURE[EMAIL SEND FAILED<br/>SMTP errors logged<br/>Connection timeout<br/>Authentication failure<br/>Rate limit exceeded<br/>Queue for retry<br/>Admin notification sent]
+    
+    %% === REGISTRATION RESPONSE ===
+    REGISTRATION_SUCCESS[REGISTRATION SUCCESS RESPONSE<br/>HTTP 201 Created<br/>JSON user object returned<br/>emailSent: true<br/>nextStep: verify_email<br/>Set httpOnly session cookie<br/>Hide form show success message]
+    
+    REGISTRATION_PARTIAL[PARTIAL SUCCESS RESPONSE<br/>HTTP 201 Created<br/>Account created emailSent false<br/>Warning about email failure<br/>Manual verification instructions<br/>Support contact information<br/>Temporary login capability]
+    
+    %% === EMAIL VERIFICATION PAGE ===
+    SHOW_VERIFICATION_PAGE[SHOW EMAIL VERIFICATION PAGE<br/>Header: Check Your Email<br/>Large email icon centered<br/>Email sent to user@example.com<br/>Check inbox and spam folder<br/>Resend Email button disabled 5min<br/>Change Email Contact Support buttons]
+    
+    USER_EMAIL_ACTIONS{USER ACTION?<br/>Resend Check Change or Support?}
+    
+    RESEND_EMAIL[RESEND VERIFICATION EMAIL<br/>Rate limit: max 3 per hour<br/>Min 5 minutes between sends<br/>Generate new verification token<br/>Invalidate previous token<br/>Send new email same template<br/>Update attempt counter]
+    
+    CHECK_EMAIL[USER CHECKS EMAIL<br/>Open email client<br/>Check inbox spam promotions<br/>Find Welcome to AndyLibrary email<br/>From: AndyLibrary noreply<br/>Large Verify Email button<br/>Alternative text link included]
+    
+    EMAIL_FOUND{EMAIL FOUND AND RECEIVED?}
+    
+    CLICK_VERIFY_LINK[CLICK VERIFICATION LINK<br/>URL: /verify-email?token=abc123<br/>Opens in default browser<br/>Shows loading page briefly<br/>GET request with token param<br/>Source tracking included]
+    
+    %% === TOKEN VALIDATION ===
+    VALIDATE_TOKEN[VALIDATE VERIFICATION TOKEN<br/>SELECT from users WHERE token<br/>Check token_expires_at > NOW<br/>Verify email_verified FALSE<br/>UUID v4 format validation<br/>Log verification attempt<br/>Prevent token enumeration]
+    
+    TOKEN_VALID{TOKEN VALIDATION RESULT?}
+    
+    ACTIVATION_SUCCESS[ACTIVATE USER ACCOUNT<br/>UPDATE users SET<br/>email_verified TRUE<br/>is_active TRUE<br/>verified_at NOW<br/>verification_token NULL<br/>access_level verified<br/>Create session record]
+    
+    SHOW_VERIFICATION_SUCCESS[SHOW SUCCESS PAGE<br/>Header: Email Verified Successfully<br/>Green checkmark icon large<br/>Account Status: Active<br/>Username and email displayed<br/>Browse Books primary button<br/>Auto-redirect countdown 10 seconds]
+    
+    TOKEN_ERROR[TOKEN VALIDATION ERROR<br/>Token not found expired or used<br/>Display appropriate error message<br/>Request New Verification Email<br/>Sign In to Existing Account<br/>Contact Support options<br/>Recovery action buttons]
+    
+    %% === SIGN IN FLOW ===
+    SHOW_SIGNIN_FORM[DISPLAY SIGN IN FORM<br/>Header: Welcome Back<br/>Email or Username field<br/>Password field with show/hide<br/>Remember me checkbox<br/>Sign In button primary<br/>Forgot Password link<br/>Social login options available]
+    
+    %% === MAIN APPLICATION ===
+    MAIN_DASHBOARD[MAIN APPLICATION DASHBOARD<br/>Header: Logo Search Notifications Avatar<br/>Welcome back username message<br/>Quick Actions: Browse Continue Recommend<br/>Sidebar: Categories and filters<br/>Footer: Support Privacy Terms<br/>Full feature access enabled]
+    
+    %% === GUEST BROWSE ===
+    GUEST_BROWSE[GUEST BROWSE MODE<br/>Header: Browsing as Guest<br/>Limited search results first 10<br/>No book downloads available<br/>Registration prompts throughout<br/>Sample pages only readable<br/>Conversion tracking active]
+    
+    %% === MAIN FLOW CONNECTIONS ===
+    START --> LOAD_ASSETS
+    LOAD_ASSETS --> CHECK_SESSION
+    CHECK_SESSION --> SESSION_DECISION
+    
+    SESSION_DECISION -->|YES Valid| MAIN_DASHBOARD
+    SESSION_DECISION -->|NO Invalid| SHOW_LANDING
+    
+    SHOW_LANDING --> AUTH_CHOICE
+    AUTH_CHOICE -->|REGISTER| SHOW_REGISTER_FORM
+    AUTH_CHOICE -->|SIGN IN| SHOW_SIGNIN_FORM
+    AUTH_CHOICE -->|GUEST| GUEST_BROWSE
+    
+    SHOW_REGISTER_FORM --> USER_TYPES
+    USER_TYPES --> VALIDATION_STATE
+    VALIDATION_STATE -->|INVALID| SHOW_FIELD_ERRORS
+    VALIDATION_STATE -->|VALID| USER_SUBMITS
+    SHOW_FIELD_ERRORS --> USER_TYPES
+    
+    USER_SUBMITS --> SERVER_VALIDATE
+    SERVER_VALIDATE --> VALIDATION_RESULT
+    VALIDATION_RESULT -->|FAILED| RETURN_VALIDATION_ERROR
+    VALIDATION_RESULT -->|PASSED| CHECK_DUPLICATES
+    RETURN_VALIDATION_ERROR --> SHOW_FIELD_ERRORS
+    
+    CHECK_DUPLICATES --> DUPLICATES_FOUND
+    DUPLICATES_FOUND -->|YES| RETURN_DUPLICATE_ERROR
+    DUPLICATES_FOUND -->|NO| CREATE_ACCOUNT
+    RETURN_DUPLICATE_ERROR --> SHOW_FIELD_ERRORS
+    
+    CREATE_ACCOUNT --> ACCOUNT_CREATED
+    ACCOUNT_CREATED --> PREPARE_EMAIL
+    PREPARE_EMAIL --> SEND_EMAIL
+    SEND_EMAIL --> EMAIL_RESULT
+    EMAIL_RESULT -->|SUCCESS| EMAIL_SUCCESS
+    EMAIL_RESULT -->|FAILED| EMAIL_FAILURE
+    
+    EMAIL_SUCCESS --> REGISTRATION_SUCCESS
+    EMAIL_FAILURE --> REGISTRATION_PARTIAL
+    REGISTRATION_SUCCESS --> SHOW_VERIFICATION_PAGE
+    REGISTRATION_PARTIAL --> SHOW_VERIFICATION_PAGE
+    
+    SHOW_VERIFICATION_PAGE --> USER_EMAIL_ACTIONS
+    USER_EMAIL_ACTIONS -->|RESEND| RESEND_EMAIL
+    USER_EMAIL_ACTIONS -->|CHECK| CHECK_EMAIL
+    USER_EMAIL_ACTIONS -->|CHANGE| SHOW_REGISTER_FORM
+    USER_EMAIL_ACTIONS -->|SUPPORT| GUEST_BROWSE
+    
+    RESEND_EMAIL --> SEND_EMAIL
+    CHECK_EMAIL --> EMAIL_FOUND
+    EMAIL_FOUND -->|YES| CLICK_VERIFY_LINK
+    EMAIL_FOUND -->|NO| RESEND_EMAIL
+    
+    CLICK_VERIFY_LINK --> VALIDATE_TOKEN
+    VALIDATE_TOKEN --> TOKEN_VALID
+    TOKEN_VALID -->|VALID| ACTIVATION_SUCCESS
+    TOKEN_VALID -->|INVALID| TOKEN_ERROR
+    
+    ACTIVATION_SUCCESS --> SHOW_VERIFICATION_SUCCESS
+    SHOW_VERIFICATION_SUCCESS --> MAIN_DASHBOARD
+    TOKEN_ERROR --> SHOW_VERIFICATION_PAGE
+    
+    SHOW_SIGNIN_FORM --> MAIN_DASHBOARD
+    GUEST_BROWSE --> SHOW_REGISTER_FORM
+    
+    %% === CLEAN STYLING ===
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000000,font-weight:bold
+    classDef pageClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000,font-weight:bold
+    classDef processClass fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000,font-weight:bold
+    classDef decisionClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000000,font-weight:bold
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000,font-weight:bold
+    classDef successClass fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000000,font-weight:bold
+    classDef userActionClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000000,font-weight:bold
+    
+    class START,MAIN_DASHBOARD startEndClass
+    class SHOW_LANDING,SHOW_REGISTER_FORM,SHOW_SIGNIN_FORM,SHOW_VERIFICATION_PAGE,SHOW_VERIFICATION_SUCCESS pageClass
+    class LOAD_ASSETS,CHECK_SESSION,SERVER_VALIDATE,CHECK_DUPLICATES,CREATE_ACCOUNT,PREPARE_EMAIL,SEND_EMAIL,VALIDATE_TOKEN processClass
+    class SESSION_DECISION,AUTH_CHOICE,VALIDATION_STATE,VALIDATION_RESULT,DUPLICATES_FOUND,EMAIL_RESULT,EMAIL_FOUND,TOKEN_VALID,USER_EMAIL_ACTIONS decisionClass
+    class SHOW_FIELD_ERRORS,RETURN_VALIDATION_ERROR,RETURN_DUPLICATE_ERROR,EMAIL_FAILURE,TOKEN_ERROR errorClass
+    class ACCOUNT_CREATED,EMAIL_SUCCESS,REGISTRATION_SUCCESS,ACTIVATION_SUCCESS successClass
+    class USER_TYPES,USER_SUBMITS,CHECK_EMAIL,CLICK_VERIFY_LINK,RESEND_EMAIL userActionClass

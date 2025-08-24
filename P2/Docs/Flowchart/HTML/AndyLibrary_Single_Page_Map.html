@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndyLibrary Registration Process - Single Page Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* FORCE SINGLE PAGE LAYOUT - NO PAGE BREAKS */
+        * {
+            page-break-inside: avoid !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+        }
+        
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            page-break-inside: avoid !important;
+        }
+        
+        .header {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 10px;
+            background: #ffffff;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .flowchart-container {
+            flex: 1;
+            width: 100%;
+            height: calc(100vh - 80px);
+            background: #ffffff;
+            overflow: visible;
+            position: relative;
+            page-break-inside: avoid !important;
+        }
+        
+        .mermaid {
+            width: 100%;
+            height: 100%;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+            page-break-inside: avoid !important;
+        }
+        
+        .mermaid svg {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+            font-weight: bold !important;
+        }
+        
+        /* Enhanced text visibility */
+        .mermaid .node text,
+        .mermaid .edgeLabel text,
+        .mermaid tspan {
+            font-family: 'Arial', sans-serif !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            fill: #000000 !important;
+            stroke: none !important;
+        }
+        
+        .mermaid .edgeLabel rect {
+            fill: #ffffff !important;
+            stroke: #333333 !important;
+            stroke-width: 1px !important;
+            opacity: 1.0 !important;
+        }
+        
+        /* PRINT STYLES - CRITICAL FOR PDF */
+        @media print {
+            * {
+                page-break-inside: avoid !important;
+                page-break-before: avoid !important;
+                page-break-after: avoid !important;
+                break-inside: avoid !important;
+            }
+            
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: visible;
+                background: #ffffff;
+            }
+            
+            .page-container {
+                width: 100%;
+                height: 100%;
+                page-break-inside: avoid !important;
+                display: block;
+            }
+            
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                z-index: 1000;
+                background: #ffffff;
+            }
+            
+            .flowchart-container {
+                margin-top: 60px;
+                width: 100%;
+                height: calc(100% - 60px);
+                page-break-inside: avoid !important;
+                overflow: visible;
+            }
+            
+            .mermaid {
+                width: 100%;
+                height: 100%;
+                page-break-inside: avoid !important;
+                transform: scale(0.85);
+                transform-origin: top left;
+            }
+            
+            .mermaid svg {
+                width: 100% !important;
+                height: 100% !important;
+                background: #ffffff !important;
+            }
+            
+            /* Hide any potential page break elements */
+            .page-break, .page-separator, .break {
+                display: none !important;
+            }
+        }
+        
+        /* Additional single-page enforcement */
+        .no-break {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+    </style>
+</head>
+<body class="no-break">
+    <div class="page-container no-break">
+        <div class="header">
+            <h1>🏛️ AndyLibrary Registration Process Map</h1>
+            <p>Complete Flow • Single-Page Navigation • PDF-Optimized</p>
+        </div>
+        
+        <div class="flowchart-container no-break">
+            <div class="mermaid no-break" id="mermaidDiagram">
+
+flowchart TD
+    %% Fixed AndyLibrary Registration Process Flowchart
+    %% Clean syntax with comprehensive registration details
+    
+    %% Start/End Nodes
+    START([START<br/>User Opens Browser])
+    END([END<br/>Book Access Complete])
+    
+    %% Initial System Loading
+    LOAD_WEBSITE[LOAD WEBSITE<br/>Static assets and service worker]
+    CHECK_SESSION[CHECK SESSION<br/>Validate existing authentication]
+    LOAD_UI[LOAD USER INTERFACE<br/>Render forms and validation]
+    
+    %% Authentication Check
+    AUTH_STATUS{USER<br/>AUTHENTICATED?}
+    
+    %% Registration Form Display
+    SHOW_FORM[SHOW REGISTRATION FORM<br/>Display all input fields]
+    
+    %% Required Fields Input
+    REQUIRED_FIELDS[ENTER REQUIRED FIELDS<br/>Email - Username - Password<br/>Confirm Password - Mission - Terms]
+    
+    %% Optional Fields Input  
+    OPTIONAL_FIELDS[ENTER OPTIONAL FIELDS<br/>Full Name - Organization<br/>Country - Newsletter]
+    
+    %% Client Validation
+    CLIENT_VALIDATE[CLIENT-SIDE VALIDATION<br/>Real-time format checking<br/>Password strength meter]
+    
+    %% Form Submission
+    SUBMIT_FORM[SUBMIT REGISTRATION<br/>POST to /api/auth/register<br/>Show loading state]
+    
+    %% Server Validation Process
+    SERVER_VALIDATE[SERVER-SIDE VALIDATION<br/>Format - Security - Business rules<br/>SQL injection prevention]
+    
+    %% Validation Decision
+    VALIDATION_OK{VALIDATION<br/>PASSED?}
+    
+    %% Validation Errors
+    VALIDATION_ERROR[VALIDATION ERROR<br/>Field-specific error messages<br/>HTTP 422 Response]
+    
+    %% Duplicate Check Process
+    CHECK_DUPLICATES[CHECK DUPLICATES<br/>Query Users table<br/>Email and username unique]
+    
+    %% Duplicate Decision
+    DUPLICATES_FOUND{DUPLICATES<br/>FOUND?}
+    
+    %% Duplicate Error
+    DUPLICATE_ERROR[DUPLICATE ERROR<br/>Email or username exists<br/>HTTP 409 Conflict]
+    
+    %% Account Creation
+    CREATE_ACCOUNT[CREATE USER ACCOUNT<br/>Hash password with bcrypt<br/>Generate verification token<br/>Insert into database]
+    
+    %% Account Success
+    ACCOUNT_SUCCESS[ACCOUNT CREATED<br/>User ID assigned<br/>Verification token ready]
+    
+    %% Email Preparation
+    PREPARE_EMAIL[PREPARE VERIFICATION EMAIL<br/>Template with verification link<br/>24-hour token expiration]
+    
+    %% SMTP Email Send
+    SEND_EMAIL[SEND EMAIL VIA SMTP<br/>smtp.gmail.com port 465<br/>SSL authentication]
+    
+    %% Email Send Decision
+    EMAIL_SENT{EMAIL<br/>SENT?}
+    
+    %% Email Success
+    EMAIL_SUCCESS[EMAIL SENT SUCCESSFULLY<br/>SMTP 250 OK response<br/>Delivery confirmed]
+    
+    %% Email Failure
+    EMAIL_FAIL[EMAIL SEND FAILED<br/>SMTP error or timeout<br/>Admin notification]
+    
+    %% Registration Response Success
+    REG_SUCCESS[REGISTRATION SUCCESS<br/>HTTP 201 Created<br/>Check email message]
+    
+    %% Registration Partial Success
+    REG_PARTIAL[PARTIAL SUCCESS<br/>Account created but email failed<br/>Manual verification option]
+    
+    %% User Waits for Email
+    WAIT_EMAIL[USER WAITS FOR EMAIL<br/>Check inbox and spam folder<br/>Look for verification link]
+    
+    %% Email Received Check
+    EMAIL_RECEIVED{EMAIL<br/>RECEIVED?}
+    
+    %% Click Verification Link
+    CLICK_VERIFY[CLICK VERIFICATION LINK<br/>GET /api/auth/verify-email<br/>Token parameter included]
+    
+    %% Token Validation
+    VALIDATE_TOKEN[VALIDATE VERIFICATION TOKEN<br/>Check database for token<br/>Verify not expired or used]
+    
+    %% Token Valid Decision
+    TOKEN_VALID{TOKEN<br/>VALID?}
+    
+    %% Account Activation
+    ACTIVATE_ACCOUNT[ACTIVATE ACCOUNT<br/>Set EmailVerified = TRUE<br/>Set IsActive = TRUE<br/>Clear verification token]
+    
+    %% Verification Success
+    VERIFY_SUCCESS[VERIFICATION SUCCESS<br/>Account fully activated<br/>Redirect to login]
+    
+    %% Token Error
+    TOKEN_ERROR[TOKEN ERROR<br/>Expired or invalid token<br/>Show error page]
+    
+    %% Resend Email Option
+    RESEND_EMAIL[RESEND VERIFICATION<br/>Generate new token<br/>Send new email]
+    
+    %% Continue to Login
+    PROCEED_LOGIN[PROCEED TO LOGIN<br/>Account ready for use<br/>Full system access]
+    
+    %% Login Process
+    LOGIN_SYSTEM[LOGIN PROCESS<br/>Authentication and session<br/>Access granted]
+    
+    %% Main System
+    MAIN_SYSTEM[MAIN SYSTEM ACCESS<br/>Book search and browse<br/>Google Drive integration]
+    
+    %% MAIN FLOW CONNECTIONS
+    START --> LOAD_WEBSITE
+    LOAD_WEBSITE --> CHECK_SESSION
+    CHECK_SESSION --> LOAD_UI
+    LOAD_UI --> AUTH_STATUS
+    
+    %% Authentication Branch
+    AUTH_STATUS -->|NO| SHOW_FORM
+    AUTH_STATUS -->|YES| MAIN_SYSTEM
+    
+    %% Registration Form Flow
+    SHOW_FORM --> REQUIRED_FIELDS
+    REQUIRED_FIELDS --> OPTIONAL_FIELDS
+    OPTIONAL_FIELDS --> CLIENT_VALIDATE
+    CLIENT_VALIDATE --> SUBMIT_FORM
+    
+    %% Server Processing
+    SUBMIT_FORM --> SERVER_VALIDATE
+    SERVER_VALIDATE --> VALIDATION_OK
+    
+    %% Validation Results
+    VALIDATION_OK -->|NO| VALIDATION_ERROR
+    VALIDATION_OK -->|YES| CHECK_DUPLICATES
+    
+    %% Error Recovery
+    VALIDATION_ERROR --> REQUIRED_FIELDS
+    
+    %% Duplicate Check Flow
+    CHECK_DUPLICATES --> DUPLICATES_FOUND
+    DUPLICATES_FOUND -->|YES| DUPLICATE_ERROR
+    DUPLICATES_FOUND -->|NO| CREATE_ACCOUNT
+    
+    %% Duplicate Error Recovery
+    DUPLICATE_ERROR --> REQUIRED_FIELDS
+    
+    %% Account Creation Flow
+    CREATE_ACCOUNT --> ACCOUNT_SUCCESS
+    ACCOUNT_SUCCESS --> PREPARE_EMAIL
+    PREPARE_EMAIL --> SEND_EMAIL
+    
+    %% Email Send Results
+    SEND_EMAIL --> EMAIL_SENT
+    EMAIL_SENT -->|YES| EMAIL_SUCCESS
+    EMAIL_SENT -->|NO| EMAIL_FAIL
+    
+    %% Registration Responses
+    EMAIL_SUCCESS --> REG_SUCCESS
+    EMAIL_FAIL --> REG_PARTIAL
+    
+    %% User Email Verification
+    REG_SUCCESS --> WAIT_EMAIL
+    REG_PARTIAL --> WAIT_EMAIL
+    
+    %% Email Verification Flow
+    WAIT_EMAIL --> EMAIL_RECEIVED
+    EMAIL_RECEIVED -->|YES| CLICK_VERIFY
+    EMAIL_RECEIVED -->|NO| RESEND_EMAIL
+    
+    %% Token Validation Flow
+    CLICK_VERIFY --> VALIDATE_TOKEN
+    VALIDATE_TOKEN --> TOKEN_VALID
+    TOKEN_VALID -->|YES| ACTIVATE_ACCOUNT
+    TOKEN_VALID -->|NO| TOKEN_ERROR
+    
+    %% Activation Success
+    ACTIVATE_ACCOUNT --> VERIFY_SUCCESS
+    VERIFY_SUCCESS --> PROCEED_LOGIN
+    
+    %% Error Recovery
+    TOKEN_ERROR --> RESEND_EMAIL
+    RESEND_EMAIL --> PREPARE_EMAIL
+    
+    %% Final Flow
+    PROCEED_LOGIN --> LOGIN_SYSTEM
+    LOGIN_SYSTEM --> MAIN_SYSTEM
+    MAIN_SYSTEM --> END
+    
+    %% CLEAN STYLING
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000000,font-weight:bold
+    classDef processClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000,font-weight:bold
+    classDef decisionClass fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000,font-weight:bold
+    classDef userActionClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000000,font-weight:bold
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000,font-weight:bold
+    classDef successClass fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000000,font-weight:bold
+    
+    %% APPLY STYLES
+    class START,END startEndClass
+    class LOAD_WEBSITE,CHECK_SESSION,LOAD_UI,SERVER_VALIDATE,CHECK_DUPLICATES,CREATE_ACCOUNT,PREPARE_EMAIL,SEND_EMAIL,VALIDATE_TOKEN,ACTIVATE_ACCOUNT,LOGIN_SYSTEM,MAIN_SYSTEM processClass
+    class AUTH_STATUS,VALIDATION_OK,DUPLICATES_FOUND,EMAIL_SENT,EMAIL_RECEIVED,TOKEN_VALID decisionClass
+    class SHOW_FORM,REQUIRED_FIELDS,OPTIONAL_FIELDS,CLIENT_VALIDATE,SUBMIT_FORM,WAIT_EMAIL,CLICK_VERIFY userActionClass
+    class VALIDATION_ERROR,DUPLICATE_ERROR,EMAIL_FAIL,TOKEN_ERROR errorClass
+    class ACCOUNT_SUCCESS,EMAIL_SUCCESS,REG_SUCCESS,VERIFY_SUCCESS,PROCEED_LOGIN successClass
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid for single-page rendering
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 15
+            },
+            themeVariables: {
+                primaryColor: '#f3e5f5',
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#4a148c',
+                lineColor: '#333333',
+                sectionBkgColor: '#ffffff',
+                altSectionBkgColor: '#f8f9fa',
+                gridColor: '#e1e1e1',
+                secondaryColor: '#fff3e0',
+                tertiaryColor: '#e1f5fe',
+                fontSize: '11px',
+                fontFamily: 'Arial, sans-serif',
+                background: '#ffffff'
+            }
+        });
+        
+        // Ensure single-page layout after rendering
+        setTimeout(() => {
+            const mermaidDiv = document.getElementById('mermaidDiagram');
+            const svg = mermaidDiv.querySelector('svg');
+            if (svg) {
+                svg.style.background = '#ffffff';
+                svg.style.width = '100%';
+                svg.style.height = '100%';
+                
+                // Force single-page attributes
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                
+                // Ensure no page breaks
+                mermaidDiv.style.pageBreakInside = 'avoid';
+                mermaidDiv.style.breakInside = 'avoid';
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

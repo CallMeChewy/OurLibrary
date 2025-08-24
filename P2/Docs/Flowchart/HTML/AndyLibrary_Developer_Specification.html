@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AndyLibrary Detailed Developer Specification</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        /* SINGLE PAGE - NO BREAKS */
+        * {
+            page-break-inside: avoid !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: #ffffff;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+        }
+        
+        .header {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 15px;
+            background: #ffffff;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin: 0 0 8px 0;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .spec-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-bottom: 2px solid #e9ecef;
+            text-align: center;
+            font-size: 14px;
+            color: #495057;
+            flex-shrink: 0;
+        }
+        
+        .flowchart-container {
+            flex: 1;
+            width: 100%;
+            background: #ffffff;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .mermaid {
+            width: 100%;
+            min-height: 100%;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+            padding: 20px;
+        }
+        
+        .mermaid svg {
+            width: 100% !important;
+            height: auto !important;
+            max-width: none !important;
+            background: #ffffff !important;
+            font-family: 'Arial', sans-serif !important;
+        }
+        
+        /* Enhanced text for developer specifications */
+        .mermaid .node text,
+        .mermaid .edgeLabel text,
+        .mermaid tspan {
+            font-family: 'Arial', sans-serif !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            fill: #000000 !important;
+            stroke: none !important;
+        }
+        
+        .mermaid .edgeLabel rect {
+            fill: #ffffff !important;
+            stroke: #333333 !important;
+            stroke-width: 1px !important;
+            opacity: 1.0 !important;
+        }
+        
+        /* Print optimization */
+        @media print {
+            .container {
+                height: auto;
+                overflow: visible;
+            }
+            .flowchart-container {
+                overflow: visible;
+                height: auto;
+            }
+            .mermaid {
+                transform: scale(0.75);
+                transform-origin: top left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ AndyLibrary Developer Specification</h1>
+            <p>Visual Code Review • Complete UI/UX Specification • Developer-Ready</p>
+        </div>
+        
+        <div class="spec-info">
+            <strong>📋 Developer Specification Level:</strong> Every UI element, field validation, user option, API call, database operation, and screen state documented for complete implementation
+        </div>
+        
+        <div class="flowchart-container">
+            <div class="mermaid" id="mermaidDiagram">
+
+flowchart TD
+    %% DETAILED DEVELOPER SPECIFICATION FLOWCHART
+    %% Visual Code Review Quality - Shows Every UI Element, Validation, User Option
+    
+    %% === INITIAL PAGE LOAD ===
+    START([USER OPENS BROWSER<br/>URL: https://andylibrary.com])
+    
+    LOAD_ASSETS[LOAD WEBSITE ASSETS<br/>• index.html loads<br/>• CSS: /static/styles.css<br/>• JS: /static/app.js<br/>• Service Worker: /service-worker.js<br/>• Favicon, images load<br/>• Show loading spinner]
+    
+    CHECK_SESSION[CHECK EXISTING SESSION<br/>API: GET /api/auth/session<br/>• Read sessionStorage.authToken<br/>• Read localStorage.userPrefs<br/>• Validate session server-side<br/>• Check cookie expiration]
+    
+    SESSION_DECISION{SESSION VALID?<br/>Token exists & not expired?}
+    
+    %% === MAIN LANDING PAGE LAYOUT ===
+    SHOW_LANDING[DISPLAY LANDING PAGE<br/>===== HEADER =====<br/>• Logo: AndyLibrary 🏛️<br/>• Navigation: Home | About | Contact<br/>• Theme toggle: Light/Dark<br/>===== MAIN CONTENT =====<br/>• Hero text: "Educational Access for All"<br/>• Mission statement paragraph<br/>• Search bar (disabled - requires auth)<br/>===== AUTH SECTION =====<br/>• "Sign In" button (blue, prominent)<br/>• "Register" button (green, secondary)<br/>• "Guest Browse" link (small, gray)<br/>===== FOOTER =====<br/>• Privacy Policy | Terms | Support]
+    
+    AUTH_CHOICE{USER CLICKS?<br/>What action does user take?}
+    
+    %% === REGISTRATION FLOW START ===
+    SHOW_REGISTER_FORM[DISPLAY REGISTRATION FORM<br/>===== FORM LAYOUT =====<br/>Header: "Create Your Account"<br/>Subtitle: "Join thousands of learners worldwide"<br/><br/>===== REQUIRED FIELDS =====<br/>📧 Email Address: [text input]<br/>   • Placeholder: "your@email.com"<br/>   • Real-time validation icon<br/>   • Error div below (hidden)<br/><br/>👤 Username: [text input]<br/>   • Placeholder: "johndoe123"<br/>   • Min 3, max 20 chars<br/>   • Availability check icon<br/>   • Error div below (hidden)<br/><br/>🔒 Password: [password input]<br/>   • Placeholder: "8+ characters"<br/>   • Strength meter bar<br/>   • Show/hide eye icon<br/>   • Error div below (hidden)<br/><br/>🔒 Confirm Password: [password input]<br/>   • Placeholder: "Re-enter password"<br/>   • Match indicator icon<br/>   • Error div below (hidden)<br/><br/>===== CHECKBOXES =====<br/>☑️ I agree to Educational Mission<br/>   • Link: "Learn about our mission"<br/>☑️ I accept Terms of Service<br/>   • Link: "Read full terms"<br/>☑️ Subscribe to newsletter (optional)<br/><br/>===== OPTIONAL SECTION =====<br/>📝 Full Name: [text input] (optional)<br/>🏢 Organization: [text input] (optional)<br/>🌍 Country: [dropdown select] (optional)<br/>📸 Profile Picture: [file upload] (optional)<br/><br/>===== BUTTONS =====<br/>• "Create Account" (blue, disabled initially)<br/>• "Already have account? Sign In" (link)<br/>• "Continue as Guest" (gray link)]
+    
+    %% === REAL-TIME VALIDATION ===
+    USER_TYPES[USER TYPES IN FIELDS<br/>===== REAL-TIME EVENTS =====<br/>Email onBlur:<br/>• Check format: /^[^\s@]+@[^\s@]+\.[^\s@]+$/<br/>• Show ✅ or ❌ icon<br/>• Display error if invalid<br/><br/>Username onKeyup (debounced 500ms):<br/>• Check length 3-20 chars<br/>• Check alphanumeric only<br/>• API call: GET /api/auth/check-username<br/>• Show availability status<br/><br/>Password onKeyup:<br/>• Strength calculation:<br/>  - Length >= 8: +1<br/>  - Has uppercase: +1<br/>  - Has lowercase: +1<br/>  - Has number: +1<br/>  - Has special char: +1<br/>• Update strength meter (1-5 bars)<br/>• Colors: red(1-2), yellow(3), green(4-5)<br/><br/>Confirm Password onKeyup:<br/>• Compare with password field<br/>• Show ✅ match or ❌ no match<br/><br/>Form Submission Button:<br/>• Enabled only when all required valid<br/>• Visual state changes (disabled → enabled)]
+    
+    VALIDATION_STATE{ALL FIELDS VALID?<br/>Real-time validation passed?}
+    
+    SHOW_FIELD_ERRORS[DISPLAY FIELD ERRORS<br/>===== ERROR DISPLAY =====<br/>Email errors:<br/>• "Please enter a valid email"<br/>• "Email format incorrect"<br/><br/>Username errors:<br/>• "Username too short (min 3 chars)"<br/>• "Username too long (max 20 chars)"<br/>• "Only letters and numbers allowed"<br/>• "Username already taken"<br/><br/>Password errors:<br/>• "Password too short (min 8 chars)"<br/>• "Add uppercase letter"<br/>• "Add number or special character"<br/><br/>Confirm errors:<br/>• "Passwords do not match"<br/><br/>Checkbox errors:<br/>• "Please accept the Terms of Service"<br/>• "Please acknowledge our mission"<br/><br/>===== ERROR STYLING =====<br/>• Red border on invalid fields<br/>• Red text for error messages<br/>• ❌ icon next to field<br/>• Error animation: shake effect]
+    
+    %% === FORM SUBMISSION ===
+    USER_SUBMITS[USER CLICKS "CREATE ACCOUNT"<br/>===== FORM SUBMISSION =====<br/>• Prevent default form submit<br/>• Show loading spinner on button<br/>• Disable all form fields<br/>• Change button text: "Creating Account..."<br/>• Gather form data into JSON<br/>• Add CSRF token from meta tag<br/><br/>===== API CALL =====<br/>POST /api/auth/register<br/>Headers:<br/>• Content-Type: application/json<br/>• X-CSRF-Token: [token]<br/>Body:<br/>{<br/>  "email": "user@email.com",<br/>  "username": "johndoe",<br/>  "password": "hashedClientSide",<br/>  "confirmPassword": "matching",<br/>  "agreeTerms": true,<br/>  "agreeMission": true,<br/>  "newsletter": false,<br/>  "fullName": "John Doe",<br/>  "organization": "University",<br/>  "country": "US"<br/>}<br/><br/>===== LOADING STATE =====<br/>• Progress indicator<br/>• Disable back/refresh<br/>• Timeout: 30 seconds]
+    
+    %% === SERVER PROCESSING ===
+    SERVER_VALIDATE[SERVER-SIDE VALIDATION<br/>===== INPUT SANITIZATION =====<br/>• Strip HTML tags from all inputs<br/>• Escape special characters<br/>• Trim whitespace<br/>• Length validation<br/><br/>===== FORMAT VALIDATION =====<br/>Email:<br/>• RFC 5322 compliant regex<br/>• DNS MX record check (optional)<br/>• Disposable email detection<br/><br/>Username:<br/>• Length: 3-20 characters<br/>• Pattern: ^[a-zA-Z0-9_]+$<br/>• Reserved words check<br/>• Profanity filter<br/><br/>Password:<br/>• Minimum 8 characters<br/>• At least 1 uppercase<br/>• At least 1 lowercase<br/>• At least 1 number<br/>• No common passwords (top 1000)<br/>• No personal info (name, username)<br/><br/>===== SECURITY CHECKS =====<br/>• Rate limiting: max 5 attempts/hour<br/>• IP address validation<br/>• CSRF token verification<br/>• SQL injection prevention<br/>• XSS protection<br/>• User agent validation]
+    
+    VALIDATION_RESULT{SERVER VALIDATION<br/>PASSED?}
+    
+    RETURN_VALIDATION_ERROR[RETURN VALIDATION ERRORS<br/>===== ERROR RESPONSE =====<br/>HTTP 422 Unprocessable Entity<br/>Response Body:<br/>{<br/>  "success": false,<br/>  "errors": {<br/>    "email": ["Invalid email format"],<br/>    "username": ["Too short"],<br/>    "password": ["Too weak"]<br/>  },<br/>  "message": "Please fix the errors below"<br/>}<br/><br/>===== CLIENT ERROR DISPLAY =====<br/>• Parse error response JSON<br/>• Map errors to form fields<br/>• Show specific error messages<br/>• Highlight invalid fields<br/>• Re-enable form for editing<br/>• Focus on first error field<br/>• Button text back to "Create Account"]
+    
+    %% === DUPLICATE CHECK ===
+    CHECK_DUPLICATES[CHECK FOR DUPLICATES<br/>===== DATABASE QUERIES =====<br/>Query 1 - Email check:<br/>SELECT id FROM users<br/>WHERE email = ? AND deleted_at IS NULL<br/><br/>Query 2 - Username check:<br/>SELECT id FROM users<br/>WHERE username = ? AND deleted_at IS NULL<br/><br/>===== CASE SENSITIVITY =====<br/>• Email: case-insensitive comparison<br/>• Username: case-sensitive comparison<br/><br/>===== PERFORMANCE =====<br/>• Use database indexes<br/>• Combined query possible<br/>• Response time < 100ms target]
+    
+    DUPLICATES_FOUND{DUPLICATES EXIST?<br/>Email or username taken?}
+    
+    RETURN_DUPLICATE_ERROR[RETURN DUPLICATE ERROR<br/>===== ERROR RESPONSE =====<br/>HTTP 409 Conflict<br/>Response Body:<br/>{<br/>  "success": false,<br/>  "errors": {<br/>    "email": ["Email already registered"],<br/>    "username": ["Username already taken"]<br/>  },<br/>  "message": "Account with this information exists",<br/>  "suggestions": {<br/>    "username": ["johndoe123", "johndoe456"],<br/>    "action": "Try signing in instead"<br/>  }<br/>}<br/><br/>===== CLIENT DISPLAY =====<br/>• Show "Account exists" message<br/>• Suggest alternative usernames<br/>• "Sign In Instead" button<br/>• Option to reset password<br/>• Clear sensitive fields only]
+    
+    %% === ACCOUNT CREATION ===
+    CREATE_ACCOUNT[CREATE USER ACCOUNT<br/>===== PASSWORD HASHING =====<br/>• Generate salt: crypto.randomBytes(32)<br/>• Hash password: bcrypt.hash(password, 12)<br/>• Store hash, never plain password<br/><br/>===== TOKEN GENERATION =====<br/>• Verification token: uuid4()<br/>• Expiration: 24 hours from now<br/>• Store in database<br/><br/>===== DATABASE INSERT =====<br/>INSERT INTO users (<br/>  email, username, password_hash,<br/>  email_verified, is_active,<br/>  verification_token, token_expires_at,<br/>  full_name, organization, country,<br/>  newsletter_subscribed,<br/>  subscription_tier, access_level,<br/>  created_at, updated_at<br/>) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)<br/><br/>===== INITIAL VALUES =====<br/>• email_verified = FALSE<br/>• is_active = FALSE<br/>• subscription_tier = 'free'<br/>• access_level = 'basic'<br/>• created_at = NOW()<br/>• ip_address = request.ip<br/>• user_agent = request.headers.user_agent]
+    
+    ACCOUNT_CREATED[ACCOUNT CREATION SUCCESS<br/>===== DATABASE RESULT =====<br/>• User ID generated (auto-increment)<br/>• All fields saved successfully<br/>• Transaction committed<br/>• Audit log entry created<br/><br/>===== PREPARE USER SESSION =====<br/>• Generate session token<br/>• Set session expiration<br/>• Prepare user object for response<br/><br/>===== ANALYTICS =====<br/>• Log registration event<br/>• Track signup source<br/>• Update metrics counter<br/>• Trigger welcome workflow]
+    
+    %% === EMAIL VERIFICATION PROCESS ===
+    PREPARE_EMAIL[PREPARE VERIFICATION EMAIL<br/>===== EMAIL TEMPLATE =====<br/>Template: verification_email.html<br/>Variables:<br/>• {user_name}: username or full name<br/>• {verification_link}: unique URL<br/>• {expiry_time}: "24 hours"<br/>• {support_email}: support contact<br/>• {company_name}: "AndyLibrary"<br/><br/>===== EMAIL CONTENT =====<br/>Subject: "Welcome to AndyLibrary - Verify Your Email"<br/>From: "AndyLibrary <noreply@andylibrary.com>"<br/>Reply-To: "support@andylibrary.com"<br/><br/>Body includes:<br/>• Welcome message<br/>• Verification button/link<br/>• Manual verification code<br/>• Expiration warning<br/>• Support contact info<br/>• Unsubscribe option<br/><br/>===== VERIFICATION URL =====<br/>https://andylibrary.com/verify-email?token={token}&user={user_id}<br/>• Token: verification_token from database<br/>• URL encoding for special characters<br/>• HTTPS required for security]
+    
+    SEND_EMAIL[SEND VERIFICATION EMAIL<br/>===== SMTP CONFIGURATION =====<br/>Server: smtp.gmail.com<br/>Port: 465 (SSL) / 587 (TLS)<br/>Authentication: App Password<br/>Username: HimalayaProject1@gmail.com<br/>Password: [app-specific password]<br/><br/>===== EMAIL HEADERS =====<br/>From: "AndyLibrary <noreply@andylibrary.com>"<br/>To: user email address<br/>Subject: verification subject<br/>Content-Type: text/html; charset=UTF-8<br/>X-Mailer: AndyLibrary System<br/>Message-ID: unique identifier<br/><br/>===== DELIVERY SETTINGS =====<br/>• Timeout: 30 seconds<br/>• Retry attempts: 3<br/>• Retry delay: exponential backoff<br/>• Error logging enabled<br/>• Delivery receipt requested<br/><br/>===== FALLBACK OPTIONS =====<br/>• Secondary SMTP server<br/>• Queue for retry if failed<br/>• Admin notification on failure]
+    
+    EMAIL_RESULT{EMAIL SENT<br/>SUCCESSFULLY?}
+    
+    EMAIL_SUCCESS[EMAIL SENT SUCCESSFULLY<br/>===== SMTP RESPONSE =====<br/>• Status: 250 OK<br/>• Message-ID recorded<br/>• Delivery timestamp logged<br/>• Queue status: sent<br/><br/>===== DATABASE UPDATE =====<br/>UPDATE users SET<br/>  verification_email_sent = TRUE,<br/>  email_sent_at = NOW(),<br/>  email_attempts = email_attempts + 1<br/>WHERE id = user_id<br/><br/>===== SUCCESS METRICS =====<br/>• Increment email success counter<br/>• Log delivery time<br/>• Update user journey stage]
+    
+    EMAIL_FAILURE[EMAIL SEND FAILED<br/>===== ERROR TYPES =====<br/>SMTP Errors:<br/>• 421: Service not available<br/>• 450: Mailbox unavailable<br/>• 451: Local error<br/>• 452: Insufficient storage<br/>• 550: Mailbox not found<br/>• 551: User not local<br/>• 552: Exceeded storage<br/>• 553: Invalid address<br/>• 554: Transaction failed<br/><br/>Network Errors:<br/>• Connection timeout<br/>• DNS resolution failed<br/>• SSL/TLS handshake failed<br/><br/>===== ERROR HANDLING =====<br/>• Log detailed error message<br/>• Update attempt counter<br/>• Schedule retry if appropriate<br/>• Notify administrators<br/>• Update user record with failure]
+    
+    %% === REGISTRATION RESPONSE ===
+    REGISTRATION_SUCCESS[REGISTRATION SUCCESS RESPONSE<br/>===== HTTP RESPONSE =====<br/>Status: 201 Created<br/>Headers:<br/>• Content-Type: application/json<br/>• Set-Cookie: session_token (httpOnly)<br/><br/>Response Body:<br/>{<br/>  "success": true,<br/>  "message": "Registration successful!",<br/>  "user": {<br/>    "id": 123,<br/>    "username": "johndoe",<br/>    "email": "john@example.com",<br/>    "emailVerified": false,<br/>    "isActive": false<br/>  },<br/>  "emailSent": true,<br/>  "nextStep": "verify_email",<br/>  "expiresIn": "24 hours"<br/>}<br/><br/>===== CLIENT ACTIONS =====<br/>• Hide registration form<br/>• Show success message<br/>• Display email verification notice<br/>• Start email check timer<br/>• Enable "Resend Email" option after 5 min]
+    
+    REGISTRATION_PARTIAL[REGISTRATION PARTIAL SUCCESS<br/>===== HTTP RESPONSE =====<br/>Status: 201 Created<br/>Response Body:<br/>{<br/>  "success": true,<br/>  "message": "Account created successfully!",<br/>  "user": {user_object},<br/>  "emailSent": false,<br/>  "warning": "Email delivery failed",<br/>  "nextStep": "contact_support",<br/>  "supportEmail": "support@andylibrary.com",<br/>  "manualVerification": true<br/>}<br/><br/>===== CLIENT DISPLAY =====<br/>• Show account created message<br/>• Warning about email issue<br/>• Manual verification instructions<br/>• Support contact information<br/>• Option to try resend email<br/>• Temporary login capability]
+    
+    %% === EMAIL VERIFICATION PAGE ===
+    SHOW_VERIFICATION_PAGE[DISPLAY EMAIL VERIFICATION PAGE<br/>===== PAGE LAYOUT =====<br/>Header: "Check Your Email"<br/>Icon: 📧 (large, centered)<br/><br/>Main Content:<br/>"We've sent a verification email to:<br/>[user_email_display]<br/><br/>Please check your inbox and click the<br/>verification link to activate your account."<br/><br/>Instructions:<br/>• "Check your spam/junk folder"<br/>• "Email may take a few minutes"<br/>• "Link expires in 24 hours"<br/><br/>===== ACTION BUTTONS =====<br/>• "Resend Email" (disabled for 5 min)<br/>• "Change Email Address"<br/>• "Contact Support"<br/>• "Continue as Guest"<br/><br/>===== STATUS INDICATORS =====<br/>• Email countdown timer<br/>• Resend cooldown timer<br/>• Verification status check<br/>• Auto-refresh every 30 seconds]
+    
+    USER_EMAIL_ACTIONS{USER ACTION?<br/>What does user choose?}
+    
+    RESEND_EMAIL[RESEND VERIFICATION EMAIL<br/>===== RATE LIMITING =====<br/>• Check: max 3 emails per hour<br/>• Check: min 5 minutes between sends<br/>• Display cooldown timer<br/><br/>===== RESEND PROCESS =====<br/>• Generate new verification token<br/>• Invalidate previous token<br/>• Update database expiration<br/>• Send new email with same template<br/>• Update attempt counter<br/><br/>===== USER FEEDBACK =====<br/>• "Email resent successfully"<br/>• Update sent timestamp<br/>• Reset button cooldown<br/>• Log resend attempt]
+    
+    CHECK_EMAIL[USER CHECKS EMAIL<br/>===== EMAIL RECEIPT =====<br/>User opens email client:<br/>• Gmail, Outlook, Apple Mail, etc.<br/>• Check inbox folder<br/>• Check spam/junk folder<br/>• Check promotions tab (Gmail)<br/><br/>===== EMAIL CONTENT DISPLAY =====<br/>Subject: "Welcome to AndyLibrary - Verify Your Email"<br/>From: "AndyLibrary <noreply@andylibrary.com>"<br/><br/>Email body shows:<br/>• Welcome message with user name<br/>• Large "Verify Email" button<br/>• Alternative text link<br/>• Manual verification code<br/>• Expiration time remaining<br/>• Support contact info]
+    
+    EMAIL_FOUND{EMAIL FOUND<br/>& RECEIVED?}
+    
+    CLICK_VERIFY_LINK[USER CLICKS VERIFICATION LINK<br/>===== LINK ACTION =====<br/>URL: https://andylibrary.com/verify-email?token=abc123&user=456<br/>• Opens in default browser<br/>• May open new tab/window<br/>• Shows loading page briefly<br/><br/>===== REQUEST PROCESSING =====<br/>GET /verify-email<br/>Parameters:<br/>• token: verification token<br/>• user: user ID (optional)<br/>• source: email (tracking)<br/><br/>===== SERVER VALIDATION =====<br/>• Extract token from URL<br/>• Validate token format<br/>• Look up token in database<br/>• Check expiration time<br/>• Verify user association]
+    
+    %% === TOKEN VALIDATION ===
+    VALIDATE_TOKEN[VALIDATE VERIFICATION TOKEN<br/>===== DATABASE QUERY =====<br/>SELECT id, username, email, verification_token,<br/>       token_expires_at, email_verified<br/>FROM users<br/>WHERE verification_token = ?<br/>  AND token_expires_at > NOW()<br/>  AND email_verified = FALSE<br/>  AND deleted_at IS NULL<br/><br/>===== VALIDATION CHECKS =====<br/>Token exists: Database record found<br/>Not expired: token_expires_at > current time<br/>Not used: email_verified = FALSE<br/>Valid format: UUID v4 format<br/>Not revoked: token not in revoked_tokens table<br/><br/>===== SECURITY MEASURES =====<br/>• Log verification attempt<br/>• Check for suspicious activity<br/>• Rate limit verification attempts<br/>• Prevent token enumeration attacks]
+    
+    TOKEN_VALID{TOKEN VALIDATION<br/>RESULT?}
+    
+    ACTIVATION_SUCCESS[ACTIVATE USER ACCOUNT<br/>===== DATABASE UPDATES =====<br/>UPDATE users SET<br/>  email_verified = TRUE,<br/>  is_active = TRUE,<br/>  verified_at = NOW(),<br/>  verification_token = NULL,<br/>  token_expires_at = NULL,<br/>  access_level = 'verified'<br/>WHERE id = user_id<br/><br/>===== SESSION CREATION =====<br/>• Generate session token<br/>• Set session expiration (7 days)<br/>• Create session record<br/>• Set authentication cookies<br/><br/>===== SUCCESS ACTIONS =====<br/>• Log successful verification<br/>• Update user metrics<br/>• Trigger welcome email<br/>• Initialize user preferences<br/>• Create default folders/settings]
+    
+    SHOW_VERIFICATION_SUCCESS[SHOW VERIFICATION SUCCESS PAGE<br/>===== PAGE LAYOUT =====<br/>Header: "Email Verified Successfully! 🎉"<br/>Icon: ✅ (large, green checkmark)<br/><br/>Success Message:<br/>"Congratulations! Your email has been verified<br/>and your account is now active."<br/><br/>Account Details:<br/>• Username: [username]<br/>• Email: [email] ✅ Verified<br/>• Account Status: Active<br/>• Membership: Free Tier<br/><br/>===== NEXT STEPS =====<br/>"What would you like to do next?"<br/>• "Browse Books" (primary button)<br/>• "Complete Profile" (secondary)<br/>• "Take a Tour" (link)<br/>• "Go to Dashboard" (link)<br/><br/>===== AUTO-REDIRECT =====<br/>• Countdown timer: "Redirecting in 10 seconds..."<br/>• Auto-redirect to dashboard<br/>• User can cancel auto-redirect]
+    
+    TOKEN_ERROR[TOKEN VALIDATION ERROR<br/>===== ERROR TYPES =====<br/>Token not found:<br/>• "Invalid verification link"<br/>• "Token may have been used already"<br/><br/>Token expired:<br/>• "Verification link expired"<br/>• "Links are valid for 24 hours"<br/><br/>Already verified:<br/>• "Email already verified"<br/>• "Account is active"<br/><br/>===== ERROR PAGE DISPLAY =====<br/>Header: "Verification Error"<br/>Icon: ❌ (red X)<br/>Error message based on type<br/><br/>===== RECOVERY OPTIONS =====<br/>• "Request New Verification Email"<br/>• "Sign In to Existing Account"<br/>• "Contact Support"<br/>• "Create New Account"<br/><br/>===== ACTION BUTTONS =====<br/>• "Send New Email" (primary)<br/>• "Go to Sign In" (secondary)<br/>• "Get Help" (link)]
+    
+    %% === SIGN IN FLOW ===
+    SHOW_SIGNIN_FORM[DISPLAY SIGN IN FORM<br/>===== FORM LAYOUT =====<br/>Header: "Welcome Back!"<br/>Subtitle: "Sign in to your account"<br/><br/>===== LOGIN FIELDS =====<br/>📧 Email or Username: [text input]<br/>   • Placeholder: "email or username"<br/>   • Autocomplete: username<br/>   • Remember last value<br/><br/>🔒 Password: [password input]<br/>   • Placeholder: "Enter your password"<br/>   • Show/hide toggle<br/>   • Caps lock warning<br/><br/>===== OPTIONS =====<br/>☑️ Remember me (optional)<br/>   • Extends session to 30 days<br/>   • Stores in secure cookie<br/><br/>===== BUTTONS =====<br/>• "Sign In" (blue, primary)<br/>• "Forgot Password?" (link)<br/>• "Create Account" (secondary)<br/>• "Continue as Guest" (small link)<br/><br/>===== SOCIAL LOGIN =====<br/>"Or sign in with:"<br/>• Google OAuth button<br/>• GitHub OAuth button<br/>• Microsoft OAuth button<br/><br/>===== SECURITY FEATURES =====<br/>• CSRF protection<br/>• Rate limiting display<br/>• Login attempt counter<br/>• Captcha after 3 failed attempts]
+    
+    %% === MAIN APPLICATION ===
+    MAIN_DASHBOARD[MAIN APPLICATION DASHBOARD<br/>===== HEADER BAR =====<br/>• AndyLibrary logo (clickable)<br/>• Search bar (global)<br/>• Notifications bell (red dot if new)<br/>• User avatar dropdown:<br/>  - Profile Settings<br/>  - My Books<br/>  - Reading History<br/>  - Account Settings<br/>  - Sign Out<br/><br/>===== MAIN CONTENT =====<br/>Welcome Section:<br/>• "Welcome back, [username]!"<br/>• Last login time<br/>• Account status indicator<br/><br/>Quick Actions:<br/>• "Browse Books" (large button)<br/>• "My Library" (personal collection)<br/>• "Continue Reading" (recent books)<br/>• "Recommendations" (AI suggested)<br/><br/>===== SIDEBAR =====<br/>Categories:<br/>• Science & Technology<br/>• Literature & Arts<br/>• History & Social Studies<br/>• Mathematics<br/>• Languages<br/>• Professional Development<br/><br/>===== FOOTER =====<br/>• Support links<br/>• Privacy policy<br/>• Terms of service<br/>• Version info]
+    
+    %% === GUEST BROWSE FLOW ===
+    GUEST_BROWSE[GUEST BROWSE MODE<br/>===== LIMITED ACCESS =====<br/>Header: "Browsing as Guest"<br/>• Limited search results (first 10)<br/>• No book downloads<br/>• No personal library<br/>• Registration prompts<br/><br/>===== AVAILABLE FEATURES =====<br/>• Browse book categories<br/>• View book descriptions<br/>• Read sample pages<br/>• Search functionality (limited)<br/><br/>===== CONVERSION PROMPTS =====<br/>• "Register for full access"<br/>• "Download requires account"<br/>• "Save books to personal library"<br/>• Exit-intent popup<br/><br/>===== TRACKING =====<br/>• Track guest activities<br/>• Popular books for guests<br/>• Conversion funnel metrics<br/>• A/B test registration prompts]
+    
+    %% === MAIN FLOW CONNECTIONS ===
+    START --> LOAD_ASSETS
+    LOAD_ASSETS --> CHECK_SESSION
+    CHECK_SESSION --> SESSION_DECISION
+    
+    SESSION_DECISION -->|YES - Valid Session| MAIN_DASHBOARD
+    SESSION_DECISION -->|NO - No Session| SHOW_LANDING
+    
+    SHOW_LANDING --> AUTH_CHOICE
+    AUTH_CHOICE -->|REGISTER CLICKED| SHOW_REGISTER_FORM
+    AUTH_CHOICE -->|SIGN IN CLICKED| SHOW_SIGNIN_FORM
+    AUTH_CHOICE -->|GUEST BROWSE CLICKED| GUEST_BROWSE
+    
+    SHOW_REGISTER_FORM --> USER_TYPES
+    USER_TYPES --> VALIDATION_STATE
+    VALIDATION_STATE -->|INVALID| SHOW_FIELD_ERRORS
+    VALIDATION_STATE -->|VALID| USER_SUBMITS
+    SHOW_FIELD_ERRORS --> USER_TYPES
+    
+    USER_SUBMITS --> SERVER_VALIDATE
+    SERVER_VALIDATE --> VALIDATION_RESULT
+    VALIDATION_RESULT -->|FAILED| RETURN_VALIDATION_ERROR
+    VALIDATION_RESULT -->|PASSED| CHECK_DUPLICATES
+    RETURN_VALIDATION_ERROR --> SHOW_FIELD_ERRORS
+    
+    CHECK_DUPLICATES --> DUPLICATES_FOUND
+    DUPLICATES_FOUND -->|YES| RETURN_DUPLICATE_ERROR
+    DUPLICATES_FOUND -->|NO| CREATE_ACCOUNT
+    RETURN_DUPLICATE_ERROR --> SHOW_FIELD_ERRORS
+    
+    CREATE_ACCOUNT --> ACCOUNT_CREATED
+    ACCOUNT_CREATED --> PREPARE_EMAIL
+    PREPARE_EMAIL --> SEND_EMAIL
+    SEND_EMAIL --> EMAIL_RESULT
+    EMAIL_RESULT -->|SUCCESS| EMAIL_SUCCESS
+    EMAIL_RESULT -->|FAILED| EMAIL_FAILURE
+    
+    EMAIL_SUCCESS --> REGISTRATION_SUCCESS
+    EMAIL_FAILURE --> REGISTRATION_PARTIAL
+    REGISTRATION_SUCCESS --> SHOW_VERIFICATION_PAGE
+    REGISTRATION_PARTIAL --> SHOW_VERIFICATION_PAGE
+    
+    SHOW_VERIFICATION_PAGE --> USER_EMAIL_ACTIONS
+    USER_EMAIL_ACTIONS -->|RESEND EMAIL| RESEND_EMAIL
+    USER_EMAIL_ACTIONS -->|CHECK EMAIL| CHECK_EMAIL
+    USER_EMAIL_ACTIONS -->|CHANGE EMAIL| SHOW_REGISTER_FORM
+    USER_EMAIL_ACTIONS -->|CONTACT SUPPORT| GUEST_BROWSE
+    
+    RESEND_EMAIL --> SEND_EMAIL
+    CHECK_EMAIL --> EMAIL_FOUND
+    EMAIL_FOUND -->|YES| CLICK_VERIFY_LINK
+    EMAIL_FOUND -->|NO| RESEND_EMAIL
+    
+    CLICK_VERIFY_LINK --> VALIDATE_TOKEN
+    VALIDATE_TOKEN --> TOKEN_VALID
+    TOKEN_VALID -->|VALID| ACTIVATION_SUCCESS
+    TOKEN_VALID -->|INVALID| TOKEN_ERROR
+    
+    ACTIVATION_SUCCESS --> SHOW_VERIFICATION_SUCCESS
+    SHOW_VERIFICATION_SUCCESS --> MAIN_DASHBOARD
+    TOKEN_ERROR --> SHOW_VERIFICATION_PAGE
+    
+    %% === STYLING ===
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000000,font-weight:bold
+    classDef pageClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000,font-weight:bold
+    classDef processClass fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000,font-weight:bold
+    classDef decisionClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000000,font-weight:bold
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000,font-weight:bold
+    classDef successClass fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000000,font-weight:bold
+    classDef userActionClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000000,font-weight:bold
+    
+    class START,MAIN_DASHBOARD startEndClass
+    class SHOW_LANDING,SHOW_REGISTER_FORM,SHOW_SIGNIN_FORM,SHOW_VERIFICATION_PAGE,SHOW_VERIFICATION_SUCCESS pageClass
+    class LOAD_ASSETS,CHECK_SESSION,SERVER_VALIDATE,CHECK_DUPLICATES,CREATE_ACCOUNT,PREPARE_EMAIL,SEND_EMAIL,VALIDATE_TOKEN processClass
+    class SESSION_DECISION,AUTH_CHOICE,VALIDATION_STATE,VALIDATION_RESULT,DUPLICATES_FOUND,EMAIL_RESULT,EMAIL_FOUND,TOKEN_VALID,USER_EMAIL_ACTIONS decisionClass
+    class SHOW_FIELD_ERRORS,RETURN_VALIDATION_ERROR,RETURN_DUPLICATE_ERROR,EMAIL_FAILURE,TOKEN_ERROR errorClass
+    class ACCOUNT_CREATED,EMAIL_SUCCESS,REGISTRATION_SUCCESS,ACTIVATION_SUCCESS successClass
+    class USER_TYPES,USER_SUBMITS,CHECK_EMAIL,CLICK_VERIFY_LINK,RESEND_EMAIL userActionClass
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 100,
+                rankSpacing: 80
+            },
+            themeVariables: {
+                primaryColor: '#f3e5f5',
+                primaryTextColor: '#000000',
+                primaryBorderColor: '#4a148c',
+                lineColor: '#333333',
+                fontSize: '10px',
+                fontFamily: 'Arial, sans-serif',
+                background: '#ffffff'
+            }
+        });
+    </script>
+</body>
+</html>

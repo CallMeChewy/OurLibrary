@@ -1,0 +1,199 @@
+
+flowchart TD
+    %% Detailed AndyLibrary Registration Process Flowchart
+    %% Enhanced with comprehensive data requirements and sequences
+    
+    %% Start/End Nodes
+    START([🚀 START<br/><b>User Opens Browser</b>])
+    END([✅ END<br/><b>Book Access Complete</b>])
+    
+    %% Initial Landing and Authentication Check
+    POWER_ON[⚡ POWER ON<br/><b>Load Website</b><br/>• Static assets load<br/>• Service worker registers<br/>• Check existing session]
+    SCAN_ENV[🔍 SCAN ENVIRONMENT<br/><b>Authentication Status Check</b><br/>• Check session cookies<br/>• Validate session tokens<br/>• Load user preferences]
+    GEN_MAP[🗺️ GENERATE MAP<br/><b>Load User Interface</b><br/>• Render auth forms<br/>• Load CSS/JS assets<br/>• Initialize form validation]
+    
+    %% Authentication Decision Point
+    AUTH_CHECK{🔐 USER<br/><b>AUTHENTICATED?</b><br/>Session token valid?}
+    
+    %% Registration Form Display and Data Collection
+    SHOW_REG_FORM[📝 SHOW REGISTRATION FORM<br/><b>Display Input Fields</b><br/>• Email input (required)<br/>• Username input (required)<br/>• Password input (required)<br/>• Confirm password (required)<br/>• Mission acknowledgment (required)<br/>• Marketing opt-in (optional)<br/>• Terms agreement (required)]
+    
+    %% User Data Entry Process
+    USER_ENTERS_DATA[👤 USER ENTERS DATA<br/><b>Form Field Input</b><br/>REQUIRED FIELDS:<br/>• Email: user@example.com<br/>• Username: johndoe (3-20 chars)<br/>• Password: 8+ chars, mixed case<br/>• Confirm Password: must match<br/>• Mission: ☑️ Educational access<br/>• Terms: ☑️ I agree<br/>OPTIONAL FIELDS:<br/>• Full Name: John Doe<br/>• Organization: University XYZ<br/>• Country: Select from dropdown<br/>• Newsletter: ☐ Subscribe]
+    
+    %% Client-Side Validation
+    CLIENT_VALIDATION[⚡ CLIENT-SIDE VALIDATION<br/><b>Real-Time Field Validation</b><br/>• Email format check (regex)<br/>• Username availability hint<br/>• Password strength meter<br/>• Confirm password match<br/>• Required field indicators<br/>• Visual feedback (✅/❌)]
+    
+    %% Form Submission
+    USER_SUBMITS[📤 USER SUBMITS FORM<br/><b>Form Submission Event</b><br/>• Prevent default submit<br/>• Gather form data<br/>• Show loading spinner<br/>• Disable submit button<br/>• POST to /api/auth/register]
+    
+    %% Server-Side Validation Process
+    SERVER_VALIDATION[🔍 SERVER-SIDE VALIDATION<br/><b>Comprehensive Data Validation</b><br/>REQUIRED FIELD CHECKS:<br/>• Email: present + valid format<br/>• Username: 3-20 chars, alphanumeric<br/>• Password: 8+ chars, complexity<br/>• Mission: boolean true<br/>• Terms: boolean true<br/>SECURITY CHECKS:<br/>• SQL injection prevention<br/>• XSS sanitization<br/>• Rate limiting check<br/>• CSRF token validation]
+    
+    %% Validation Results Decision
+    VALIDATION_RESULT{✅ VALIDATION<br/><b>PASSED?</b><br/>All required fields valid?}
+    
+    %% Validation Error Handling
+    VALIDATION_ERROR[❌ VALIDATION ERROR<br/><b>Return Field-Specific Errors</b><br/>POSSIBLE ERRORS:<br/>• Email: "Invalid format"<br/>• Username: "Too short/long"<br/>• Password: "Too weak"<br/>• Mission: "Must acknowledge"<br/>• Terms: "Must accept"<br/>HTTP Status: 422<br/>Response: Error details JSON]
+    
+    %% Database Duplicate Check
+    DUPLICATE_CHECK[🔍 DUPLICATE CHECK<br/><b>Database Query</b><br/>• Check email in Users table<br/>• Check username in Users table<br/>• Case-insensitive comparison<br/>• Query: SELECT * FROM Users<br/>  WHERE email=? OR username=?]
+    
+    %% Duplicate Check Results
+    DUPLICATE_RESULT{🔍 DUPLICATES<br/><b>FOUND?</b><br/>Email or username exists?}
+    
+    %% Duplicate Error Response
+    DUPLICATE_ERROR[❌ DUPLICATE ERROR<br/><b>Conflict Response</b><br/>EMAIL EXISTS:<br/>• Status: 409 Conflict<br/>• Message: "Email already registered"<br/>• Suggestion: "Try login instead"<br/>USERNAME EXISTS:<br/>• Status: 409 Conflict<br/>• Message: "Username taken"<br/>• Suggestion: "Try: johndoe123"]
+    
+    %% User Account Creation Process
+    CREATE_USER_ACCOUNT[✅ CREATE USER ACCOUNT<br/><b>Database Insert Operation</b><br/>USER RECORD CREATION:<br/>• Hash password with bcrypt (cost: 12)<br/>• Generate verification token (UUID)<br/>• Set EmailVerified = FALSE<br/>• Set IsActive = FALSE<br/>• Set SubscriptionTier = 'free'<br/>• Set CreatedAt = NOW()<br/>• Set AccessLevel = 'basic'<br/>• Assign UserID (auto-increment)<br/>INSERT INTO Users VALUES (...)]
+    
+    %% Account Creation Success
+    ACCOUNT_CREATED[🎉 ACCOUNT CREATED<br/><b>User Record Saved</b><br/>SYSTEM ACTIONS:<br/>• User ID assigned: 30<br/>• Password securely hashed<br/>• Verification token generated<br/>• Database transaction committed<br/>• Audit log entry created<br/>• User session prepared]
+    
+    %% Email Verification Process Start
+    PREPARE_EMAIL[📧 PREPARE VERIFICATION EMAIL<br/><b>Email Template Generation</b><br/>EMAIL CONTENT:<br/>• From: HimalayaProject1@gmail.com<br/>• To: user@example.com<br/>• Subject: "Welcome to AndyLibrary"<br/>• Template: verification.html<br/>• Verification URL with token<br/>• Expiration: 24 hours<br/>• Personalized greeting]
+    
+    %% SMTP Email Sending
+    SEND_EMAIL_SMTP[📤 SEND EMAIL VIA SMTP<br/><b>Email Delivery Process</b><br/>SMTP CONFIGURATION:<br/>• Server: smtp.gmail.com:465<br/>• Security: SSL/TLS enabled<br/>• Auth: App password (svah...)<br/>• Timeout: 30 seconds<br/>• Retry: 3 attempts<br/>• Delivery confirmation<br/>• Error logging enabled]
+    
+    %% Email Send Result
+    EMAIL_SEND_RESULT{📧 EMAIL<br/><b>SENT?</b><br/>SMTP success response?}
+    
+    %% Email Send Success
+    EMAIL_SUCCESS[✅ EMAIL SENT SUCCESSFULLY<br/><b>SMTP Delivery Confirmed</b><br/>SYSTEM RESPONSE:<br/>• SMTP Status: 250 OK<br/>• Message-ID recorded<br/>• Delivery timestamp logged<br/>• Email queue updated<br/>• Success metrics incremented]
+    
+    %% Email Send Failure
+    EMAIL_FAILURE[❌ EMAIL SEND FAILED<br/><b>SMTP Error Handling</b><br/>POSSIBLE ERRORS:<br/>• SMTP server unavailable<br/>• Authentication failure<br/>• Rate limit exceeded<br/>• Invalid recipient address<br/>• Network timeout<br/>• Quota exceeded<br/>Error logged for admin review]
+    
+    %% Registration Success Response
+    REG_SUCCESS_RESPONSE[🎉 REGISTRATION SUCCESS<br/><b>Client Response</b><br/>HTTP Status: 201 Created<br/>JSON RESPONSE:<br/>{{<br/>  "success": true,<br/>  "message": "Registration successful",<br/>  "userId": 30,<br/>  "email": "user@example.com",<br/>  "emailSent": true,<br/>  "nextStep": "verify_email"<br/>}}<br/>• Hide form, show success<br/>• Display verification instructions]
+    
+    %% Registration Partial Success (No Email)
+    REG_PARTIAL_SUCCESS[⚠️ REGISTRATION PARTIAL SUCCESS<br/><b>Account Created, Email Failed</b><br/>HTTP Status: 201 Created<br/>JSON RESPONSE:<br/>{{<br/>  "success": true,<br/>  "message": "Account created",<br/>  "userId": 30,<br/>  "emailSent": false,<br/>  "warning": "Email delivery failed",<br/>  "nextStep": "contact_support"<br/>}}<br/>• Show manual verification option<br/>• Provide support contact]
+    
+    %% User Email Verification Wait
+    USER_WAITS[⏳ USER WAITS FOR EMAIL<br/><b>Email Verification Process</b><br/>USER ACTIONS NEEDED:<br/>• Check email inbox<br/>• Check spam/junk folder<br/>• Look for sender verification<br/>• Click verification link<br/>SYSTEM MONITORING:<br/>• Token expiration timer<br/>• Delivery status tracking<br/>• User session maintenance]
+    
+    %% Email Receipt Check
+    EMAIL_RECEIVED{📧 EMAIL<br/><b>RECEIVED?</b><br/>User found verification email?}
+    
+    %% User Clicks Verification Link
+    USER_CLICKS_VERIFY[👆 USER CLICKS VERIFICATION<br/><b>Email Link Action</b><br/>VERIFICATION LINK:<br/>• URL: /api/auth/verify-email<br/>• Parameter: ?token=abc123...<br/>• Method: GET request<br/>• Browser redirect<br/>• Token validation required<br/>• Session state check]
+    
+    %% Token Validation Process
+    TOKEN_VALIDATION[🎫 TOKEN VALIDATION<br/><b>Server-Side Verification</b><br/>VALIDATION CHECKS:<br/>• Token exists in database<br/>• Token not expired (24h limit)<br/>• Token matches user record<br/>• User not already verified<br/>• Token not previously used<br/>QUERY: SELECT * FROM Users<br/>WHERE verification_token=?<br/>AND EmailVerified=FALSE]
+    
+    %% Token Validation Result
+    TOKEN_VALID_RESULT{🎫 TOKEN<br/><b>VALID?</b><br/>Verification token accepted?}
+    
+    %% Account Activation Process
+    ACTIVATE_ACCOUNT[✅ ACTIVATE ACCOUNT<br/><b>Account Verification Complete</b><br/>DATABASE UPDATES:<br/>• EmailVerified = TRUE<br/>• IsActive = TRUE<br/>• VerifiedAt = NOW()<br/>• verification_token = NULL<br/>• AccessLevel = 'verified'<br/>UPDATE Users SET ... WHERE id=30<br/>• Commit transaction<br/>• Audit log entry]
+    
+    %% Verification Success Response
+    VERIFY_SUCCESS[🎉 VERIFICATION SUCCESS<br/><b>Account Fully Activated</b><br/>HTTP Status: 200 OK<br/>RESPONSE:<br/>{{<br/>  "success": true,<br/>  "message": "Email verified",<br/>  "accountActive": true,<br/>  "nextStep": "login"<br/>}}<br/>• Redirect to login page<br/>• Show success message<br/>• Clear verification state]
+    
+    %% Verification Error Handling
+    VERIFY_ERROR[❌ VERIFICATION ERROR<br/><b>Token Validation Failed</b><br/>POSSIBLE ERRORS:<br/>• Token expired (24h limit)<br/>• Token not found<br/>• Token already used<br/>• Account already verified<br/>• Malformed token<br/>HTTP Status: 400/404/410<br/>• Show error page<br/>• Offer resend option]
+    
+    %% Resend Verification Option
+    RESEND_OPTION[🔄 RESEND VERIFICATION<br/><b>New Verification Email</b><br/>USER ACTION:<br/>• Click "Resend Email" button<br/>• POST /api/auth/resend-verification<br/>SYSTEM RESPONSE:<br/>• Generate new token<br/>• Send new email<br/>• Update database<br/>• Rate limit check (max 3/hour)]
+    
+    %% Continue to Login Process
+    CONTINUE_LOGIN[▶️ CONTINUE TO LOGIN<br/><b>Ready for Authentication</b><br/>ACCOUNT STATUS:<br/>• Email verified ✅<br/>• Account active ✅<br/>• Ready for login ✅<br/>• Access level: verified<br/>• User can now authenticate<br/>• Full system access enabled]
+    
+    %% LOGIN PROCESS (Simplified for space)
+    LOGIN_PROCESS[🔑 LOGIN PROCESS<br/><b>User Authentication</b><br/>• Email/password form<br/>• Credential validation<br/>• Session creation<br/>• Access granted]
+    
+    %% Continue to Main System
+    MAIN_SYSTEM[📚 MAIN SYSTEM ACCESS<br/><b>Full AndyLibrary Features</b><br/>• Book search and browse<br/>• Google Drive integration<br/>• User profile management<br/>• Reading history<br/>• Preferences settings]
+    
+    %% MAIN FLOW CONNECTIONS
+    START --> POWER_ON
+    POWER_ON --> SCAN_ENV
+    SCAN_ENV --> GEN_MAP
+    GEN_MAP --> AUTH_CHECK
+    
+    %% Authentication Decision
+    AUTH_CHECK -->|<b>❌ NO</b>| SHOW_REG_FORM
+    AUTH_CHECK -->|<b>✅ YES</b>| MAIN_SYSTEM
+    
+    %% Registration Form Flow
+    SHOW_REG_FORM --> USER_ENTERS_DATA
+    USER_ENTERS_DATA --> CLIENT_VALIDATION
+    CLIENT_VALIDATION --> USER_SUBMITS
+    USER_SUBMITS --> SERVER_VALIDATION
+    
+    %% Server Validation Flow
+    SERVER_VALIDATION --> VALIDATION_RESULT
+    VALIDATION_RESULT -->|<b>❌ FAILED</b>| VALIDATION_ERROR
+    VALIDATION_RESULT -->|<b>✅ PASSED</b>| DUPLICATE_CHECK
+    
+    %% Error Handling
+    VALIDATION_ERROR -->|<b>🔄 FIX & RETRY</b>| USER_ENTERS_DATA
+    
+    %% Duplicate Check Flow
+    DUPLICATE_CHECK --> DUPLICATE_RESULT
+    DUPLICATE_RESULT -->|<b>✅ UNIQUE</b>| CREATE_USER_ACCOUNT
+    DUPLICATE_RESULT -->|<b>❌ DUPLICATE</b>| DUPLICATE_ERROR
+    DUPLICATE_ERROR -->|<b>🔄 FIX & RETRY</b>| USER_ENTERS_DATA
+    
+    %% Account Creation Flow
+    CREATE_USER_ACCOUNT --> ACCOUNT_CREATED
+    ACCOUNT_CREATED --> PREPARE_EMAIL
+    PREPARE_EMAIL --> SEND_EMAIL_SMTP
+    
+    %% Email Send Results
+    SEND_EMAIL_SMTP --> EMAIL_SEND_RESULT
+    EMAIL_SEND_RESULT -->|<b>✅ SUCCESS</b>| EMAIL_SUCCESS
+    EMAIL_SEND_RESULT -->|<b>❌ FAILED</b>| EMAIL_FAILURE
+    
+    %% Registration Response
+    EMAIL_SUCCESS --> REG_SUCCESS_RESPONSE
+    EMAIL_FAILURE --> REG_PARTIAL_SUCCESS
+    
+    %% User Verification Wait
+    REG_SUCCESS_RESPONSE --> USER_WAITS
+    REG_PARTIAL_SUCCESS --> USER_WAITS
+    
+    %% Email Verification Flow
+    USER_WAITS --> EMAIL_RECEIVED
+    EMAIL_RECEIVED -->|<b>✅ YES</b>| USER_CLICKS_VERIFY
+    EMAIL_RECEIVED -->|<b>❌ NO</b>| RESEND_OPTION
+    
+    %% Token Validation Flow
+    USER_CLICKS_VERIFY --> TOKEN_VALIDATION
+    TOKEN_VALIDATION --> TOKEN_VALID_RESULT
+    TOKEN_VALID_RESULT -->|<b>✅ VALID</b>| ACTIVATE_ACCOUNT
+    TOKEN_VALID_RESULT -->|<b>❌ INVALID</b>| VERIFY_ERROR
+    
+    %% Account Activation
+    ACTIVATE_ACCOUNT --> VERIFY_SUCCESS
+    VERIFY_SUCCESS --> CONTINUE_LOGIN
+    
+    %% Error Recovery
+    VERIFY_ERROR --> RESEND_OPTION
+    RESEND_OPTION --> PREPARE_EMAIL
+    
+    %% Final Flow
+    CONTINUE_LOGIN --> LOGIN_PROCESS
+    LOGIN_PROCESS --> MAIN_SYSTEM
+    MAIN_SYSTEM --> END
+    
+    %% DETAILED PROFESSIONAL STYLING
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:4px,color:#000000,font-size:14px,font-weight:900
+    classDef processClass fill:#f3e5f5,stroke:#4a148c,stroke-width:3px,color:#000000,font-size:12px,font-weight:800
+    classDef decisionClass fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#000000,font-size:13px,font-weight:800
+    classDef userActionClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px,color:#000000,font-size:12px,font-weight:800
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#000000,font-size:12px,font-weight:800
+    classDef successClass fill:#f1f8e9,stroke:#33691e,stroke-width:3px,color:#000000,font-size:12px,font-weight:800
+    classDef dataClass fill:#fce4ec,stroke:#880e4f,stroke-width:3px,color:#000000,font-size:12px,font-weight:800
+    
+    %% APPLY DETAILED STYLES
+    class START,END startEndClass
+    class POWER_ON,SCAN_ENV,GEN_MAP,SERVER_VALIDATION,DUPLICATE_CHECK,CREATE_USER_ACCOUNT,PREPARE_EMAIL,SEND_EMAIL_SMTP,TOKEN_VALIDATION,ACTIVATE_ACCOUNT,LOGIN_PROCESS,MAIN_SYSTEM processClass
+    class AUTH_CHECK,VALIDATION_RESULT,DUPLICATE_RESULT,EMAIL_SEND_RESULT,EMAIL_RECEIVED,TOKEN_VALID_RESULT decisionClass
+    class SHOW_REG_FORM,USER_ENTERS_DATA,CLIENT_VALIDATION,USER_SUBMITS,USER_WAITS,USER_CLICKS_VERIFY userActionClass
+    class VALIDATION_ERROR,DUPLICATE_ERROR,EMAIL_FAILURE,VERIFY_ERROR errorClass
+    class ACCOUNT_CREATED,EMAIL_SUCCESS,REG_SUCCESS_RESPONSE,VERIFY_SUCCESS,CONTINUE_LOGIN successClass
+    class REG_PARTIAL_SUCCESS,RESEND_OPTION dataClass

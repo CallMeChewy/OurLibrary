@@ -1,0 +1,137 @@
+
+flowchart TD
+    %% Professional AndyLibrary User Process Flowchart
+    %% Designed for management presentation
+    
+    %% Start/End Nodes
+    START([🚀 Start<br/>User Opens Browser])
+    END([✅ End<br/>Book Access Complete])
+    
+    %% Main Process Flow
+    POWER_ON[⚡ Power On<br/>Load Website]
+    SCAN_ENV[🔍 Scan Environment<br/>Check Auth Status]
+    GEN_MAP[🗺️ Generate Map<br/>Load User Interface]
+    PLAN_ROUTE[🎯 Plan Route<br/>Choose Auth Method]
+    
+    %% Authentication Decision
+    AUTH_CHECK{🔐 User<br/>Authenticated?}
+    
+    %% Registration Flow
+    VAC_ON[🔄 Vacuum On<br/>Start Registration]
+    REG_VALID{✅ Registration<br/>Valid?}
+    SEND_EMAIL[📧 Send Verification<br/>Email Process]
+    EMAIL_SENT{📤 Email<br/>Sent?}
+    VACUUM_FULL{📧 Email<br/>Verified?}
+    TOKEN_VALID{🎫 Token<br/>Valid?}
+    
+    %% Login Flow  
+    LOGIN_PROCESS[🔑 Login Process<br/>Authenticate User]
+    USER_FOUND{👤 User<br/>Found?}
+    BATTERY_LOW{🔒 Account<br/>Locked?}
+    LOGIN_SUCCESS{✅ Login<br/>Successful?}
+    
+    %% Data Storage
+    ROUTE[(💾 User Database<br/>Store User Data)]
+    
+    %% Google Drive Integration
+    GDRIVE_SETUP[☁️ Google Drive Setup<br/>OAuth Configuration]
+    GDRIVE_AUTH{🌐 Google Drive<br/>Authorized?}
+    FIND_FOLDER[📁 Find Library Folder<br/>Search Google Drive]
+    FOLDER_EXISTS{📂 Library Folder<br/>Exists?}
+    BOOK_SEARCH[📚 Search Book File<br/>Locate Requested Book]
+    FILE_FOUND{📖 Book File<br/>Found?}
+    
+    %% Error States
+    ERROR_IND[🚨 Error Indicator On<br/>Show Error Message]
+    DUPLICATE_USER[❌ Duplicate User<br/>Email Already Exists]
+    VAC_OFF_1[🔴 Vacuum Off<br/>Email Verification Failed]
+    TOKEN_EXPIRED[⏰ Token Expired<br/>Request New Verification]
+    USER_NOT_FOUND[❌ User Not Found<br/>Invalid Credentials]
+    VAC_OFF_2[🔴 Vacuum Off<br/>Google Drive Failed]
+    STOP_MOVING[🛑 Stop Moving<br/>Registration Failed]
+    
+    %% Action States
+    RETURN_DOCK[🏠 Return to Dock<br/>Show Login Form]
+    POWER_OFF[⏹️ Power Off<br/>Session Expired]
+    
+    %% MAIN FLOW CONNECTIONS
+    START --> POWER_ON
+    POWER_ON --> SCAN_ENV
+    SCAN_ENV --> GEN_MAP
+    GEN_MAP --> PLAN_ROUTE
+    PLAN_ROUTE --> AUTH_CHECK
+    
+    %% AUTHENTICATION DECISION
+    AUTH_CHECK -->|❌ No| VAC_ON
+    AUTH_CHECK -->|✅ Yes| GDRIVE_SETUP
+    
+    %% REGISTRATION FLOW
+    VAC_ON --> REG_VALID
+    REG_VALID -->|✅ Yes| SEND_EMAIL
+    REG_VALID -->|❌ No| DUPLICATE_USER
+    
+    SEND_EMAIL --> EMAIL_SENT
+    EMAIL_SENT -->|✅ Yes| VACUUM_FULL
+    EMAIL_SENT -->|❌ No| VAC_OFF_1
+    
+    VACUUM_FULL -->|✅ Yes| TOKEN_VALID
+    VACUUM_FULL -->|❌ No| VAC_OFF_1
+    
+    TOKEN_VALID -->|✅ Yes| LOGIN_PROCESS
+    TOKEN_VALID -->|❌ No| TOKEN_EXPIRED
+    
+    %% LOGIN FLOW
+    LOGIN_PROCESS --> USER_FOUND
+    USER_FOUND -->|✅ Yes| BATTERY_LOW
+    USER_FOUND -->|❌ No| USER_NOT_FOUND
+    
+    BATTERY_LOW -->|❌ No| LOGIN_SUCCESS
+    BATTERY_LOW -->|🔒 Yes| RETURN_DOCK
+    
+    LOGIN_SUCCESS -->|✅ Yes| ROUTE
+    LOGIN_SUCCESS -->|❌ No| RETURN_DOCK
+    
+    %% DATABASE STORAGE
+    ROUTE --> GDRIVE_SETUP
+    
+    %% GOOGLE DRIVE FLOW
+    GDRIVE_SETUP --> GDRIVE_AUTH
+    GDRIVE_AUTH -->|✅ Yes| FIND_FOLDER
+    GDRIVE_AUTH -->|❌ No| VAC_OFF_2
+    
+    FIND_FOLDER --> FOLDER_EXISTS
+    FOLDER_EXISTS -->|✅ Yes| BOOK_SEARCH
+    FOLDER_EXISTS -->|❌ No| VAC_OFF_2
+    
+    BOOK_SEARCH --> FILE_FOUND
+    FILE_FOUND -->|✅ Yes| END
+    FILE_FOUND -->|❌ No| VAC_OFF_2
+    
+    %% ACTION FLOW
+    RETURN_DOCK --> POWER_OFF
+    POWER_OFF --> END
+    
+    %% ERROR RECOVERY FLOWS
+    DUPLICATE_USER --> ERROR_IND
+    STOP_MOVING --> ERROR_IND
+    VAC_OFF_1 --> ERROR_IND
+    TOKEN_EXPIRED --> ERROR_IND
+    USER_NOT_FOUND --> ERROR_IND
+    VAC_OFF_2 --> ERROR_IND
+    ERROR_IND -.->|🔄 Retry| PLAN_ROUTE
+    
+    %% PROFESSIONAL STYLING
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:4px,color:#000,font-weight:bold
+    classDef processClass fill:#f3e5f5,stroke:#4a148c,stroke-width:3px,color:#000,font-weight:bold
+    classDef decisionClass fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#000,font-weight:bold
+    classDef storageClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px,color:#000,font-weight:bold
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#000,font-weight:bold
+    classDef actionClass fill:#f1f8e9,stroke:#33691e,stroke-width:3px,color:#000,font-weight:bold
+    
+    %% APPLY STYLES
+    class START,END startEndClass
+    class POWER_ON,SCAN_ENV,GEN_MAP,PLAN_ROUTE,VAC_ON,SEND_EMAIL,LOGIN_PROCESS,GDRIVE_SETUP,FIND_FOLDER,BOOK_SEARCH processClass
+    class AUTH_CHECK,REG_VALID,EMAIL_SENT,VACUUM_FULL,TOKEN_VALID,USER_FOUND,BATTERY_LOW,LOGIN_SUCCESS,GDRIVE_AUTH,FOLDER_EXISTS,FILE_FOUND decisionClass
+    class ROUTE storageClass
+    class ERROR_IND,DUPLICATE_USER,VAC_OFF_1,TOKEN_EXPIRED,USER_NOT_FOUND,VAC_OFF_2,STOP_MOVING errorClass
+    class RETURN_DOCK,POWER_OFF actionClass

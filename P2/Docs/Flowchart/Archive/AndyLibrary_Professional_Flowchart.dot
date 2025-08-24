@@ -1,0 +1,131 @@
+// AndyLibrary User Process Flow
+digraph AndyLibrary_Flow {
+	bgcolor=white dpi=300 fontname=Arial fontsize=14 label="AndyLibrary User Process Flowchart
+Complete User Journey with Failure Points" labeljust=c labelloc=t nodesep=1.0 pad=0.5 rankdir=TB ranksep=1.5 size="16,20"
+	node [fontname=Arial fontsize=11 margin="0.3,0.2" style=filled]
+	edge [color=black fontname=Arial fontsize=10 penwidth=2]
+	START [label="Start\nUser Opens Browser" color="#8B0000" fillcolor="#FFB6C1" fontweight=bold penwidth=3 shape=ellipse]
+	END [label="End\nBook Access Complete" color="#8B0000" fillcolor="#FFB6C1" fontweight=bold penwidth=3 shape=ellipse]
+	POWER_ON [label="Power On\nLoad Website" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	SCAN_ENV [label="Scan Environment\nCheck Auth Status" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	GEN_MAP [label="Generate Map\nLoad User Interface" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	PLAN_ROUTE [label="Plan Route\nChoose Auth Method" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	AUTH_CHECK [label="User\nAuthenticated?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	REG_VALID [label="Registration\nValid?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	EMAIL_SENT [label="Email\nSent?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	VACUUM_FULL [label="Email\nVerified?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	TOKEN_VALID [label="Token\nValid?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	USER_FOUND [label="User\nFound?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	BATTERY_LOW [label="Account\nLocked?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	LOGIN_SUCCESS [label="Login\nSuccessful?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	GDRIVE_AUTH [label="Google Drive\nAuthorized?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	FOLDER_EXISTS [label="Library Folder\nExists?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	FILE_FOUND [label="Book File\nFound?" color="#FF8C00" fillcolor="#FFD700" fontweight=bold penwidth=2 shape=diamond]
+	VAC_ON [label="Vacuum On\nStart Registration" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	SEND_EMAIL [label="Send Verification\nEmail Process" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	LOGIN_PROCESS [label="Login Process\nAuthenticate User" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	GDRIVE_SETUP [label="Google Drive Setup\nOAuth Configuration" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	FIND_FOLDER [label="Find Library Folder\nSearch Google Drive" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	BOOK_SEARCH [label="Search Book File\nLocate Requested Book" color="#000080" fillcolor="#87CEEB" fontweight=bold penwidth=2 shape=box]
+	ROUTE [label="User Database\nStore User Data" color="#006400" fillcolor="#98FB98" fontweight=bold penwidth=2 shape=cylinder]
+	ERROR_IND [label="Error Indicator On\nShow Error Message" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	DUPLICATE_USER [label="Duplicate User\nEmail Already Exists" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	VAC_OFF_1 [label="Vacuum Off\nEmail Verification Failed" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	TOKEN_EXPIRED [label="Token Expired\nRequest New Verification" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	USER_NOT_FOUND [label="User Not Found\nInvalid Credentials" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	VAC_OFF_2 [label="Vacuum Off\nGoogle Drive Failed" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	STOP_MOVING [label="Stop Moving\nRegistration Failed" color="#DC143C" fillcolor="#FFA07A" fontweight=bold penwidth=2 shape=box]
+	RETURN_DOCK [label="Return to Dock\nShow Login Form" color="#800080" fillcolor="#DDA0DD" fontweight=bold penwidth=2 shape=box]
+	POWER_OFF [label="Power Off\nSession Expired" color="#800080" fillcolor="#DDA0DD" fontweight=bold penwidth=2 shape=box]
+	subgraph cluster_main {
+		label="Main Flow" style=invis
+		START
+		POWER_ON
+		SCAN_ENV
+		GEN_MAP
+		PLAN_ROUTE
+		AUTH_CHECK
+		ROUTE
+		END
+	}
+	subgraph cluster_registration {
+		color=blue label="Registration Flow" style=dashed
+		VAC_ON
+		REG_VALID
+		SEND_EMAIL
+		EMAIL_SENT
+		VACUUM_FULL
+		TOKEN_VALID
+	}
+	subgraph cluster_login {
+		color=green label="Login Flow" style=dashed
+		LOGIN_PROCESS
+		USER_FOUND
+		BATTERY_LOW
+		LOGIN_SUCCESS
+	}
+	subgraph cluster_gdrive {
+		color=purple label="Google Drive Flow" style=dashed
+		GDRIVE_SETUP
+		GDRIVE_AUTH
+		FIND_FOLDER
+		FOLDER_EXISTS
+		BOOK_SEARCH
+		FILE_FOUND
+	}
+	subgraph cluster_errors {
+		color=red label="Error Handling" style=dashed
+		ERROR_IND
+		DUPLICATE_USER
+		VAC_OFF_1
+		TOKEN_EXPIRED
+		USER_NOT_FOUND
+		VAC_OFF_2
+		STOP_MOVING
+		RETURN_DOCK
+		POWER_OFF
+	}
+	START -> POWER_ON
+	POWER_ON -> SCAN_ENV
+	SCAN_ENV -> GEN_MAP
+	GEN_MAP -> PLAN_ROUTE
+	PLAN_ROUTE -> AUTH_CHECK
+	AUTH_CHECK -> VAC_ON [label=No color=red fontcolor=red]
+	AUTH_CHECK -> GDRIVE_SETUP [label=Yes color=green fontcolor=green]
+	VAC_ON -> REG_VALID
+	REG_VALID -> SEND_EMAIL [label=Yes color=green fontcolor=green]
+	REG_VALID -> DUPLICATE_USER [label=No color=red fontcolor=red]
+	SEND_EMAIL -> EMAIL_SENT
+	EMAIL_SENT -> VACUUM_FULL [label=Yes color=green fontcolor=green]
+	EMAIL_SENT -> VAC_OFF_1 [label=No color=red fontcolor=red]
+	VACUUM_FULL -> TOKEN_VALID [label=Yes color=green fontcolor=green]
+	VACUUM_FULL -> VAC_OFF_1 [label=No color=red fontcolor=red]
+	TOKEN_VALID -> LOGIN_PROCESS [label=Yes color=green fontcolor=green]
+	TOKEN_VALID -> TOKEN_EXPIRED [label=No color=red fontcolor=red]
+	LOGIN_PROCESS -> USER_FOUND
+	USER_FOUND -> BATTERY_LOW [label=Yes color=green fontcolor=green]
+	USER_FOUND -> USER_NOT_FOUND [label=No color=red fontcolor=red]
+	BATTERY_LOW -> LOGIN_SUCCESS [label=No color=green fontcolor=green]
+	BATTERY_LOW -> RETURN_DOCK [label=Yes color=red fontcolor=red]
+	LOGIN_SUCCESS -> ROUTE [label=Yes color=green fontcolor=green]
+	LOGIN_SUCCESS -> RETURN_DOCK [label=No color=red fontcolor=red]
+	ROUTE -> GDRIVE_SETUP
+	GDRIVE_SETUP -> GDRIVE_AUTH
+	GDRIVE_AUTH -> FIND_FOLDER [label=Yes color=green fontcolor=green]
+	GDRIVE_AUTH -> VAC_OFF_2 [label=No color=red fontcolor=red]
+	FIND_FOLDER -> FOLDER_EXISTS
+	FOLDER_EXISTS -> BOOK_SEARCH [label=Yes color=green fontcolor=green]
+	FOLDER_EXISTS -> VAC_OFF_2 [label=No color=red fontcolor=red]
+	BOOK_SEARCH -> FILE_FOUND
+	FILE_FOUND -> END [label=Yes color=green fontcolor=green]
+	FILE_FOUND -> VAC_OFF_2 [label=No color=red fontcolor=red]
+	RETURN_DOCK -> POWER_OFF
+	POWER_OFF -> END
+	DUPLICATE_USER -> ERROR_IND [color=red]
+	STOP_MOVING -> ERROR_IND [color=red]
+	VAC_OFF_1 -> ERROR_IND [color=red]
+	TOKEN_EXPIRED -> ERROR_IND [color=red]
+	USER_NOT_FOUND -> ERROR_IND [color=red]
+	VAC_OFF_2 -> ERROR_IND [color=red]
+	ERROR_IND -> PLAN_ROUTE [label=Retry color=orange style=dashed]
+}

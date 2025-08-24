@@ -1,0 +1,137 @@
+
+flowchart TD
+    %% Enhanced Professional AndyLibrary User Process Flowchart
+    %% Optimized for presentations with larger, bolder text
+    
+    %% Start/End Nodes
+    START([🚀 START<br/><b>User Opens Browser</b>])
+    END([✅ END<br/><b>Book Access Complete</b>])
+    
+    %% Main Process Flow
+    POWER_ON[⚡ POWER ON<br/><b>Load Website</b>]
+    SCAN_ENV[🔍 SCAN ENVIRONMENT<br/><b>Check Auth Status</b>]
+    GEN_MAP[🗺️ GENERATE MAP<br/><b>Load User Interface</b>]
+    PLAN_ROUTE[🎯 PLAN ROUTE<br/><b>Choose Auth Method</b>]
+    
+    %% Authentication Decision
+    AUTH_CHECK{🔐 USER<br/><b>AUTHENTICATED?</b>}
+    
+    %% Registration Flow
+    VAC_ON[🔄 VACUUM ON<br/><b>Start Registration</b>]
+    REG_VALID{✅ REGISTRATION<br/><b>VALID?</b>}
+    SEND_EMAIL[📧 SEND VERIFICATION<br/><b>Email Process</b>]
+    EMAIL_SENT{📤 EMAIL<br/><b>SENT?</b>}
+    VACUUM_FULL{📧 EMAIL<br/><b>VERIFIED?</b>}
+    TOKEN_VALID{🎫 TOKEN<br/><b>VALID?</b>}
+    
+    %% Login Flow  
+    LOGIN_PROCESS[🔑 LOGIN PROCESS<br/><b>Authenticate User</b>]
+    USER_FOUND{👤 USER<br/><b>FOUND?</b>}
+    BATTERY_LOW{🔒 ACCOUNT<br/><b>LOCKED?</b>}
+    LOGIN_SUCCESS{✅ LOGIN<br/><b>SUCCESSFUL?</b>}
+    
+    %% Data Storage
+    ROUTE[(💾 USER DATABASE<br/><b>Store User Data</b>)]
+    
+    %% Google Drive Integration
+    GDRIVE_SETUP[☁️ GOOGLE DRIVE SETUP<br/><b>OAuth Configuration</b>]
+    GDRIVE_AUTH{🌐 GOOGLE DRIVE<br/><b>AUTHORIZED?</b>}
+    FIND_FOLDER[📁 FIND LIBRARY FOLDER<br/><b>Search Google Drive</b>]
+    FOLDER_EXISTS{📂 LIBRARY FOLDER<br/><b>EXISTS?</b>}
+    BOOK_SEARCH[📚 SEARCH BOOK FILE<br/><b>Locate Requested Book</b>]
+    FILE_FOUND{📖 BOOK FILE<br/><b>FOUND?</b>}
+    
+    %% Error States
+    ERROR_IND[🚨 ERROR INDICATOR ON<br/><b>Show Error Message</b>]
+    DUPLICATE_USER[❌ DUPLICATE USER<br/><b>Email Already Exists</b>]
+    VAC_OFF_1[🔴 VACUUM OFF<br/><b>Email Verification Failed</b>]
+    TOKEN_EXPIRED[⏰ TOKEN EXPIRED<br/><b>Request New Verification</b>]
+    USER_NOT_FOUND[❌ USER NOT FOUND<br/><b>Invalid Credentials</b>]
+    VAC_OFF_2[🔴 VACUUM OFF<br/><b>Google Drive Failed</b>]
+    STOP_MOVING[🛑 STOP MOVING<br/><b>Registration Failed</b>]
+    
+    %% Action States
+    RETURN_DOCK[🏠 RETURN TO DOCK<br/><b>Show Login Form</b>]
+    POWER_OFF[⏹️ POWER OFF<br/><b>Session Expired</b>]
+    
+    %% MAIN FLOW CONNECTIONS
+    START --> POWER_ON
+    POWER_ON --> SCAN_ENV
+    SCAN_ENV --> GEN_MAP
+    GEN_MAP --> PLAN_ROUTE
+    PLAN_ROUTE --> AUTH_CHECK
+    
+    %% AUTHENTICATION DECISION
+    AUTH_CHECK -->|<b>❌ NO</b>| VAC_ON
+    AUTH_CHECK -->|<b>✅ YES</b>| GDRIVE_SETUP
+    
+    %% REGISTRATION FLOW
+    VAC_ON --> REG_VALID
+    REG_VALID -->|<b>✅ YES</b>| SEND_EMAIL
+    REG_VALID -->|<b>❌ NO</b>| DUPLICATE_USER
+    
+    SEND_EMAIL --> EMAIL_SENT
+    EMAIL_SENT -->|<b>✅ YES</b>| VACUUM_FULL
+    EMAIL_SENT -->|<b>❌ NO</b>| VAC_OFF_1
+    
+    VACUUM_FULL -->|<b>✅ YES</b>| TOKEN_VALID
+    VACUUM_FULL -->|<b>❌ NO</b>| VAC_OFF_1
+    
+    TOKEN_VALID -->|<b>✅ YES</b>| LOGIN_PROCESS
+    TOKEN_VALID -->|<b>❌ NO</b>| TOKEN_EXPIRED
+    
+    %% LOGIN FLOW
+    LOGIN_PROCESS --> USER_FOUND
+    USER_FOUND -->|<b>✅ YES</b>| BATTERY_LOW
+    USER_FOUND -->|<b>❌ NO</b>| USER_NOT_FOUND
+    
+    BATTERY_LOW -->|<b>❌ NO</b>| LOGIN_SUCCESS
+    BATTERY_LOW -->|<b>🔒 YES</b>| RETURN_DOCK
+    
+    LOGIN_SUCCESS -->|<b>✅ YES</b>| ROUTE
+    LOGIN_SUCCESS -->|<b>❌ NO</b>| RETURN_DOCK
+    
+    %% DATABASE STORAGE
+    ROUTE --> GDRIVE_SETUP
+    
+    %% GOOGLE DRIVE FLOW
+    GDRIVE_SETUP --> GDRIVE_AUTH
+    GDRIVE_AUTH -->|<b>✅ YES</b>| FIND_FOLDER
+    GDRIVE_AUTH -->|<b>❌ NO</b>| VAC_OFF_2
+    
+    FIND_FOLDER --> FOLDER_EXISTS
+    FOLDER_EXISTS -->|<b>✅ YES</b>| BOOK_SEARCH
+    FOLDER_EXISTS -->|<b>❌ NO</b>| VAC_OFF_2
+    
+    BOOK_SEARCH --> FILE_FOUND
+    FILE_FOUND -->|<b>✅ YES</b>| END
+    FILE_FOUND -->|<b>❌ NO</b>| VAC_OFF_2
+    
+    %% ACTION FLOW
+    RETURN_DOCK --> POWER_OFF
+    POWER_OFF --> END
+    
+    %% ERROR RECOVERY FLOWS
+    DUPLICATE_USER --> ERROR_IND
+    STOP_MOVING --> ERROR_IND
+    VAC_OFF_1 --> ERROR_IND
+    TOKEN_EXPIRED --> ERROR_IND
+    USER_NOT_FOUND --> ERROR_IND
+    VAC_OFF_2 --> ERROR_IND
+    ERROR_IND -.->|<b>🔄 RETRY</b>| PLAN_ROUTE
+    
+    %% ENHANCED PROFESSIONAL STYLING WITH LARGER TEXT
+    classDef startEndClass fill:#e1f5fe,stroke:#01579b,stroke-width:4px,color:#000000,font-size:16px,font-weight:900
+    classDef processClass fill:#f3e5f5,stroke:#4a148c,stroke-width:3px,color:#000000,font-size:15px,font-weight:800
+    classDef decisionClass fill:#fff3e0,stroke:#e65100,stroke-width:3px,color:#000000,font-size:15px,font-weight:800
+    classDef storageClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:3px,color:#000000,font-size:15px,font-weight:800
+    classDef errorClass fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#000000,font-size:15px,font-weight:800
+    classDef actionClass fill:#f1f8e9,stroke:#33691e,stroke-width:3px,color:#000000,font-size:15px,font-weight:800
+    
+    %% APPLY ENHANCED STYLES
+    class START,END startEndClass
+    class POWER_ON,SCAN_ENV,GEN_MAP,PLAN_ROUTE,VAC_ON,SEND_EMAIL,LOGIN_PROCESS,GDRIVE_SETUP,FIND_FOLDER,BOOK_SEARCH processClass
+    class AUTH_CHECK,REG_VALID,EMAIL_SENT,VACUUM_FULL,TOKEN_VALID,USER_FOUND,BATTERY_LOW,LOGIN_SUCCESS,GDRIVE_AUTH,FOLDER_EXISTS,FILE_FOUND decisionClass
+    class ROUTE storageClass
+    class ERROR_IND,DUPLICATE_USER,VAC_OFF_1,TOKEN_EXPIRED,USER_NOT_FOUND,VAC_OFF_2,STOP_MOVING errorClass
+    class RETURN_DOCK,POWER_OFF actionClass
