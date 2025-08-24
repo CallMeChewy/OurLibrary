@@ -1155,10 +1155,13 @@
                             📁 <span class="ml-2">Where Your Files Will Live</span>
                         </h2>
                         <div class="space-y-4">
-                            <div class="bg-slate-800/50 rounded-lg p-4">
-                                <div class="font-semibold text-green-400 mb-2">📍 Linux/Unix Systems:</div>
-                                <div class="font-mono text-sm bg-slate-900 px-3 py-2 rounded border">~/OurLibrary/</div>
-                                <div class="text-xs text-gray-400 mt-1">(Your home directory → OurLibrary folder)</div>
+                            <div class="bg-slate-800/50 rounded-lg p-4 border-2 border-green-500/50">
+                                <div class="font-semibold text-green-400 mb-2">📍 Linux/Unix Systems (YOU):</div>
+                                <div class="font-mono text-sm bg-slate-900 px-3 py-2 rounded border mb-2">~/OurLibrary/</div>
+                                <div class="text-xs text-gray-300 mt-1 space-y-1">
+                                    <div><strong>Full path:</strong> /home/herb/OurLibrary/</div>
+                                    <div><strong>When dialog opens:</strong> Navigate to your home folder (/home/herb) and create/select "OurLibrary"</div>
+                                </div>
                             </div>
                             <div class="bg-slate-800/50 rounded-lg p-4">
                                 <div class="font-semibold text-blue-400 mb-2">🪟 Windows Systems:</div>
@@ -1333,6 +1336,25 @@
                 </div>
 
                 <!-- Action Buttons -->
+                <!-- IMPORTANT SETUP INSTRUCTION -->
+                <div class="mt-6 p-4 bg-yellow-500/10 border-2 border-yellow-500/50 rounded-xl">
+                    <div class="flex items-start space-x-3">
+                        <div class="text-yellow-400 text-2xl">⚠️</div>
+                        <div>
+                            <div class="font-bold text-yellow-300 mb-2">IMPORTANT: When Setup Begins</div>
+                            <div class="text-sm text-gray-200 space-y-2">
+                                <div>• A folder picker dialog will appear</div>
+                                <div>• Navigate to your home folder: <code class="bg-slate-800 px-2 py-1 rounded">/home/herb/</code></div>
+                                <div>• Create or select folder named: <code class="bg-slate-800 px-2 py-1 rounded">OurLibrary</code></div>
+                                <div>• Click "Select" to confirm location</div>
+                            </div>
+                            <div class="mt-2 text-xs text-yellow-200">
+                                <strong>Result:</strong> Your library files will be at <code class="bg-slate-800 px-1 rounded">/home/herb/OurLibrary/</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-8 pt-6 border-t border-white/10">
                     <div class="flex flex-col md:flex-row gap-4 justify-center">
                         <button id="cancelBtn" class="px-8 py-3 bg-gray-600 hover:bg-gray-500 rounded-xl font-medium transition-all duration-200 hover-lift">
