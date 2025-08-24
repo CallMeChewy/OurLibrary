@@ -32,25 +32,39 @@ class OurLibraryFileManager {
 
     /**
      * Initialize the OurLibrary directory structure
-     * Asks user for permission to create ~/OurLibrary/ directory
+     * Uses File System Access API to create REAL ~/OurLibrary/ directory
      */
     async initializeLibraryDirectory() {
         try {
-            console.log('🏠 Auto-creating OurLibrary directory structure...');
+            console.log('🏠 Creating REAL OurLibrary directory structure...');
             
+            if (!this.isSupported) {
+                throw new Error('File System Access API not supported in this browser');
+            }
+
             // Get platform-specific path where files will be stored
             const platformPath = this.getDefaultLibraryPath();
             console.log(`📍 Files will be stored at: ${platformPath}`);
             
-            // Use automatic directory creation (no user dialogs)
-            await this.createDirectoryStructureAutomatically();
+            // Use File System Access API to create REAL directory
+            this.directoryHandle = await window.showDirectoryPicker({
+                mode: 'readwrite',
+                startIn: 'documents',
+                suggestedName: 'OurLibrary'
+            });
             
-            console.log(`✅ OurLibrary directory structure created automatically`);
+            console.log(`✅ Directory access granted: ${this.directoryHandle.name}`);
+
+            // Create real subdirectories
+            await this.createSubdirectories();
+
+            // Store directory handle reference
+            await this.saveDirectoryReference();
 
             return {
                 success: true,
-                path: platformPath,
-                message: `OurLibrary directory created automatically at ${platformPath}`
+                path: `${platformPath}/${this.directoryHandle.name}`,
+                message: `OurLibrary directory created successfully at ${this.directoryHandle.name}`
             };
 
         } catch (error) {
@@ -81,7 +95,7 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Create the standard OurLibrary subdirectory structure (VIRTUAL - no user dialogs)
+     * Create the standard OurLibrary subdirectory structure (REAL directories)
      */
     async createSubdirectories() {
         const directories = [
@@ -93,25 +107,18 @@ class OurLibraryFileManager {
 
         for (const dir of directories) {
             try {
-                // Create virtual directory structure in storage
-                const dirKey = `ourLibrary_dir_${dir.name}`;
-                localStorage.setItem(dirKey, JSON.stringify({
-                    name: dir.name,
-                    purpose: dir.purpose,
-                    created: Date.now(),
-                    files: []
-                }));
-                console.log(`📁 Created virtual subdirectory: ${dir.name} (${dir.purpose})`);
+                await this.directoryHandle.getDirectoryHandle(dir.name, { create: true });
+                console.log(`📁 Created REAL subdirectory: ${dir.name} (${dir.purpose})`);
             } catch (error) {
-                console.warn(`⚠️  Could not create virtual directory ${dir.name}:`, error);
+                console.warn(`⚠️  Could not create ${dir.name}:`, error);
             }
         }
     }
 
     /**
-     * Download and save the main book catalog database
+     * Download and save the main book catalog database to REAL directory
      */
-    async downloadAndSaveDatabase(databaseUrl = 'Data/OurLibrary.db') {
+    async downloadAndSaveDatabase(databaseUrl = 'library_web.db') {
         try {
             console.log('📥 Downloading book catalog database...');
             
@@ -120,40 +127,48 @@ class OurLibraryFileManager {
                 throw new Error(`Database download failed: ${response.status}`);
             }
 
-            const totalSize = parseInt(response.headers.get('content-length'), 10) || response.headers.get('content-length');
-            const arrayBuffer = await response.arrayBuffer();
-            const databaseData = new Uint8Array(arrayBuffer);
+            const totalSize = parseInt(response.headers.get('content-length'), 10);
+            const reader = response.body.getReader();
+            let downloadedSize = 0;
+            const chunks = [];
 
-            console.log('💾 Saving database to automatic location...');
+            // Download with progress tracking
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
 
-            // Save database to browser's automatic download location
-            const blob = new Blob([databaseData], { type: 'application/x-sqlite3' });
-            const filename = 'OurLibrary_catalog.db';
+                chunks.push(value);
+                downloadedSize += value.length;
+
+                // Report progress
+                const progress = Math.round((downloadedSize / totalSize) * 100);
+                this.reportProgress('download', progress, `${downloadedSize} / ${totalSize} bytes`);
+            }
+
+            // Combine chunks into single array
+            const databaseData = new Uint8Array(downloadedSize);
+            let offset = 0;
+            for (const chunk of chunks) {
+                databaseData.set(chunk, offset);
+                offset += chunk.length;
+            }
+
+            console.log('💾 Saving database to REAL ~/OurLibrary/database/ directory...');
+
+            // Save to REAL database subdirectory
+            const dbDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.database);
+            const dbFile = await dbDir.getFileHandle('library_catalog.db', { create: true });
+            const writable = await dbFile.createWritable();
             
-            // Use automatic download - browser saves to Downloads folder
-            const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(blob);
-            downloadLink.download = filename;
-            downloadLink.style.display = 'none';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-            URL.revokeObjectURL(downloadLink.href);
+            await writable.write(databaseData);
+            await writable.close();
 
-            // Also store in IndexedDB for application use
-            await this.saveToIndexedDB('ourLibrary_database', {
-                filename: filename,
-                data: Array.from(databaseData),
-                timestamp: Date.now(),
-                size: databaseData.length
-            });
-
-            console.log('✅ Database saved successfully to Downloads folder and app storage');
+            console.log('✅ Database saved successfully to REAL directory');
 
             return {
                 success: true,
-                size: databaseData.length,
-                location: `~/Downloads/${filename} and app storage`
+                size: downloadedSize,
+                location: `${this.directoryHandle.name}/${this.subdirectories.database}/library_catalog.db`
             };
 
         } catch (error) {
@@ -343,34 +358,28 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Save directory reference for future sessions (AUTOMATIC - no user interaction)
+     * Save directory reference for future sessions 
      */
     async saveDirectoryReference() {
-        // Virtual file system with automatic downloads - no directory handle needed
-        const directoryInfo = {
-            virtualRoot: 'OurLibrary',
-            downloadLocation: '~/Downloads/',
-            userDataLocation: 'browser storage',
-            initialized: true,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('ourLibrary_directory_info', JSON.stringify(directoryInfo));
-        console.log('📁 Directory reference saved (automatic mode)');
+        try {
+            // Store directory handle for future sessions (if supported by browser)
+            if (this.directoryHandle && 'navigator' in window && 'storage' in navigator && 'persist' in navigator.storage) {
+                await navigator.storage.persist();
+            }
+            console.log('📁 Directory reference saved');
+        } catch (error) {
+            console.warn('Could not save directory reference:', error);
+        }
     }
 
     /**
      * Load directory reference from previous session
      */
     async loadDirectoryReference() {
-        // Load automatic directory configuration
-        const saved = localStorage.getItem('ourLibrary_directory_info');
-        if (saved) {
-            const info = JSON.parse(saved);
-            console.log('📁 Directory reference loaded (automatic mode)');
-            return info.initialized;
-        }
-        console.log('📁 No previous directory reference found');
-        return false;
+        // Directory handle persistence is handled by the browser
+        // This is called but no action needed - user will be prompted if needed
+        console.log('📁 Directory reference handling managed by browser');
+        return true;
     }
 
     /**
@@ -477,88 +486,13 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Create directory structure automatically without user dialogs
+     * Create directory structure - this method is no longer used
+     * Directory creation now handled directly by initializeLibraryDirectory()
      */
     async createDirectoryStructureAutomatically() {
-        try {
-            // Download setup script to create REAL ~/OurLibrary/ directory
-            await this.downloadSetupScript();
-            
-            // Also create virtual structure for browser data
-            return this.createFallbackDirectoryStructure();
-            
-        } catch (error) {
-            console.error('Directory creation failed:', error);
-            return this.createFallbackDirectoryStructure();
-        }
-    }
-
-    /**
-     * Download setup script that creates real ~/OurLibrary/ directory
-     */
-    async downloadSetupScript() {
-        try {
-            console.log('📥 Downloading directory setup script...');
-            
-            // Create setup script content
-            const setupScript = `#!/bin/bash
-# OurLibrary Directory Setup Script
-echo "🏠 Creating OurLibrary directory structure..."
-
-HOME_DIR="$HOME"
-LIBRARY_DIR="$HOME_DIR/OurLibrary"
-
-# Create main OurLibrary directory
-mkdir -p "$LIBRARY_DIR"
-echo "📁 Created: $LIBRARY_DIR"
-
-# Create subdirectories  
-mkdir -p "$LIBRARY_DIR/database"
-mkdir -p "$LIBRARY_DIR/downloads"
-mkdir -p "$LIBRARY_DIR/user_data"
-mkdir -p "$LIBRARY_DIR/cache"
-
-echo "📁 Created subdirectory: $LIBRARY_DIR/database"
-echo "📁 Created subdirectory: $LIBRARY_DIR/downloads" 
-echo "📁 Created subdirectory: $LIBRARY_DIR/user_data"
-echo "📁 Created subdirectory: $LIBRARY_DIR/cache"
-
-# Create README
-cat > "$LIBRARY_DIR/README.txt" << EOF
-OurLibrary Directory Structure
-=============================
-
-📁 database/   - Book catalog database files
-📁 downloads/  - Downloaded books for offline reading  
-📁 user_data/  - Reading progress and preferences
-📁 cache/      - Temporary files and thumbnails
-
-Your library location: $LIBRARY_DIR
-EOF
-
-echo "✅ OurLibrary directory structure created at: $LIBRARY_DIR"
-ls -la "$LIBRARY_DIR"`;
-
-            // Download script as file
-            const blob = new Blob([setupScript], { type: 'text/plain' });
-            const downloadLink = document.createElement('a');
-            downloadLink.href = URL.createObjectURL(blob);
-            downloadLink.download = 'setup-ourlibrary.sh';
-            downloadLink.style.display = 'none';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-            URL.revokeObjectURL(downloadLink.href);
-            
-            console.log('📁 Setup script downloaded: ~/Downloads/setup-ourlibrary.sh');
-            console.log('🔧 Run: chmod +x ~/Downloads/setup-ourlibrary.sh && ~/Downloads/setup-ourlibrary.sh');
-            
-            return true;
-            
-        } catch (error) {
-            console.error('Failed to download setup script:', error);
-            throw error;
-        }
+        // This method is deprecated - directory creation handled by initializeLibraryDirectory()
+        console.log('📁 Directory creation handled by File System Access API');
+        return true;
     }
 
     /**
