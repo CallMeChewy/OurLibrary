@@ -238,7 +238,7 @@
 
                     // Step 2: Database Download
                     await this.executeStep(2, "Downloading book catalog database...", async () => {
-                        const result = await this.fileManager.downloadAndSaveDatabase('/library_web.db');
+                        const result = await this.fileManager.downloadAndSaveDatabase('library_web.db');
                         return result;
                     });
 
