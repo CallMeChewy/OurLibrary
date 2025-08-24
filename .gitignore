@@ -236,6 +236,7 @@ coverage.xml
 htmlcov/
 
 # Database files
+!library_web.db
 *.db
 *.sqlite
 *.sqlite3
