@@ -151,24 +151,30 @@ class OurLibraryFileManager {
      */
     async saveBook(bookData, bookTitle, bookId) {
         try {
-            const downloadsDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.downloads);
-            
             // Sanitize filename
             const safeTitle = this.sanitizeFilename(bookTitle);
             const filename = `${bookId}_${safeTitle}.pdf`;
-
-            const bookFile = await downloadsDir.getFileHandle(filename, { create: true });
-            const writable = await bookFile.createWritable();
             
-            await writable.write(bookData);
-            await writable.close();
+            // Save to virtual downloads directory
+            const bookKey = `ourLibrary_book_${bookId}`;
+            const bookEntry = {
+                filename: filename,
+                title: bookTitle,
+                bookId: bookId,
+                data: Array.from(new Uint8Array(bookData)),
+                timestamp: Date.now(),
+                directory: this.subdirectories.downloads
+            };
+            
+            // Use IndexedDB for book files (they're typically large)
+            await this.saveToIndexedDB(bookKey, bookEntry);
 
-            console.log(`📚 Book saved: ${filename}`);
+            console.log(`📚 Book saved to virtual storage: ${filename}`);
             
             return {
                 success: true,
                 filename: filename,
-                path: `${this.directoryHandle.name}/${this.subdirectories.downloads}/${filename}`
+                path: `${this.getDefaultLibraryPath()}/${this.subdirectories.downloads}/${filename}`
             };
 
         } catch (error) {
@@ -182,14 +188,19 @@ class OurLibraryFileManager {
      */
     async saveUserData(dataType, data) {
         try {
-            const userDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.userData);
             const filename = `${dataType}.json`;
-
-            const dataFile = await userDir.getFileHandle(filename, { create: true });
-            const writable = await dataFile.createWritable();
             
-            await writable.write(JSON.stringify(data, null, 2));
-            await writable.close();
+            // Save user data to localStorage (small JSON files)
+            const userDataKey = `ourLibrary_userData_${dataType}`;
+            const userData = {
+                filename: filename,
+                dataType: dataType,
+                data: data,
+                timestamp: Date.now(),
+                directory: this.subdirectories.userData
+            };
+            
+            localStorage.setItem(userDataKey, JSON.stringify(userData));
 
             console.log(`💾 User data saved: ${dataType}`);
             
@@ -206,14 +217,19 @@ class OurLibraryFileManager {
      */
     async loadUserData(dataType) {
         try {
-            const userDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.userData);
             const filename = `${dataType}.json`;
-
-            const dataFile = await userDir.getFileHandle(filename);
-            const file = await dataFile.getFile();
-            const content = await file.text();
-
-            return JSON.parse(content);
+            
+            // Load user data from localStorage
+            const userDataKey = `ourLibrary_userData_${dataType}`;
+            const storedData = localStorage.getItem(userDataKey);
+            
+            if (!storedData) {
+                throw new Error(`User data file not found: ${filename}`);
+            }
+            
+            const userData = JSON.parse(storedData);
+            
+            return userData.data;
 
         } catch (error) {
             console.log(`ℹ️  No existing ${dataType} data found (this is normal for new users)`);
@@ -226,18 +242,26 @@ class OurLibraryFileManager {
      */
     async getDownloadedBooks() {
         try {
-            const downloadsDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.downloads);
             const books = [];
-
-            for await (const [name, handle] of downloadsDir.entries()) {
-                if (handle.kind === 'file' && name.endsWith('.pdf')) {
-                    const file = await handle.getFile();
-                    books.push({
-                        filename: name,
-                        size: file.size,
-                        lastModified: file.lastModified,
-                        bookId: name.split('_')[0]
-                    });
+            
+            // Get all book entries from IndexedDB
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('ourLibrary_book_')) {
+                    try {
+                        const bookData = JSON.parse(localStorage.getItem(key));
+                        if (bookData && bookData.filename) {
+                            books.push({
+                                filename: bookData.filename,
+                                size: bookData.data ? bookData.data.length : 0,
+                                lastModified: bookData.timestamp,
+                                bookId: bookData.bookId,
+                                title: bookData.title
+                            });
+                        }
+                    } catch (parseError) {
+                        console.warn(`Skipping corrupted book entry: ${key}`);
+                    }
                 }
             }
 
@@ -260,17 +284,28 @@ class OurLibraryFileManager {
                 directories: {}
             };
 
+            // Calculate stats from virtual storage
             for (const [dirName, dirPath] of Object.entries(this.subdirectories)) {
                 try {
-                    const subDir = await this.directoryHandle.getDirectoryHandle(dirPath);
                     let dirSize = 0;
                     let fileCount = 0;
 
-                    for await (const [name, handle] of subDir.entries()) {
-                        if (handle.kind === 'file') {
-                            const file = await handle.getFile();
-                            dirSize += file.size;
-                            fileCount++;
+                    // Scan localStorage for files in this directory
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith('ourLibrary_')) {
+                            try {
+                                const data = JSON.parse(localStorage.getItem(key));
+                                if (data && data.directory === dirPath) {
+                                    const size = data.data ? 
+                                        (Array.isArray(data.data) ? data.data.length : JSON.stringify(data.data).length) 
+                                        : 0;
+                                    dirSize += size;
+                                    fileCount++;
+                                }
+                            } catch (parseError) {
+                                // Skip corrupted entries
+                            }
                         }
                     }
 
@@ -292,58 +327,20 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Save directory reference for future sessions
+     * Save directory reference for future sessions (DEPRECATED - now using virtual storage)
      */
     async saveDirectoryReference() {
-        if ('indexedDB' in window) {
-            // Store the directory handle in IndexedDB for persistence
-            const request = indexedDB.open('OurLibraryConfig', 1);
-            
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                db.createObjectStore('config');
-            };
-
-            request.onsuccess = (event) => {
-                const db = event.target.result;
-                const transaction = db.transaction(['config'], 'readwrite');
-                const store = transaction.objectStore('config');
-                store.put(this.directoryHandle, 'libraryDirectory');
-            };
-        }
+        // Virtual file system doesn't need directory handle persistence
+        console.log('📁 Directory reference saved (virtual mode)');
     }
 
     /**
      * Load directory reference from previous session
      */
     async loadDirectoryReference() {
-        if (!('indexedDB' in window)) return null;
-
-        return new Promise((resolve) => {
-            const request = indexedDB.open('OurLibraryConfig', 1);
-            
-            request.onsuccess = (event) => {
-                const db = event.target.result;
-                
-                if (!db.objectStoreNames.contains('config')) {
-                    resolve(null);
-                    return;
-                }
-
-                const transaction = db.transaction(['config'], 'readonly');
-                const store = transaction.objectStore('config');
-                const getRequest = store.get('libraryDirectory');
-                
-                getRequest.onsuccess = () => {
-                    this.directoryHandle = getRequest.result;
-                    resolve(getRequest.result);
-                };
-                
-                getRequest.onerror = () => resolve(null);
-            };
-            
-            request.onerror = () => resolve(null);
-        });
+        // Virtual file system doesn't need directory handle loading
+        console.log('📁 Directory reference loaded (virtual mode)');
+        return true;
     }
 
     /**
