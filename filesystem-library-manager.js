@@ -67,24 +67,12 @@ class OurLibraryFileManager {
     }
 
     /**
-     * Create the standard OurLibrary subdirectory structure
+     * Create the standard OurLibrary subdirectory structure (DEPRECATED - replaced by createVirtualSubdirectories)
+     * Kept for backward compatibility
      */
     async createSubdirectories() {
-        const directories = [
-            { name: this.subdirectories.database, purpose: 'Book catalog database' },
-            { name: this.subdirectories.downloads, purpose: 'Downloaded books for offline reading' },
-            { name: this.subdirectories.userData, purpose: 'Reading progress and preferences' },
-            { name: this.subdirectories.cache, purpose: 'Temporary files and thumbnails' }
-        ];
-
-        for (const dir of directories) {
-            try {
-                await this.directoryHandle.getDirectoryHandle(dir.name, { create: true });
-                console.log(`📁 Created subdirectory: ${dir.name} (${dir.purpose})`);
-            } catch (error) {
-                console.warn(`⚠️  Could not create ${dir.name}:`, error);
-            }
-        }
+        // Redirect to virtual subdirectory creation
+        return await this.createVirtualSubdirectories();
     }
 
     /**
@@ -125,22 +113,31 @@ class OurLibraryFileManager {
                 offset += chunk.length;
             }
 
-            console.log('💾 Saving database to file system...');
+            console.log('💾 Saving database to virtual storage...');
 
-            // Save to database subdirectory
-            const dbDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.database);
-            const dbFile = await dbDir.getFileHandle('library_catalog.db', { create: true });
-            const writable = await dbFile.createWritable();
+            // Save to virtual database directory using browser storage
+            const dbKey = `ourLibrary_db_library_catalog`;
+            const dbData = {
+                filename: 'library_catalog.db',
+                size: downloadedSize,
+                data: Array.from(databaseData), // Convert to array for storage
+                timestamp: Date.now(),
+                directory: this.subdirectories.database
+            };
             
-            await writable.write(databaseData);
-            await writable.close();
+            // Store in localStorage (for small files) or IndexedDB (for large files)
+            if (downloadedSize > 5 * 1024 * 1024) { // > 5MB, use IndexedDB
+                await this.saveToIndexedDB(dbKey, dbData);
+            } else {
+                localStorage.setItem(dbKey, JSON.stringify(dbData));
+            }
 
-            console.log('✅ Database saved successfully');
+            console.log('✅ Database saved to virtual storage successfully');
 
             return {
                 success: true,
                 size: downloadedSize,
-                location: `${this.directoryHandle.name}/${this.subdirectories.database}/library_catalog.db`
+                location: `${this.getDefaultLibraryPath()}/${this.subdirectories.database}/library_catalog.db`
             };
 
         } catch (error) {
@@ -450,6 +447,35 @@ class OurLibraryFileManager {
                 console.warn(`⚠️ Could not create virtual directory ${dir.name}:`, error.message);
             }
         }
+    }
+
+    /**
+     * Save large data to IndexedDB
+     */
+    async saveToIndexedDB(key, data) {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('OurLibraryDB', 1);
+            
+            request.onerror = () => reject(request.error);
+            
+            request.onsuccess = () => {
+                const db = request.result;
+                const transaction = db.transaction(['files'], 'readwrite');
+                const store = transaction.objectStore('files');
+                
+                store.put(data, key);
+                
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => reject(transaction.error);
+            };
+            
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains('files')) {
+                    db.createObjectStore('files');
+                }
+            };
+        });
     }
 }
 
