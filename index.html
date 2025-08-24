@@ -896,12 +896,12 @@
                 const successDiv = document.createElement('div');
                 successDiv.id = 'verification-success';
                 successDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#10B981;color:white;padding:30px;border-radius:12px;z-index:1000;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
-                successDiv.innerHTML = '<h2 style="margin:0 0 10px 0;">🎉 Registration Completed!</h2><p style="margin:0 0 15px 0;">Welcome to OurLibrary!</p><p style="margin:0;opacity:0.9;">Redirecting to your library...</p>';
+                successDiv.innerHTML = '<h2 style="margin:0 0 10px 0;">🎉 Registration Completed!</h2><p style="margin:0 0 15px 0;">Welcome to OurLibrary!</p><p style="margin:0;opacity:0.9;">Setting up your personal library...</p>';
                 document.body.appendChild(successDiv);
                 
-                // Redirect to main library app
+                // Redirect to file system setup (MANDATORY for new users)
                 setTimeout(() => {
-                    window.location.href = 'desktop-library-enhanced.html';
+                    window.location.href = 'setup-filesystem.html';
                 }, 2000);
             } else {
                 // Failed verification
