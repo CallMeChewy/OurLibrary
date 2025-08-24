@@ -899,9 +899,9 @@
                 successDiv.innerHTML = '<h2 style="margin:0 0 10px 0;">🎉 Registration Completed!</h2><p style="margin:0 0 15px 0;">Welcome to OurLibrary!</p><p style="margin:0;opacity:0.9;">Setting up your personal library...</p>';
                 document.body.appendChild(successDiv);
                 
-                // Redirect to file system setup (MANDATORY for new users)
+                // Redirect to consent page first (MANDATORY for new users)
                 setTimeout(() => {
-                    window.location.href = 'setup-filesystem.html';
+                    window.location.href = 'Set Up Your Personal Library - OurLibrary.html';
                 }, 2000);
             } else {
                 // Failed verification
