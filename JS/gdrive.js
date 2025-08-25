@@ -12,7 +12,143 @@
 
 class OurLibraryGDrive {
     constructor() {
-        this.serviceAccount = 'anderson-library-service@anderson-library.iam.gserviceaccount.com';
+        // File: gdrive.js
+// Path: /home/herb/Desktop/OurLibrary/archive/JS/gdrive.js
+// Standard: AIDEV-PascalCase-2.3
+// Created: 2025-01-23
+// Last Modified: 2025-08-24 12:45PM
+
+/**
+ * OurLibrary Google Drive Integration (Refactored to use OurLibraryFileManager)
+ * Handles PDF downloads and saves them directly to the user's chosen directory.
+ */
+class OurLibraryGDrive {
+    constructor() {
+        this.baseURL = 'https://drive.google.com/uc?export=download&id=';
+        this.fileIdMap = {};
+        this.fileMapLoaded = false;
+    }
+
+    /**
+     * Load file ID mapping from server.
+     * Maps book IDs to Google Drive file IDs.
+     */
+    async loadFileIdMap() {
+        if (this.fileMapLoaded) return;
+
+        try {
+            const response = await fetch('/assets/data/gdrive_file_map.json');
+            if (response.ok) {
+                this.fileIdMap = await response.json();
+                this.fileMapLoaded = true;
+                console.log('Google Drive file ID map loaded.');
+            } else {
+                console.warn('File ID map not found, book downloads may fail.');
+            }
+        } catch (error) {
+            console.error('Error loading file ID map:', error);
+        }
+    }
+
+    /**
+     * Gets a PDF book.
+     * 1. Checks if the book is already downloaded in the user's directory.
+     * 2. If not, downloads it from Google Drive.
+     * 3. Saves the downloaded book to the user's directory.
+     * @param {number} bookId - Book ID from the database.
+     * @param {Object} bookInfo - Book information from the database.
+     * @returns {Blob|null} PDF blob or null if an error occurs.
+     */
+    async getBook(bookId, bookInfo = {}) {
+        try {
+            const fileName = this.generateFileName(bookId, bookInfo.title);
+
+            // 1. Check if the file exists in the user's downloads directory.
+            const existingFile = await window.OurLibraryFileManager.readFile('downloads', fileName);
+            if (existingFile) {
+                console.log(`Book '${fileName}' loaded from local file system.`);
+                return existingFile;
+            }
+
+            // 2. If not, download from Google Drive.
+            console.log(`Downloading book '${fileName}' from Google Drive...`);
+            const pdfBlob = await this.downloadFromGDrive(bookId, bookInfo);
+
+            if (pdfBlob) {
+                // 3. Save the downloaded file for future use.
+                await window.OurLibraryFileManager.writeFile('downloads', fileName, pdfBlob);
+                console.log(`Book '${fileName}' saved to local file system.`);
+                return pdfBlob;
+            }
+
+            return null;
+
+        } catch (error) {
+            console.error(`Error getting book ${bookId}:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Downloads the actual PDF content from Google Drive.
+     * @param {number} bookId - The ID of the book.
+     * @param {Object} bookInfo - Metadata about the book.
+     * @returns {Blob|null} The PDF content as a Blob.
+     */
+    async downloadFromGDrive(bookId, bookInfo) {
+        try {
+            // Ensure the file map is loaded before trying to download.
+            if (!this.fileMapLoaded) {
+                await this.loadFileIdMap();
+            }
+
+            const fileId = this.fileIdMap[bookId];
+            if (!fileId) {
+                throw new Error(`No Google Drive file ID found for book ID ${bookId}`);
+            }
+
+            const downloadURL = `${this.baseURL}${fileId}`;
+            const response = await fetch(downloadURL);
+
+            if (!response.ok) {
+                throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+            }
+
+            return await response.blob();
+
+        } catch (error) {
+            console.error(`Error downloading book ${bookId} from GDrive:`, error);
+            return null;
+        }
+    }
+    
+    /**
+     * Generates a sanitized, consistent file name for a book.
+     * @param {number} bookId - The book's ID.
+     * @param {string} title - The book's title.
+     * @returns {string} A safe filename.
+     */
+    generateFileName(bookId, title = 'book') {
+        const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        return `${bookId}_${sanitizedTitle}.pdf`;
+    }
+
+    /**
+     * Checks if a book PDF already exists in the user's downloads directory.
+     * @param {number} bookId - The book's ID.
+     * @param {string} title - The book's title.
+     * @returns {Promise<boolean>} True if the file exists.
+     */
+    async isBookDownloaded(bookId, title) {
+        const fileName = this.generateFileName(bookId, title);
+        const file = await window.OurLibraryFileManager.readFile('downloads', fileName);
+        return !!file;
+    }
+}
+
+// Create a global Google Drive instance.
+window.ourLibraryGDrive = new OurLibraryGDrive();
+
         this.baseURL = 'https://drive.google.com/uc?export=download&id=';
         this.apiBaseURL = 'https://www.googleapis.com/drive/v3';
         this.cacheStoreName = 'OurLibrary_PDFs';

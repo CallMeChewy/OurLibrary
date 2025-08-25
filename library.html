@@ -252,26 +252,22 @@
         
         // Initialize application
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                // Check environment first - this will redirect to setup if needed
-                const route = await window.ourLibraryEnvironment.initialize();
-                
-                if (route === 'setup') {
-                    // Will be redirected by environment.js
-                    return;
-                }
-                
-                if (route === 'error') {
-                    showStatus('Failed to initialize library environment. Please refresh the page.', 'error');
-                    return;
-                }
-                
-                // Environment is ready - initialize library
+            showStatus('Initializing File System Access...');
+            
+            // This now calls our new File System manager.
+            // It will prompt the user to pick a directory if it's the first time.
+            const isReady = await window.OurLibraryFileManager.initialize();
+
+            if (isReady) {
+                // If the user selected a directory and we are ready, initialize the library UI.
+                showStatus('File system ready. Loading library...');
                 await initializeLibrary();
-                
-            } catch (error) {
-                console.error('Failed to initialize library:', error);
-                showStatus('Failed to initialize library. Please refresh the page.', 'error');
+            } else {
+                // This happens if the user cancels the directory picker.
+                showStatus('Directory access is required to use OurLibrary. Please refresh to try again.', 'error');
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('resultsTitle').textContent = 'Initialization Cancelled';
+                document.getElementById('resultsSection').style.display = 'block';
             }
         });
 
