@@ -1,0 +1,69 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]: Sponsored by BowersWorld.com
+  - img "Project Himalaya - Human and AI collaboration" [ref=e4]
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - heading "OurLibrary" [level=1] [ref=e7]
+      - generic [ref=e8]:
+        - heading "\"Getting education into the hands of people who can least afford it\"" [level=2] [ref=e9]
+        - paragraph [ref=e10]: OurLibrary is a free digital library platform providing access to thousands of educational books and resources. Our mission is to break down barriers to education by offering completely free access to quality educational content for students worldwide.
+        - paragraph [ref=e11]: From elementary school textbooks to university-level research materials, we believe that knowledge should be accessible to everyone, regardless of economic circumstances. Join our community of learners and educators working together to democratize education.
+        - generic [ref=e12]:
+          - button "🚀 Get Started - Join OurLibrary!" [ref=e13]
+          - paragraph [ref=e14]:
+            - text: Already a member?
+            - link "Sign in here" [ref=e15] [cursor=pointer]:
+              - /url: "#"
+    - heading "What's In Our Library" [level=2] [ref=e16]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]: 📚
+        - heading "Educational Books" [level=3] [ref=e20]
+        - paragraph [ref=e21]: Thousands of textbooks, workbooks, and educational resources covering all subjects and grade levels.
+      - generic [ref=e22]:
+        - generic [ref=e23]: 🌍
+        - heading "Multiple Languages" [level=3] [ref=e24]
+        - paragraph [ref=e25]: Books and materials available in multiple languages to serve diverse global communities.
+      - generic [ref=e26]:
+        - generic [ref=e27]: 📱
+        - heading "Offline Access" [level=3] [ref=e28]
+        - paragraph [ref=e29]: Download books for offline reading - perfect for areas with limited internet connectivity.
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - button "← Back" [ref=e34]
+        - heading "Email Registration" [level=2] [ref=e35]
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]: Email Address (User ID) *
+            - textbox "your.email@example.com" [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]: Full Name *
+            - textbox "Enter your full name" [ref=e43]
+          - generic [ref=e44]:
+            - generic [ref=e45]: Password *
+            - textbox "Minimum 8 characters" [ref=e46]
+          - generic [ref=e47]:
+            - generic [ref=e48]: Confirm Password *
+            - textbox "Re-enter your password" [ref=e49]
+          - generic [ref=e50]:
+            - generic [ref=e51]: Zip Code
+            - textbox [ref=e52]
+          - generic [ref=e54]:
+            - checkbox "I agree to the Terms of Service *" [ref=e55]
+            - generic [ref=e56]:
+              - text: I agree to the
+              - link "Terms of Service" [ref=e57] [cursor=pointer]:
+                - /url: "#"
+              - text: "*"
+        - button "Create Account & Send Verification" [ref=e59]
+      - button "Cancel" [ref=e61]
+  - contentinfo [ref=e62]:
+    - generic [ref=e64]:
+      - generic [ref=e65]: © 2025 OurLibrary - Getting education into the hands of people who can least afford it. Sponsored by BowersWorld.com
+      - link "📊 Analytics Dashboard" [ref=e67] [cursor=pointer]:
+        - /url: analytics-dashboard.html
+```
