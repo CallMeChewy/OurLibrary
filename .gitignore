@@ -8,3 +8,4 @@ Thumbs.db
 *.tar.gz
 audits/
 .env
+Data/Books
