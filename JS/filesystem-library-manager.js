@@ -535,10 +535,10 @@ class OurLibraryFileManager {
      * Save large data to IndexedDB
      */
     // File: filesystem-library-manager.js
-// Path: /home/herb/Desktop/OurLibrary/archive/filesystem-library-manager.js
+// Path: /home/herb/Desktop/OurLibrary/archive/JS/filesystem-library-manager.js
 // Standard: AIDEV-PascalCase-2.3
 // Created: 2025-01-23
-// Last Modified: 2025-08-24 12:00PM
+// Last Modified: 2025-08-25 10:00AM
 
 /**
  * OurLibrary File System Manager (Refactored for Modern File System Access API)
@@ -551,6 +551,7 @@ class OurLibraryFileManager {
     constructor() {
         this.directoryHandle = null;
         this.db = null;
+        this.isInitialized = false; // Added for robust state checking
         this.dbName = 'OurLibraryFSA';
         this.storeName = 'fileSystemHandles';
         this.subdirectories = ['database', 'downloads', 'userData', 'cache'];
@@ -563,29 +564,38 @@ class OurLibraryFileManager {
      * @returns {Promise<boolean>} True if initialization is successful, false otherwise.
      */
     async initialize() {
+        console.log('[FSM] Initializing...');
         if (!this.isSupported()) {
-            console.error('File System Access API is not supported in this browser.');
-            // Here you could implement a fallback to a virtual in-memory storage
+            console.error('[FSM] File System Access API is not supported.');
             return false;
         }
 
         await this.initDB();
         const savedHandle = await this.getDHandle(this.storeName);
 
+        let success = false;
         if (savedHandle) {
-            console.log('📁 Found saved directory handle.');
+            console.log('[FSM] Found saved directory handle.');
             if (await this.verifyPermission(savedHandle)) {
-                console.log('✅ Permission granted for saved handle.');
+                console.log('[FSM] Permission granted for saved handle.');
                 this.directoryHandle = savedHandle;
-                return true;
+                success = true;
             } else {
-                console.warn('⚠️ Permission denied for saved handle. Please re-select the directory.');
-                return this.promptForDirectory();
+                console.warn('[FSM] Permission denied for saved handle. Re-prompting.');
+                success = await this.promptForDirectory();
             }
         } else {
-            console.log('ℹ️ No saved directory handle. Prompting user.');
-            return this.promptForDirectory();
+            console.log('[FSM] No saved directory handle. Prompting user.');
+            success = await this.promptForDirectory();
         }
+
+        if (success) {
+            this.isInitialized = true;
+            console.log('[FSM] Initialization successful.');
+            await this.createInitialSubdirectories();
+        }
+
+        return success;
     }
 
     /**
@@ -602,17 +612,15 @@ class OurLibraryFileManager {
 
             if (this.directoryHandle) {
                 await this.setDHandle(this.storeName, this.directoryHandle);
-                console.log(`✅ Directory '${this.directoryHandle.name}' selected and handle saved.`);
-                await this.createInitialSubdirectories();
+                console.log(`[FSM] Directory '${this.directoryHandle.name}' selected and handle saved.`);
                 return true;
             }
             return false;
         } catch (error) {
-            // This error is common if the user cancels the dialog.
             if (error.name === 'AbortError') {
-                console.log('User cancelled the directory selection.');
+                console.log('[FSM] User cancelled the directory selection.');
             } else {
-                console.error('Error picking directory:', error);
+                console.error('[FSM] Error picking directory:', error);
             }
             return false;
         }
@@ -622,29 +630,26 @@ class OurLibraryFileManager {
      * Creates the essential subdirectories if they don't exist.
      */
     async createInitialSubdirectories() {
-        if (!this.directoryHandle) return;
-        console.log('📂 Checking for initial subdirectories...');
+        if (!this.directoryHandle) {
+            console.error('[FSM] Cannot create subdirectories without a directory handle.');
+            return;
+        }
+        console.log('[FSM] Verifying subdirectories...');
         for (const dirName of this.subdirectories) {
             try {
                 await this.directoryHandle.getDirectoryHandle(dirName, { create: true });
-                console.log(`  -> Subdirectory '${dirName}' is present.`);
             } catch (error) {
-                console.error(`❌ Failed to create subdirectory '${dirName}':`, error);
+                console.error(`[FSM] Failed to create subdirectory '${dirName}':`, error);
             }
         }
     }
 
     /**
      * Writes a file to a specified subdirectory.
-     * @param {string} subDir - The name of the subdirectory (e.g., 'database').
-     * @param {string} fileName - The name of the file to write.
-     * @param {Blob|string|ArrayBuffer} content - The content to write to the file.
-     * @returns {Promise<boolean>} True on success, false on failure.
      */
     async writeFile(subDir, fileName, content) {
-        if (!this.directoryHandle) {
-            console.error('Directory handle not available.');
-            return false;
+        if (!this.isInitialized || !this.directoryHandle) {
+            throw new Error('[FSM] Error: writeFile called before File System Manager was initialized.');
         }
         try {
             const dirHandle = await this.directoryHandle.getDirectoryHandle(subDir, { create: true });
@@ -652,29 +657,28 @@ class OurLibraryFileManager {
             const writable = await fileHandle.createWritable();
             await writable.write(content);
             await writable.close();
-            console.log(`💾 File '${fileName}' saved to '${subDir}'.`);
+            console.log(`[FSM] File '${fileName}' saved to '${subDir}'.`);
             return true;
         } catch (error) {
-            console.error(`Error writing file ${fileName}:`, error);
+            console.error(`[FSM] Error writing file ${fileName}:`, error);
             return false;
         }
     }
 
     /**
      * Reads a file from a specified subdirectory.
-     * @param {string} subDir - The name of the subdirectory.
-     * @param {string} fileName - The name of the file to read.
-     * @returns {Promise<File|null>} The file object on success, null on failure.
      */
     async readFile(subDir, fileName) {
-        if (!this.directoryHandle) return null;
+        if (!this.isInitialized || !this.directoryHandle) {
+            throw new Error('[FSM] Error: readFile called before File System Manager was initialized.');
+        }
         try {
             const dirHandle = await this.directoryHandle.getDirectoryHandle(subDir);
             const fileHandle = await dirHandle.getFileHandle(fileName);
             return await fileHandle.getFile();
         } catch (error) {
             if (error.name !== 'NotFoundError') {
-               console.error(`Error reading file ${fileName}:`, error);
+               console.error(`[FSM] Error reading file ${fileName}:`, error);
             }
             return null;
         }
@@ -702,7 +706,7 @@ class OurLibraryFileManager {
             const tx = this.db.transaction(this.storeName, 'readonly');
             const request = tx.objectStore(this.storeName).get(key);
             request.onsuccess = () => resolve(request.result);
-            request.onerror = () => resolve(null); // Resolve null on error
+            request.onerror = () => resolve(null);
         });
     }
 
