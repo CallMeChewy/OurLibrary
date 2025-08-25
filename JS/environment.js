@@ -335,7 +335,7 @@ class OurLibraryEnvironment {
         switch (route) {
             case 'setup':
                 console.log('Routing to setup page');
-                window.location.href = '/setup.html';
+                window.location.href = 'library.html';
                 break;
                 
             case 'library':
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const setupData = localStorage.getItem('ourLibrary_setupComplete');
         if (!setupData) {
             console.log('No setup found on library page - routing to setup');
-            window.location.href = '/setup.html';
+            window.location.href = 'library.html';
         }
     }
 });
