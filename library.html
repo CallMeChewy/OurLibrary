@@ -253,17 +253,24 @@
         // Initialize application
         document.addEventListener('DOMContentLoaded', async function() {
             showStatus('Initializing File System Access...');
-            
+
+            // Set a timeout to detect if the folder picker is blocked
+            const pickerTimeout = setTimeout(() => {
+                showStatus('The folder picker seems to be blocked by your browser. Please try a standard browser like Chrome or Firefox.', 'error');
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }, 8000); // 8 seconds
+
             // This now calls our new File System manager.
-            // It will prompt the user to pick a directory if it's the first time.
             const isReady = await window.OurLibraryFileManager.initialize();
+            
+            clearTimeout(pickerTimeout); // Clear the timeout if initialization proceeds
 
             if (isReady) {
                 // If the user selected a directory and we are ready, initialize the library UI.
                 showStatus('File system ready. Loading library...');
                 await initializeLibrary();
             } else {
-                // This happens if the user cancels the directory picker.
+                // This happens if the user cancels the directory picker or it was blocked.
                 showStatus('Directory access is required to use OurLibrary. Please refresh to try again.', 'error');
                 document.getElementById('loadingIndicator').style.display = 'none';
                 document.getElementById('resultsTitle').textContent = 'Initialization Cancelled';
