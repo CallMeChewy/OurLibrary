@@ -97,20 +97,20 @@
                         
                         <!-- Step 1 -->
                         <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                            <div class="font-semibold text-blue-400 mb-2">📁 Directory Setup</div>
-                            <div class="text-sm text-gray-300">Create ~/OurLibrary/ folder structure</div>
+                            <div class="font-semibold text-blue-400 mb-2">📥 Download Installer</div>
+                            <div class="text-sm text-gray-300">Get OurLibrary-Installer.sh (like any software)</div>
                         </div>
                         
                         <!-- Step 2 -->
                         <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
-                            <div class="font-semibold text-cyan-400 mb-2">📥 Database Download</div>
-                            <div class="text-sm text-gray-300">Download 11MB book catalog</div>
+                            <div class="font-semibold text-cyan-400 mb-2">🚀 Run Installer</div>
+                            <div class="text-sm text-gray-300">Creates ~/OurLibrary/ + downloads database</div>
                         </div>
                         
                         <!-- Step 3 -->
                         <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4">
-                            <div class="font-semibold text-indigo-400 mb-2">⚙️ System Configuration</div>
-                            <div class="text-sm text-gray-300">Configure search and user preferences</div>
+                            <div class="font-semibold text-indigo-400 mb-2">📁 Directory Created</div>
+                            <div class="text-sm text-gray-300">~/OurLibrary/ with all subdirectories</div>
                         </div>
                         
                         <!-- Step 4 -->
@@ -311,11 +311,11 @@
             }
 
             showCompletion() {
-                this.elements.statusText.textContent = "🎉 Your OurLibrary is ready to use!";
+                this.elements.statusText.textContent = "📥 Installer downloaded! Please run it to complete setup.";
                 this.elements.progressBar.style.width = '100%';
-                this.elements.progressDetails.textContent = "All setup steps completed successfully";
+                this.elements.progressDetails.textContent = "Run: chmod +x ~/Downloads/OurLibrary-Installer.sh && ~/Downloads/OurLibrary-Installer.sh";
                 
-                // Show continue button
+                // Show continue button (will only work after user runs installer)
                 this.elements.continueButton.classList.remove('hidden');
             }
 

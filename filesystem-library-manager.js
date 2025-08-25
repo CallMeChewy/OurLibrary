@@ -32,65 +32,74 @@ class OurLibraryFileManager {
 
     /**
      * Initialize the OurLibrary directory structure
-     * Uses File System Access API to create REAL ~/OurLibrary/ directory
+     * Downloads installer script for user to run (like Chrome, Python, MySQL installers)
      */
     async initializeLibraryDirectory() {
         try {
-            console.log('🏠 Creating REAL OurLibrary directory structure...');
+            console.log('🏠 Downloading OurLibrary installer...');
             
-            if (!this.isSupported) {
-                throw new Error('File System Access API not supported in this browser');
-            }
-
-            // Get platform-specific path where files will be stored
+            // Get platform-specific path where installer will be downloaded
             const platformPath = this.getDefaultLibraryPath();
-            console.log(`📍 Files will be stored at: ${platformPath}`);
+            console.log(`📍 Installer will create library at: ${platformPath}`);
             
-            // Use File System Access API to create REAL directory
-            this.directoryHandle = await window.showDirectoryPicker({
-                mode: 'readwrite',
-                startIn: 'documents',
-                suggestedName: 'OurLibrary'
-            });
+            // Download the installer script
+            await this.downloadInstaller();
             
-            console.log(`✅ Directory access granted: ${this.directoryHandle.name}`);
-
-            // Create real subdirectories
-            await this.createSubdirectories();
-
-            // Store directory handle reference
-            await this.saveDirectoryReference();
-
             return {
                 success: true,
-                path: `${platformPath}/${this.directoryHandle.name}`,
-                message: `OurLibrary directory created successfully at ${this.directoryHandle.name}`
+                path: platformPath,
+                message: 'OurLibrary installer downloaded successfully. Please run it to complete setup.',
+                installerPath: '~/Downloads/OurLibrary-Installer.sh'
             };
 
         } catch (error) {
-            console.error('❌ Failed to initialize directory:', error);
-            
-            // Provide specific error messages based on error type
-            let errorMessage = error.message;
-            let recommendation = 'Please try again or use a different browser.';
-            
-            if (error.name === 'AbortError' || error.message.includes('aborted')) {
-                errorMessage = 'Directory picker was cancelled or blocked by browser security settings.';
-                recommendation = 'Try: 1) Enable file system access in browser settings, 2) Use Chrome/Edge browser, 3) Disable popup blockers';
-            } else if (error.message.includes('not supported')) {
-                errorMessage = 'Your browser does not support file system access.';
-                recommendation = 'Please use Chrome, Edge, or another Chromium-based browser for full functionality.';
-            } else if (error.message.includes('permission')) {
-                errorMessage = 'File system permission denied.';
-                recommendation = 'Please allow file system access when prompted, or check browser security settings.';
-            }
+            console.error('❌ Failed to download installer:', error);
             
             return {
                 success: false,
-                error: errorMessage,
-                recommendation: recommendation,
-                fallback: 'browser-storage'
+                error: 'Failed to download installer: ' + error.message,
+                recommendation: 'Please check your internet connection and try again.',
+                fallback: 'manual-download'
             };
+        }
+    }
+
+    /**
+     * Download the installation script (like Chrome installer, Python installer, etc.)
+     */
+    async downloadInstaller() {
+        try {
+            console.log('📥 Downloading OurLibrary installer script...');
+            
+            // Fetch the installer script
+            const response = await fetch('OurLibrary-Installer.sh');
+            if (!response.ok) {
+                throw new Error(`Installer download failed: ${response.status}`);
+            }
+            
+            const installerContent = await response.text();
+            
+            // Create and trigger download (like any software installer)
+            const blob = new Blob([installerContent], { type: 'application/x-sh' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'OurLibrary-Installer.sh';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+            
+            console.log('✅ Installer downloaded to ~/Downloads/OurLibrary-Installer.sh');
+            console.log('🔧 User can now run: chmod +x ~/Downloads/OurLibrary-Installer.sh && ~/Downloads/OurLibrary-Installer.sh');
+            
+            return { success: true };
+            
+        } catch (error) {
+            console.error('❌ Installer download failed:', error);
+            throw error;
         }
     }
 
