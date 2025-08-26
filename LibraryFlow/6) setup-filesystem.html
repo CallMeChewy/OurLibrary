@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting up your OurLibrary - File System Setup</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        .step-indicator.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        .step-indicator.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-y-auto">
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 -left-4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-0 -right-4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex items-start justify-center p-4 py-8">
+        <div class="w-full max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    📚 <span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Setting up your OurLibrary</span>
+                </h1>
+                <p class="text-xl text-gray-300 font-light">
+                    Creating your personal educational library directory
+                </p>
+            </div>
+
+            <!-- Main Setup Card -->
+            <div class="glass-effect rounded-2xl p-6 md:p-8 shadow-2xl">
+                
+                <!-- Progress Steps -->
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center space-x-4">
+                        <div id="step1" class="step-indicator pending w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg">1</div>
+                        <div class="w-16 h-1 bg-gray-600 rounded"></div>
+                        <div id="step2" class="step-indicator pending w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg">2</div>
+                        <div class="w-16 h-1 bg-gray-600 rounded"></div>
+                        <div id="step3" class="step-indicator pending w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg">3</div>
+                        <div class="w-16 h-1 bg-gray-600 rounded"></div>
+                        <div id="step4" class="step-indicator pending w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg">4</div>
+                    </div>
+                </div>
+
+                <!-- Status Display -->
+                <div class="bg-slate-800/50 rounded-xl p-6 mb-6">
+                    <div id="statusText" class="text-xl font-medium text-center mb-4">
+                        Ready to set up your personal library
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                        <div id="progressBar" class="progress-bar w-0 h-3 rounded-full"></div>
+                    </div>
+                    
+                    <div id="progressDetails" class="text-sm text-gray-400 text-center">
+                        Click "Start Setup" to begin
+                    </div>
+                </div>
+
+                <!-- Setup Steps Display -->
+                <div class="space-y-4 mb-8">
+                    <div id="stepDetails" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <!-- Step 1 -->
+                        <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                            <div class="font-semibold text-blue-400 mb-2">📥 Download Installer</div>
+                            <div class="text-sm text-gray-300">Get OurLibrary-Installer.sh (like any software)</div>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
+                            <div class="font-semibold text-cyan-400 mb-2">🚀 Run Installer</div>
+                            <div class="text-sm text-gray-300">Creates ~/OurLibrary/ + downloads database</div>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="bg-indigo-500/10 border border-indigo-500/30 rounded-lg p-4">
+                            <div class="font-semibold text-indigo-400 mb-2">📁 Directory Created</div>
+                            <div class="text-sm text-gray-300">~/OurLibrary/ with all subdirectories</div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="bg-sky-500/10 border border-sky-500/30 rounded-lg p-4">
+                            <div class="font-semibold text-sky-400 mb-2">🎉 Ready to Use</div>
+                            <div class="text-sm text-gray-300">Access your personal library</div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- Directory Location Display -->
+                <div id="directoryInfo" class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6 hidden">
+                    <div class="font-semibold text-green-400 mb-2">📍 Your Library Location</div>
+                    <div id="directoryPath" class="text-sm text-gray-300 font-mono"></div>
+                    <div class="text-xs text-gray-400 mt-2">You can find your books and data in this directory</div>
+                </div>
+
+                <!-- Error Display -->
+                <div id="errorDisplay" class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 hidden">
+                    <div class="font-semibold text-red-400 mb-2">❌ Setup Issue</div>
+                    <div id="errorMessage" class="text-sm text-gray-300"></div>
+                    <div id="errorSolution" class="text-xs text-gray-400 mt-2"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center space-x-4">
+                    <button 
+                        id="startSetupBtn" 
+                        class="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
+                    >
+                        🚀 Start Setup
+                    </button>
+                    
+                    <button 
+                        id="continueButton" 
+                        class="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 hidden"
+                    >
+                        📚 Continue to Library
+                    </button>
+                </div>
+
+                <!-- Browser Compatibility Notice -->
+                <div id="compatibilityNotice" class="mt-6 text-center text-sm text-gray-400">
+                    <div id="browserSupport"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Import File System Manager -->
+    <script src="filesystem-library-manager.js?v=force-cache-clear-20250824"></script>
+    
+    <script>
+        // Setup process controller
+        class OurLibrarySetup {
+            constructor() {
+                this.fileManager = new OurLibraryFileManager();
+                this.currentStep = 0;
+                this.totalSteps = 4;
+                
+                this.initializeUI();
+                this.bindEvents();
+                this.checkBrowserCompatibility();
+            }
+
+            initializeUI() {
+                // Get DOM elements
+                this.elements = {
+                    startSetupBtn: document.getElementById('startSetupBtn'),
+                    continueButton: document.getElementById('continueButton'),
+                    statusText: document.getElementById('statusText'),
+                    progressBar: document.getElementById('progressBar'),
+                    progressDetails: document.getElementById('progressDetails'),
+                    directoryInfo: document.getElementById('directoryInfo'),
+                    directoryPath: document.getElementById('directoryPath'),
+                    errorDisplay: document.getElementById('errorDisplay'),
+                    errorMessage: document.getElementById('errorMessage'),
+                    errorSolution: document.getElementById('errorSolution'),
+                    browserSupport: document.getElementById('browserSupport')
+                };
+            }
+
+            bindEvents() {
+                this.elements.startSetupBtn.addEventListener('click', () => this.startSetup());
+                this.elements.continueButton.addEventListener('click', () => this.goToLibrary());
+                
+                // Listen for progress updates from file manager
+                window.addEventListener('ourLibraryProgress', (event) => {
+                    const { operation, percentage, details } = event.detail;
+                    this.updateProgress(percentage, details);
+                });
+            }
+
+            checkBrowserCompatibility() {
+                const compatibility = this.fileManager.getCompatibilityMessage();
+                this.elements.browserSupport.textContent = compatibility.message;
+                
+                if (!compatibility.supported) {
+                    this.elements.browserSupport.className += ' text-yellow-400';
+                    this.showError('Browser Compatibility', compatibility.recommendation);
+                }
+            }
+
+            async startSetup() {
+                try {
+                    this.elements.startSetupBtn.disabled = true;
+                    this.elements.startSetupBtn.className += ' opacity-50 cursor-not-allowed';
+
+                    // Step 1: Directory Setup
+                    await this.executeStep(1, "Setting up directory structure...", async () => {
+                        const result = await this.fileManager.initializeLibraryDirectory();
+                        
+                        if (!result.success) {
+                            // Enhanced error with specific recommendations
+                            const errorDetails = result.recommendation ? 
+                                `${result.error}\n\nSuggestions:\n${result.recommendation}` : 
+                                result.error || 'Directory setup failed';
+                            throw new Error(errorDetails);
+                        }
+
+                        // Show directory location
+                        this.elements.directoryPath.textContent = result.path;
+                        this.elements.directoryInfo.classList.remove('hidden');
+                        
+                        return result;
+                    });
+
+                    // Step 2: Database Download
+                    await this.executeStep(2, "Downloading book catalog database...", async () => {
+                        // Use available database file
+                        const result = await this.fileManager.downloadAndSaveDatabase('library_web.db');
+                        return result;
+                    });
+
+                    // Step 3: System Configuration
+                    await this.executeStep(3, "Configuring system preferences...", async () => {
+                        // Initialize user data files
+                        await this.fileManager.saveUserData('preferences', {
+                            theme: 'default',
+                            setupDate: new Date().toISOString(),
+                            version: '1.0.0'
+                        });
+
+                        await this.fileManager.saveUserData('reading_progress', {});
+                        await this.fileManager.saveUserData('bookmarks', []);
+
+                        return { success: true };
+                    });
+
+                    // Step 4: Completion
+                    await this.executeStep(4, "Setup complete! Your library is ready.", async () => {
+                        // Get directory stats
+                        const stats = await this.fileManager.getDirectoryStats();
+                        
+                        return { 
+                            success: true,
+                            stats: stats
+                        };
+                    });
+
+                    // Show completion
+                    this.showCompletion();
+
+                } catch (error) {
+                    console.error('Setup failed:', error);
+                    this.showError('Setup Failed', error.message);
+                }
+            }
+
+            async executeStep(stepNumber, statusMessage, stepFunction) {
+                // Update UI
+                this.updateStepIndicator(stepNumber, 'active');
+                this.elements.statusText.textContent = statusMessage;
+                
+                // Execute step
+                const result = await stepFunction();
+                
+                // Mark step as completed
+                this.updateStepIndicator(stepNumber, 'completed');
+                
+                return result;
+            }
+
+            updateStepIndicator(stepNumber, status) {
+                const stepElement = document.getElementById(`step${stepNumber}`);
+                stepElement.className = `step-indicator ${status} w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg`;
+                
+                if (status === 'completed') {
+                    stepElement.textContent = '✓';
+                }
+            }
+
+            updateProgress(percentage, details) {
+                this.elements.progressBar.style.width = `${percentage}%`;
+                this.elements.progressDetails.textContent = details;
+            }
+
+            showCompletion() {
+                this.elements.statusText.textContent = "📥 Installer downloaded! Please run it to complete setup.";
+                this.elements.progressBar.style.width = '100%';
+                this.elements.progressDetails.textContent = "Run: chmod +x ~/Downloads/OurLibrary-Installer.sh && ~/Downloads/OurLibrary-Installer.sh";
+                
+                // Show continue button (will only work after user runs installer)
+                this.elements.continueButton.classList.remove('hidden');
+            }
+
+            showError(title, message) {
+                this.elements.errorMessage.textContent = message;
+                this.elements.errorDisplay.classList.remove('hidden');
+                
+                // Re-enable start button
+                this.elements.startSetupBtn.disabled = false;
+                this.elements.startSetupBtn.className = this.elements.startSetupBtn.className.replace(' opacity-50 cursor-not-allowed', '');
+            }
+
+            goToLibrary() {
+                // Redirect to library page
+                window.location.href = 'desktop-library-enhanced.html';
+            }
+        }
+
+        // Initialize setup when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new OurLibrarySetup();
+        });
+    </script>
+</body>
+</html>

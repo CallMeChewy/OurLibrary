@@ -1,0 +1,8 @@
+1) ourlibrary-main-page-playwright
+2) ourlibrary-registration-modal-playwright
+3) ourlibrary-completed-registration-form-playwright
+4) ourlibrary-email-verification-screen-playwright
+5) setup-consent.html
+6) setup-filesystem.html
+7a) ourlibrary-registration-success-playwright
+7b) desktop-library-enhanced.html
