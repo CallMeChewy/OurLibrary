@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<!--
+File: desktop-library-enhanced.html
+Path: WebPages/desktop-library-enhanced.html
+Standard: AIDEV-PascalCase-2.1
+Created: 2025-07-26
+Last Modified: 2025-07-26 10:30AM
+Description: Enhanced Anderson's Library Desktop Web Interface with UX improvements
+- Added real-time search suggestions
+- Enhanced loading states with animations
+- Keyboard navigation support
+- Quick book preview modal
+- Recently viewed books tracking
+- Improved visual feedback
+- Better responsive design
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anderson's Library - Enhanced Edition</title>
+    
+    <style>
+        /* Enhanced Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        button, input, select, .menu-item, .dropdown-item, .book-card {
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(to bottom, rgb(3, 50, 76), rgb(6, 82, 125) 29%, rgb(8, 117, 178) 51%, rgb(7, 108, 164) 75%, rgb(3, 51, 77));
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Enhanced Menu Bar */
+        .menu-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .menu-item {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            pointer-events: auto;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(44, 62, 80, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+            user-select: none;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+            padding-left: 20px;
+        }
+
+        .menu-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Enhanced Title Bar */
+        .title-bar {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .title-bar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Enhanced Main Content */
+        .content-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Enhanced Sidebar */
+        .sidebar {
+            width: 320px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-title {
+            padding: 16px;
+            text-align: center;
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 12px;
+            color: #ecf0f1;
+            font-size: 16px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Enhanced Search with Suggestions */
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 14px;
+            pointer-events: auto;
+            user-select: text;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(44, 62, 80, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .suggestion-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.selected {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+        }
+
+        .suggestion-type {
+            font-size: 12px;
+            color: #bdc3c7;
+            margin-left: 8px;
+        }
+
+        /* Enhanced View Controls */
+        .view-controls {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-mode-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+            pointer-events: auto;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-mode-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .view-mode-btn:hover::before {
+            left: 100%;
+        }
+
+        .view-mode-btn.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-color: #3498db;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .view-mode-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Dropdowns */
+        .desktop-dropdown {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 14px;
+            pointer-events: auto;
+            user-select: text;
+            transition: all 0.3s ease;
+        }
+
+        .desktop-dropdown:focus {
+            border-color: #3498db;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.3);
+            outline: none;
+        }
+
+        .desktop-dropdown option {
+            background: #2c3e50;
+            color: #ffffff;
+            padding: 8px;
+        }
+
+        /* Recently Viewed Section */
+        .recent-books {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .recent-book-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .recent-book-item:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .recent-book-thumb {
+            width: 24px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .recent-book-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recent-book-title {
+            font-size: 12px;
+            color: #ecf0f1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recent-book-author {
+            font-size: 11px;
+            color: #bdc3c7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Enhanced Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .content-title {
+            font-size: 18px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-count {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        /* Enhanced Loading States */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            color: #ecf0f1;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* Enhanced Books Grid */
+        .books-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            align-content: start;
+            position: relative;
+        }
+
+        .books-grid.view-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .books-grid.view-list .book-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 16px 20px;
+            max-width: none;
+            height: 90px;
+        }
+
+        .books-grid.view-list .book-thumbnail {
+            width: 100px;
+            height: 130px;
+            margin-right: 20px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .books-grid.view-list .book-info {
+            flex: 1;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        /* Enhanced Book Cards */
+        .book-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .book-card:hover::before {
+            opacity: 1;
+        }
+
+        .book-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-color: #3498db;
+        }
+
+        .book-card.selected {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .book-card.loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Enhanced Thumbnails */
+        .book-thumbnail {
+            width: 160px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .book-thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .book-thumbnail img.loaded {
+            opacity: 1;
+        }
+
+        .book-thumbnail::before {
+            content: "📚";
+            font-size: 40px;
+            opacity: 0.5;
+            position: absolute;
+            z-index: 1;
+        }
+
+        .book-thumbnail img:not(.error) {
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Enhanced Book Info */
+        .book-info {
+            flex: 1;
+            width: 100%;
+        }
+
+        .book-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ecf0f1;
+            font-size: 14px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-author {
+            color: #bdc3c7;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .book-category {
+            color: #3498db;
+            font-size: 12px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .book-rating {
+            color: #f39c12;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Quick Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .preview-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .preview-content {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border: 2px solid #3498db;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-modal.active .preview-content {
+            transform: scale(1);
+        }
+
+        .preview-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .preview-close:hover {
+            background: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        .preview-book {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .preview-thumbnail {
+            width: 120px;
+            height: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .preview-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-details {
+            flex: 1;
+        }
+
+        .preview-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ecf0f1;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-author {
+            font-size: 16px;
+            color: #bdc3c7;
+            margin-bottom: 12px;
+        }
+
+        .preview-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .preview-meta-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .preview-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+        }
+
+        .preview-btn.secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        /* Enhanced Status Bar */
+        .status-bar {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-message {
+            color: #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27ae60;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .mode-indicator {
+            color: #f39c12;
+            font-weight: bold;
+            background: rgba(243, 156, 18, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.2);
+        }
+
+        .status-stats {
+            color: #bdc3c7;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Keyboard Navigation Indicators */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ecf0f1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .keyboard-hint.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .book-thumbnail {
+                width: 120px;
+                height: 150px;
+            }
+
+            .preview-content {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .preview-book {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Accessibility Enhancements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus indicators for keyboard navigation */
+        .book-card:focus {
+            outline: 3px solid #3498db;
+            outline-offset: 2px;
+        }
+
+        .menu-item:focus,
+        .search-input:focus,
+        .desktop-dropdown:focus,
+        .view-mode-btn:focus {
+            outline: 2px solid #3498db;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Enhanced Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-item" tabindex="0" role="menuitem">
+                File
+                <div class="dropdown-menu" role="menu">
+                    <div class="dropdown-item" data-action="showStats" role="menuitem" tabindex="0">📊 Library Statistics</div>
+                    <div class="dropdown-item" data-action="exportData" role="menuitem" tabindex="0">📄 Export Data</div>
+                    <div class="dropdown-item" data-action="exitApp" role="menuitem" tabindex="0">🚪 Exit</div>
+                </div>
+            </div>
+            <div class="menu-item" tabindex="0" role="menuitem">
+                View
+                <div class="dropdown-menu" role="menu">
+                    <div class="dropdown-item" data-action="setViewMode" data-mode="grid" role="menuitem" tabindex="0">🔲 Grid View</div>
+                    <div class="dropdown-item" data-action="setViewMode" data-mode="list" role="menuitem" tabindex="0">📋 List View</div>
+                    <div class="dropdown-item" data-action="toggleViewMode" role="menuitem" tabindex="0">🔄 Toggle View</div>
+                    <div class="dropdown-item" data-action="refreshLibrary" role="menuitem" tabindex="0">♻️ Refresh</div>
+                </div>
+            </div>
+            <div class="menu-item" tabindex="0" role="menuitem">
+                Help
+                <div class="dropdown-menu" role="menu">
+                    <div class="dropdown-item" data-action="showHelp" role="menuitem" tabindex="0">❓ User Guide</div>
+                    <div class="dropdown-item" data-action="showKeyboardShortcuts" role="menuitem" tabindex="0">⌨️ Keyboard Shortcuts</div>
+                    <div class="dropdown-item" data-action="showAbout" role="menuitem" tabindex="0">ℹ️ About</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Title Bar -->
+        <div class="title-bar">
+            <h1>Anderson's Library - Enhanced Edition</h1>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-area">
+            <!-- Enhanced Left Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-title">📚 Library Controls</div>
+
+                <!-- Enhanced View Controls -->
+                <div class="sidebar-section">
+                    <h3>🎨 View Mode</h3>
+                    <div class="view-controls">
+                        <button class="view-mode-btn active" data-mode="grid" id="viewToggleBtn" tabindex="0">
+                            🔲 Grid
+                        </button>
+                        <button class="view-mode-btn" data-mode="list" tabindex="0">
+                            📋 List
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Enhanced Search Section -->
+                <div class="sidebar-section">
+                    <h3>🔍 Search Library</h3>
+                    <div class="search-container">
+                        <input type="text" 
+                               class="search-input" 
+                               placeholder="Search books, authors..." 
+                               id="searchInput"
+                               autocomplete="off"
+                               tabindex="0">
+                        <div class="search-suggestions" id="searchSuggestions" role="listbox"></div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Filters Section -->
+                <div class="sidebar-section">
+                    <h3>🏷️ Filters</h3>
+                    
+                    <!-- Category Dropdown -->
+                    <select class="desktop-dropdown" 
+                            id="categorySelect" 
+                            onchange="onCategoryChange()"
+                            tabindex="0">
+                        <option value="">📚 All Categories</option>
+                    </select>
+
+                    <!-- Subject Dropdown -->
+                    <select class="desktop-dropdown" 
+                            id="subjectSelect" 
+                            onchange="onSubjectChange()"
+                            tabindex="0">
+                        <option value="">📖 All Subjects</option>
+                    </select>
+                </div>
+
+                <!-- Recently Viewed Section -->
+                <div class="sidebar-section">
+                    <h3>🕒 Recently Viewed</h3>
+                    <div class="recent-books" id="recentBooks">
+                        <div style="color: #bdc3c7; font-size: 14px; text-align: center; padding: 20px;">
+                            No recent books yet
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Download Section -->
+                <div class="sidebar-section">
+                    <h3>💾 Database</h3>
+                    <button class="search-btn" onclick="downloadDatabase()" id="downloadBtn" tabindex="0">
+                        📥 Download Database
+                    </button>
+                    <div class="db-info" id="dbInfo" style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 8px;">
+                        Loading database info...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Main Content Area -->
+            <div class="main-content">
+                <!-- Content Header -->
+                <div class="content-header">
+                    <div class="content-title" id="contentTitle">🏠 Welcome to Anderson's Library</div>
+                    <div class="book-count" id="bookCount">Select a category or search for books</div>
+                </div>
+
+                <!-- Books Grid -->
+                <div class="books-grid" id="booksGrid" role="grid" tabindex="0">
+                    <!-- Enhanced startup screen will be populated by JavaScript -->
+                </div>
+
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                    <div style="text-align: center;">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text" id="loadingText">Loading books...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Status Bar -->
+        <div class="status-bar">
+            <div class="status-message" id="statusMessage">
+                <div class="status-indicator"></div>
+                <span>Ready - Enhanced Edition</span>
+            </div>
+            <div class="mode-indicator" id="modeIndicator">💾 LOCAL (Enhanced)</div>
+            <div class="status-stats" id="statusStats">
+                <div class="stat-item">📚 <span>1,219</span> Books</div>
+                <div class="stat-item">🏷️ <span>26</span> Categories</div>
+                <div class="stat-item">📖 <span>118</span> Subjects</div>
+            </div>
+        </div>
+
+        <!-- Quick Preview Modal -->
+        <div class="preview-modal" id="previewModal">
+            <div class="preview-content">
+                <button class="preview-close" onclick="closePreview()" tabindex="0">×</button>
+                <div class="preview-book" id="previewBook">
+                    <!-- Book preview content will be populated by JavaScript -->
+                </div>
+                <div class="preview-actions">
+                    <button class="preview-btn" onclick="selectBookFromPreview()" tabindex="0">
+                        📖 Open Book
+                    </button>
+                    <button class="preview-btn secondary" onclick="closePreview()" tabindex="0">
+                        ✖️ Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Navigation Hints -->
+        <div class="keyboard-hint" id="keyboardHint">
+            Use arrow keys to navigate • Enter to select • Space for preview • Esc to close
+        </div>
+    </div>
+
+    <!-- Enhanced JavaScript with new features -->
+    <script>
+        // Enhanced global functions and variables
+        let currentSelectedIndex = -1;
+        let currentBooks = [];
+        let recentlyViewed = [];
+        let searchSuggestions = [];
+        let currentPreviewBook = null;
+
+        // Global functions for inline event handlers (preserved for compatibility)
+        function setViewMode(mode) {
+            if (window.libraryInterface) {
+                window.libraryInterface.setViewMode(mode);
+            }
+        }
+
+        function performSearch() {
+            if (window.libraryInterface) {
+                window.libraryInterface.performSearch();
+            }
+        }
+
+        function onCategoryChange() {
+            if (window.libraryInterface) {
+                window.libraryInterface.onCategoryChange();
+            }
+        }
+
+        function onSubjectChange() {
+            if (window.libraryInterface) {
+                window.libraryInterface.onSubjectChange();
+            }
+        }
+
+        function selectBook(bookId) {
+            if (window.libraryInterface) {
+                window.libraryInterface.selectBook(bookId);
+                addToRecentlyViewed(bookId);
+            }
+        }
+
+        // Enhanced functions
+        function showPreview(bookId) {
+            // Implementation for quick preview
+            if (window.libraryInterface) {
+                const book = currentBooks.find(b => b.id === bookId);
+                if (book) {
+                    currentPreviewBook = book;
+                    populatePreview(book);
+                    document.getElementById('previewModal').classList.add('active');
+                }
+            }
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('active');
+            currentPreviewBook = null;
+        }
+
+        function selectBookFromPreview() {
+            if (currentPreviewBook) {
+                selectBook(currentPreviewBook.id);
+                closePreview();
+            }
+        }
+
+        function populatePreview(book) {
+            const previewBook = document.getElementById('previewBook');
+            previewBook.innerHTML = `
+                <div class="preview-thumbnail">
+                    <img src="/api/thumbnails/${book.id}" 
+                         alt="${book.title}" 
+                         onerror="this.style.display='none'">
+                </div>
+                <div class="preview-details">
+                    <div class="preview-title">${book.title}</div>
+                    <div class="preview-author">by ${book.author || 'Unknown Author'}</div>
+                    <div class="preview-meta">
+                        <div class="preview-meta-item">
+                            <strong>Category:</strong><br>${book.category || 'Uncategorized'}
+                        </div>
+                        <div class="preview-meta-item">
+                            <strong>File Size:</strong><br>${formatFileSize(book.file_size)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addToRecentlyViewed(bookId) {
+            const book = currentBooks.find(b => b.id === bookId);
+            if (!book) return;
+
+            // Remove if already exists
+            recentlyViewed = recentlyViewed.filter(item => item.id !== bookId);
+            
+            // Add to beginning
+            recentlyViewed.unshift(book);
+            
+            // Keep only last 5
+            recentlyViewed = recentlyViewed.slice(0, 5);
+            
+            // Update UI
+            updateRecentlyViewed();
+            
+            // Save to localStorage
+            localStorage.setItem('andyLibraryRecent', JSON.stringify(recentlyViewed));
+        }
+
+        function updateRecentlyViewed() {
+            const container = document.getElementById('recentBooks');
+            
+            if (recentlyViewed.length === 0) {
+                container.innerHTML = `
+                    <div style="color: #bdc3c7; font-size: 14px; text-align: center; padding: 20px;">
+                        No recent books yet
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recentlyViewed.map(book => `
+                <div class="recent-book-item" onclick="selectBook(${book.id})" tabindex="0" role="button">
+                    <div class="recent-book-thumb"></div>
+                    <div class="recent-book-info">
+                        <div class="recent-book-title">${book.title}</div>
+                        <div class="recent-book-author">${book.author || 'Unknown'}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadRecentlyViewed() {
+            try {
+                const saved = localStorage.getItem('andyLibraryRecent');
+                if (saved) {
+                    recentlyViewed = JSON.parse(saved);
+                    updateRecentlyViewed();
+                }
+            } catch (e) {
+                console.warn('Failed to load recently viewed:', e);
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return 'Unknown';
+            const mb = bytes / (1024 * 1024);
+            return mb < 1 ? `${(bytes / 1024).toFixed(0)} KB` : `${mb.toFixed(1)} MB`;
+        }
+
+        function showLoading(message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            text.textContent = message;
+            overlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showKeyboardHint() {
+            const hint = document.getElementById('keyboardHint');
+            hint.classList.add('visible');
+            setTimeout(() => {
+                hint.classList.remove('visible');
+            }, 3000);
+        }
+
+        // Enhanced keyboard navigation
+        function handleKeyboardNavigation(event) {
+            const bookCards = document.querySelectorAll('.book-card');
+            
+            switch (event.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    event.preventDefault();
+                    currentSelectedIndex = Math.min(currentSelectedIndex + 1, bookCards.length - 1);
+                    updateSelection(bookCards);
+                    break;
+                    
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    event.preventDefault();
+                    currentSelectedIndex = Math.max(currentSelectedIndex - 1, 0);
+                    updateSelection(bookCards);
+                    break;
+                    
+                case 'Enter':
+                    event.preventDefault();
+                    if (currentSelectedIndex >= 0 && bookCards[currentSelectedIndex]) {
+                        const bookId = bookCards[currentSelectedIndex].dataset.bookId;
+                        if (bookId) selectBook(parseInt(bookId));
+                    }
+                    break;
+                    
+                case ' ':
+                    event.preventDefault();
+                    if (currentSelectedIndex >= 0 && bookCards[currentSelectedIndex]) {
+                        const bookId = bookCards[currentSelectedIndex].dataset.bookId;
+                        if (bookId) showPreview(parseInt(bookId));
+                    }
+                    break;
+                    
+                case 'Escape':
+                    event.preventDefault();
+                    closePreview();
+                    break;
+            }
+        }
+
+        function updateSelection(bookCards) {
+            bookCards.forEach((card, index) => {
+                card.classList.toggle('selected', index === currentSelectedIndex);
+                if (index === currentSelectedIndex) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        }
+
+        // Enhanced search suggestions
+        function handleSearchInput(event) {
+            const query = event.target.value.trim();
+            
+            if (query.length >= 2) {
+                generateSearchSuggestions(query);
+            } else {
+                hideSearchSuggestions();
+            }
+        }
+
+        function generateSearchSuggestions(query) {
+            // This would typically call an API endpoint
+            // For now, we'll simulate with mock data
+            const suggestions = [
+                { text: query, type: 'search', icon: '🔍' },
+                { text: `${query} in Programming`, type: 'category', icon: '🏷️' },
+                { text: `${query} by Author`, type: 'author', icon: '👤' }
+            ];
+            
+            showSearchSuggestions(suggestions);
+        }
+
+        function showSearchSuggestions(suggestions) {
+            const container = document.getElementById('searchSuggestions');
+            container.innerHTML = suggestions.map((suggestion, index) => `
+                <div class="suggestion-item" 
+                     data-suggestion="${suggestion.text}" 
+                     onclick="selectSuggestion('${suggestion.text}')"
+                     role="option"
+                     tabindex="0">
+                    ${suggestion.icon} ${suggestion.text}
+                    <span class="suggestion-type">${suggestion.type}</span>
+                </div>
+            `).join('');
+            container.style.display = 'block';
+        }
+
+        function hideSearchSuggestions() {
+            document.getElementById('searchSuggestions').style.display = 'none';
+        }
+
+        function selectSuggestion(text) {
+            document.getElementById('searchInput').value = text;
+            hideSearchSuggestions();
+            performSearch();
+        }
+
+        // Enhanced database info and download
+        async function downloadDatabase() {
+            try {
+                showLoading('Preparing download...');
+                const downloadBtn = document.getElementById('downloadBtn');
+                const originalText = downloadBtn.textContent;
+                
+                downloadBtn.textContent = '⏳ Preparing...';
+                downloadBtn.disabled = true;
+                
+                const link = document.createElement('a');
+                link.href = '/api/database/download';
+                link.download = `andylibrary_enhanced_${new Date().toISOString().slice(0,10)}.db`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    downloadBtn.textContent = originalText;
+                    downloadBtn.disabled = false;
+                    hideLoading();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                hideLoading();
+                alert('Download failed: ' + error.message);
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.textContent = '📥 Download Database';
+                downloadBtn.disabled = false;
+            }
+        }
+
+        async function loadDatabaseInfo() {
+            try {
+                const response = await fetch('/api/database/info');
+                const data = await response.json();
+                
+                const dbInfo = document.getElementById('dbInfo');
+                if (data.available) {
+                    dbInfo.innerHTML = `
+                        <div>📊 ${data.total_books} books</div>
+                        <div>💾 ${data.file_size_mb} MB</div>
+                        <div>🔄 ${data.source}</div>
+                        <div>✨ Enhanced Edition</div>
+                    `;
+                } else {
+                    dbInfo.innerHTML = '❌ Database not available';
+                }
+            } catch (error) {
+                console.error('Database info error:', error);
+                document.getElementById('dbInfo').innerHTML = '⚠️ Info unavailable';
+            }
+        }
+
+        // Enhanced event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load recently viewed books
+            loadRecentlyViewed();
+            
+            // Load database info
+            loadDatabaseInfo();
+            
+            // Enhanced search input
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', handleSearchInput);
+            searchInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    hideSearchSuggestions();
+                    performSearch();
+                }
+            });
+            
+            // Enhanced keyboard navigation
+            document.addEventListener('keydown', handleKeyboardNavigation);
+            
+            // Show keyboard hints on first focus
+            document.getElementById('booksGrid').addEventListener('focus', function() {
+                showKeyboardHint();
+            }, { once: true });
+            
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.search-container')) {
+                    hideSearchSuggestions();
+                }
+            });
+            
+            // Enhanced view mode buttons
+            document.querySelectorAll('.view-mode-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-mode-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    setViewMode(this.dataset.mode);
+                });
+            });
+            
+            // Initialize library interface
+            try {
+                window.libraryInterface = new DesktopLibraryInterface();
+            } catch (error) {
+                console.error('Failed to create library interface:', error);
+            }
+        });
+
+        // Handle page lifecycle
+        window.addEventListener('beforeunload', function(event) {
+            if (window.libraryInterface) {
+                window.libraryInterface.shutdownServer();
+            }
+        });
+
+        // Enhanced modal handling
+        document.getElementById('previewModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closePreview();
+            }
+        });
+
+        // Additional placeholder functions for menu items
+        function showStats() {
+            if (window.libraryInterface) {
+                window.libraryInterface.showStats();
+            }
+        }
+
+        function exportData() {
+            if (window.libraryInterface) {
+                window.libraryInterface.exportData();
+            }
+        }
+
+        function refreshLibrary() {
+            showLoading('Refreshing library...');
+            if (window.libraryInterface) {
+                window.libraryInterface.refreshLibrary();
+            }
+            setTimeout(hideLoading, 1000);
+        }
+
+        function showHelp() {
+            if (window.libraryInterface) {
+                window.libraryInterface.showHelp();
+            }
+        }
+
+        function showKeyboardShortcuts() {
+            alert(`Keyboard Shortcuts:
+            
+📚 Navigation:
+• Arrow Keys - Navigate books
+• Enter - Open selected book
+• Space - Quick preview
+• Esc - Close preview/dialogs
+
+🔍 Search:
+• Ctrl+F - Focus search
+• Enter - Search
+• Esc - Clear suggestions
+
+🎨 View:
+• Ctrl+1 - Grid view
+• Ctrl+2 - List view
+• F5 - Refresh library`);
+        }
+
+        function showAbout() {
+            if (window.libraryInterface) {
+                window.libraryInterface.showAboutBox();
+            }
+        }
+
+        function exitApp() {
+            if (window.libraryInterface) {
+                window.libraryInterface.exitApp();
+            }
+        }
+
+        function toggleViewMode() {
+            if (window.libraryInterface) {
+                window.libraryInterface.toggleViewMode();
+            }
+        }
+
+        // Utility functions for thumbnail handling
+        function handleThumbnailError(img, bookId) {
+            if (window.libraryInterface) {
+                window.libraryInterface.handleThumbnailError(img, bookId);
+            }
+        }
+
+        function handleThumbnailLoad(img) {
+            if (window.libraryInterface) {
+                window.libraryInterface.handleThumbnailLoad(img);
+            }
+        }
+    </script>
+    <script src="/static/JS/library-api-client.js?v=3"></script>
+</body>
+</html>
