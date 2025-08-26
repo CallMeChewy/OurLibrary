@@ -1,0 +1,46 @@
+[Running] python -u "/home/herb/Desktop/OurLibrary/Scripts/Common/GitHub/GitHubAutoUpdate.py"
+🔄 Starting GitHub auto-update...
+📁 Found 34 changed/new files:
+   - Updates/index_html.html
+   - Updates/package_json.json
+   - Updates/router_js.js
+   - Updates/styles_css.css
+   - index.html
+   - package-lock.json
+   - package.json
+   - playwright.config.ts
+   - tailwind.config.js
+   - .env.example
+   - USER_FLOW_DOCUMENTATION.md
+   - Updates/CodebaseSum.py
+   - Updates/GitHub auto-update.txt
+   - Updates/index.html
+   - Updates/package.json
+   - Updates/router.js
+   - Updates/styles.css
+   - src/auth/AuthService.js
+   - src/auth/FirebaseAdapter.js
+   - src/auth/MockAdapter.js
+   - src/main.js
+   - src/pages/DesktopLibrary.js
+   - src/pages/EmailVerification.js
+   - src/pages/MainPage.js
+   - src/pages/RegistrationComplete.js
+   - src/pages/RegistrationModal.js
+   - src/pages/SetupConsent.js
+   - src/pages/SetupFilesystem.js
+   - src/pages/SignIn.js
+   - src/router.js
+   - src/styles.css
+   - src/ui/dom.js
+   - tests/e2e/basic-flow.spec.ts
+   - vite.config.js
+📤 Adding files to staging area...
+💾 Creating commit...
+🚀 Pushing to GitHub...
+✅ Successfully updated GitHub!
+   Commit: Auto-update: 2025-08-26 16:33:50
+   Branch: main
+🌐 GitHub Pages will update in 5-10 minutes
+
+[Done] exited with code=0 in 1.362 seconds
