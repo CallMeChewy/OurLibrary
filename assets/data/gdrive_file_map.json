@@ -1,0 +1,28 @@
+{
+  "_comment": "File ID mapping from book IDs to Google Drive file IDs",
+  "_note": "This file maps OurLibrary book IDs to their corresponding Google Drive file IDs",
+  "_service_account": "anderson-library-service@anderson-library.iam.gserviceaccount.com",
+  "_last_updated": "2025-01-23",
+  
+  "1": "1ABC123_example_file_id_for_book_1",
+  "2": "1DEF456_example_file_id_for_book_2",
+  "3": "1GHI789_example_file_id_for_book_3",
+  
+  "_instructions": {
+    "setup": "To populate this file with real Google Drive file IDs:",
+    "step1": "Upload all PDF books to your 2TB Google Drive",
+    "step2": "Organize them in folders by category (Computer_Science, Mathematics, etc.)",
+    "step3": "Make the main folder public with 'Anyone with the link can view'",
+    "step4": "Use Google Drive API to get file IDs for each book",
+    "step5": "Map each book ID from the SQLite database to its Google Drive file ID",
+    "example_script": "A Python script can automate this process using the Google Drive API"
+  },
+  
+  "_folder_structure": {
+    "Books/Computer_Science/": "Folder for Computer Science books",
+    "Books/Mathematics/": "Folder for Mathematics books", 
+    "Books/Science/": "Folder for Science books",
+    "Books/Engineering/": "Folder for Engineering books",
+    "note": "Organize by the 26 categories from your SQLite database"
+  }
+}

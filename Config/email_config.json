@@ -1,0 +1,43 @@
+{
+  "active_provider": "smtp",
+  "from_email": "ProjectHimalaya@BowersWorld.com",
+  "from_name": "OurLibrary - Project Himalaya",
+  "reply_to": "ProjectHimalaya@BowersWorld.com",
+  
+  "providers": {
+    "firebase": {
+      "enabled": false,
+      "note": "Fallback to Firebase Functions if custom SMTP fails"
+    },
+    "smtp": {
+      "host": "smtp.gmail.com",
+      "port": 465,
+      "username": "HimalayaProject1@gmail.com",
+      "password": "svah cggw kvcp pdck",
+      "use_ssl": true,
+      "enabled": true,
+      "notes": "Business domain SMTP for better deliverability"
+    }
+  },
+  
+  "templates": {
+    "verification_email": {
+      "subject": "Welcome to OurLibrary - Verify Your Email",
+      "from": "ProjectHimalaya@BowersWorld.com",
+      "from_name": "OurLibrary Team"
+    },
+    "password_reset": {
+      "subject": "OurLibrary - Password Reset Request", 
+      "from": "ProjectHimalaya@BowersWorld.com",
+      "from_name": "OurLibrary Support"
+    }
+  },
+  
+  "settings": {
+    "max_retries": 3,
+    "retry_delay": 5,
+    "timeout": 30,
+    "rate_limit": 100,
+    "fallback_to_firebase": true
+  }
+}

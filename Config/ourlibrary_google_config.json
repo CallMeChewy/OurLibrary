@@ -1,0 +1,29 @@
+{
+    "google_client_id": "YOUR_GOOGLE_CLIENT_ID_HERE",
+    "google_api_key": "YOUR_GOOGLE_API_KEY_HERE",
+    "spreadsheet_ids": {
+        "user_registrations": "YOUR_USER_REGISTRATIONS_SHEET_ID",
+        "incomplete_emails": "YOUR_INCOMPLETE_EMAILS_SHEET_ID", 
+        "session_tracking": "YOUR_SESSION_TRACKING_SHEET_ID"
+    },
+    "sheet_structure": {
+        "user_registrations": {
+            "headers": ["UserID", "Email", "Name", "AuthMethod", "Status", "RegStartTime", "RegCompleteTime", "Location", "Consent", "Notes"],
+            "description": "Complete user registrations from both email and Google OAuth"
+        },
+        "incomplete_emails": {
+            "headers": ["Email", "Timestamp", "LastStep", "SessionID", "UserAgent", "Referrer", "Hostname"],
+            "description": "Emails entered but registration not completed"
+        },
+        "session_tracking": {
+            "headers": ["UserID", "Email", "Action", "Details", "SessionID", "Timestamp", "UserAgent", "Hostname"],
+            "description": "Detailed activity tracking for all registration steps"
+        }
+    },
+    "privacy_settings": {
+        "auto_delete_incomplete_after_days": 30,
+        "gdpr_compliant": true,
+        "track_user_agent": true,
+        "track_referrer": true
+    }
+}

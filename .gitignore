@@ -1,0 +1,60 @@
+# Node & JS dependencies
+node_modules/
+lib/
+dist/
+*.log
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Test artifacts
+test-results/
+playwright-report/
+.playwright-mcp/
+
+# Configuration files (exclude JSON configs but keep templates)
+Config/*.json
+!Config/*.template
+
+# Local databases & generated data
+Data/
+library_web.db
+
+# Specific data subdirectories (covered by Data/ above but kept for clarity)
+Data/Databases/
+Data/Thumbs/
+Data/Backups/
+Data/Logs/
+Data/Covers/
+Data/HTML/
+Data/Text/
+
+# System / IDE files
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Archives & large binaries
+*.tar.gz
+*.zip
+*.7z
+*.odt
+archive/
+installers/
+
+# Development artifacts & excluded content
+..Exclude/
+website/
+api/
+
+# Symlink/shortcut files
+*.lnk
+*.alias
