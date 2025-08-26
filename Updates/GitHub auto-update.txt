@@ -1,0 +1,37 @@
+[Running] python -u "/home/herb/Desktop/OurLibrary/Scripts/Common/GitHub/GitHubAutoUpdate.py"
+🔄 Starting GitHub auto-update...
+📁 Found 25 changed/new files:
+   - LibraryFlow/1) index.html
+   - LibraryFlow/1) ourlibrary-main-page-playwright
+   - LibraryFlow/2) ourlibrary-registration-modal-playwright
+   - LibraryFlow/3) ourlibrary-completed-registration-form-playwright
+   - LibraryFlow/4) ourlibrary-email-verification-screen-playwright
+   - LibraryFlow/5) setup-consent.html
+   - LibraryFlow/6) setup-filesystem.html
+   - LibraryFlow/7) desktop-library-enhanced.html
+   - LibraryFlow/7) ourlibrary-registration-success-playwright
+   - LibraryFlow/LibraryFlow.txt
+   - LibraryFlow/Resources/Images/ProjectHimalayaBanner.png
+   - Updates/OurLibrary Project Analysis.md
+   - Updates/OurLibrary_RecoveryPlan.md
+   - Updates/auth_service.js
+   - Updates/env_example.sh
+   - Updates/index_html.html
+   - Updates/mock_adapter.js
+   - Updates/package_json.json
+   - Updates/playwright_config.ts
+   - Updates/playwright_test.ts
+   - Updates/registration_page.js
+   - Updates/router_js.js
+   - Updates/setup_guide.md
+   - Updates/styles_css.css
+   - Updates/tailwind_config.js
+📤 Adding files to staging area...
+💾 Creating commit...
+🚀 Pushing to GitHub...
+✅ Successfully updated GitHub!
+   Commit: Auto-update: 2025-08-26 15:00:20
+   Branch: main
+🌐 GitHub Pages will update in 5-10 minutes
+
+[Done] exited with code=0 in 1.427 seconds

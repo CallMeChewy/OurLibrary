@@ -1,0 +1,8 @@
+# 'mock' (default) or 'firebase'
+VITE_AUTH_MODE=mock
+
+# Only if using Firebase:
+VITE_FB_API_KEY=
+VITE_FB_AUTH_DOMAIN=
+VITE_FB_PROJECT_ID=
+VITE_FB_APP_ID=

@@ -1,15 +1,23 @@
 {
-  "name": "ourlibrary",
+  "name": "ourlibrary-rescue",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "pw:install": "playwright install chromium",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
-    "build:css": "tailwindcss -i ./assets/css/input.css -o ./assets/css/tailwind.css --minify"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5173",
+    "lint": "eslint .",
+    "test:e2e": "playwright test",
+    "test:ui": "playwright test --ui"
   },
   "devDependencies": {
-    "@playwright/test": "^1.46.0",
-    "tailwindcss": "^4.1.12"
-  }
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.9.0",
+    "playwright": "^1.47.0",
+    "postcss": "^8.4.45",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.0"
+  },
+  "dependencies": {}
 }

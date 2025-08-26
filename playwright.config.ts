@@ -1,19 +1,20 @@
-// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: 'Tests/E2E',
-  testMatch: ['**/*.spec.ts'],
-  timeout: 90_000,
-  expect: { timeout: 12_000 },
-  reporter: [['list'], ['html', { open: 'never' }]],
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  retries: 0,
   use: {
-    baseURL: 'https://callmechewy.github.io/OurLibrary/',
-    headless: false,
+    baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    viewport: { width: 1280, height: 800 },
+    headless: true
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
+  webServer: {
+    command: 'npm run dev',
+    port: 5173,
+    reuseExistingServer: !process.env.CI,
+  },
 });
