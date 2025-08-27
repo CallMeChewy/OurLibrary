@@ -192,9 +192,19 @@
                     this.elements.startSetupBtn.disabled = true;
                     this.elements.startSetupBtn.className += ' opacity-50 cursor-not-allowed';
 
-                    // Step 1: Download Installer
-                    await this.executeStep(1, "Downloading installer script...", async () => {
-                        const response = await fetch('../OurLibrary-Installer.sh');
+                    // Detect operating system
+                    const os = this.detectOperatingSystem();
+                    const installerInfo = this.getInstallerInfo(os);
+
+                    // Handle mobile/web-only platforms
+                    if (installerInfo.redirectUrl) {
+                        window.location.href = installerInfo.redirectUrl;
+                        return;
+                    }
+
+                    // Step 1: Download appropriate installer
+                    await this.executeStep(1, `Downloading ${os} installer...`, async () => {
+                        const response = await fetch(`../${installerInfo.filename}`);
                         if (!response.ok) {
                             throw new Error(`Failed to download installer: ${response.status}`);
                         }
@@ -203,19 +213,34 @@
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = 'OurLibrary-Installer.sh';
+                        a.download = installerInfo.filename;
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
                         window.URL.revokeObjectURL(url);
                         
-                        return { success: true };
+                        // For Windows, also offer PowerShell version
+                        if (os === 'windows' && installerInfo.alternativeFilename) {
+                            const psResponse = await fetch(`../${installerInfo.alternativeFilename}`);
+                            if (psResponse.ok) {
+                                const psBlob = await psResponse.blob();
+                                const psUrl = window.URL.createObjectURL(psBlob);
+                                const psA = document.createElement('a');
+                                psA.href = psUrl;
+                                psA.download = installerInfo.alternativeFilename;
+                                document.body.appendChild(psA);
+                                psA.click();
+                                document.body.removeChild(psA);
+                                window.URL.revokeObjectURL(psUrl);
+                            }
+                        }
+                        
+                        return { success: true, os, installerInfo };
                     });
 
-                    // Step 2: Show Instructions
+                    // Step 2: Show platform-specific instructions
                     await this.executeStep(2, "Installer downloaded - showing instructions...", async () => {
-                        this.elements.instructionsDisplay.classList.remove('hidden');
-                        this.elements.directoryInfo.classList.remove('hidden');
+                        this.showPlatformInstructions(os, installerInfo);
                         return { success: true };
                     });
 
@@ -225,12 +250,72 @@
                     });
 
                     // Show completion
-                    this.showCompletion();
+                    this.showCompletion(os, installerInfo);
 
                 } catch (error) {
                     console.error('Setup failed:', error);
                     this.showError('Setup Failed', error.message);
                 }
+            }
+
+            detectOperatingSystem() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                const platform = navigator.platform.toLowerCase();
+                
+                if (userAgent.includes('android')) {
+                    return 'android';
+                } else if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
+                    return 'ios';
+                } else if (platform.includes('win') || userAgent.includes('windows')) {
+                    return 'windows';
+                } else if (platform.includes('mac') || userAgent.includes('macintosh')) {
+                    return 'macos';
+                } else if (platform.includes('linux') || userAgent.includes('linux')) {
+                    return 'linux';
+                } else {
+                    return 'unknown';
+                }
+            }
+
+            getInstallerInfo(os) {
+                const installers = {
+                    windows: {
+                        filename: 'OurLibrary-Installer.bat',
+                        instructions: 'Download and run the .bat file to install',
+                        icon: '💻',
+                        alternativeFilename: 'OurLibrary-Installer.ps1',
+                        alternativeInstructions: 'For PowerShell: Right-click and "Run with PowerShell"'
+                    },
+                    linux: {
+                        filename: 'OurLibrary-Installer.sh', 
+                        instructions: 'Download and run: chmod +x installer.sh && ./installer.sh',
+                        icon: '🐧'
+                    },
+                    macos: {
+                        filename: 'OurLibrary-Installer.sh',
+                        instructions: 'Download and run: chmod +x installer.sh && ./installer.sh', 
+                        icon: '🍎'
+                    },
+                    android: {
+                        filename: null,
+                        instructions: 'Android setup uses web-based installation',
+                        icon: '📱',
+                        redirectUrl: '../android-setup.html'
+                    },
+                    ios: {
+                        filename: null,
+                        instructions: 'iOS uses web-based installation',
+                        icon: '📱',
+                        redirectUrl: '../android-setup.html'
+                    },
+                    unknown: {
+                        filename: 'OurLibrary-Installer.sh',
+                        instructions: 'Try the Linux/Unix installer, or contact support',
+                        icon: '❓'
+                    }
+                };
+                
+                return installers[os] || installers.unknown;
             }
 
             async executeStep(stepNumber, statusMessage, stepFunction) {
@@ -267,10 +352,45 @@
                 this.elements.progressDetails.textContent = details;
             }
 
-            showCompletion() {
-                this.elements.statusText.textContent = "📥 Setup Complete! Run the installer to finish.";
+            showPlatformInstructions(os, installerInfo) {
+                this.elements.instructionsDisplay.classList.remove('hidden');
+                this.elements.directoryInfo.classList.remove('hidden');
+                
+                // Update instructions based on platform
+                const instructionsElement = this.elements.instructionsDisplay.querySelector('.text-sm.text-gray-300.mb-2');
+                const commandElement = this.elements.instructionsDisplay.querySelector('.text-xs.text-gray-400.font-mono');
+                
+                if (instructionsElement && commandElement) {
+                    instructionsElement.textContent = installerInfo.instructions;
+                    
+                    let commands = '';
+                    if (os === 'windows') {
+                        commands = `Double-click: ${installerInfo.filename}\nOr for PowerShell: ${installerInfo.alternativeFilename}`;
+                    } else if (os === 'linux' || os === 'macos') {
+                        commands = `chmod +x ${installerInfo.filename}\n./${installerInfo.filename}`;
+                    } else {
+                        commands = installerInfo.instructions;
+                    }
+                    
+                    commandElement.innerHTML = commands.split('\n').map(cmd => `<div>${cmd}</div>`).join('');
+                }
+            }
+
+            showCompletion(os, installerInfo) {
+                const osIcon = installerInfo.icon;
+                const osName = os.charAt(0).toUpperCase() + os.slice(1);
+                
+                this.elements.statusText.textContent = `${osIcon} ${osName} installer downloaded! Run it to finish setup.`;
                 this.elements.progressBar.style.width = '100%';
-                this.elements.progressDetails.textContent = "The installer has been downloaded. Run it to create ~/OurLibrary/";
+                
+                let instructions = '';
+                if (os === 'windows') {
+                    instructions = `Both .bat and .ps1 installers downloaded. Double-click either to run.`;
+                } else {
+                    instructions = `Run the installer to create ~/OurLibrary/ directory`;
+                }
+                
+                this.elements.progressDetails.textContent = instructions;
                 
                 // Show continue button
                 this.elements.continueButton.classList.remove('hidden');

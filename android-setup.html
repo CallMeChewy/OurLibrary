@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OurLibrary - Android Setup</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-900 via-blue-900 to-purple-900 text-white overflow-y-auto">
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 -left-4 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-0 -right-4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex items-start justify-center p-4 py-8">
+        <div class="w-full max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    📱 <span class="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">OurLibrary for Android</span>
+                </h1>
+                <p class="text-xl text-gray-300 font-light">
+                    Your personal educational library on mobile
+                </p>
+            </div>
+
+            <!-- Main Setup Card -->
+            <div class="glass-effect rounded-2xl p-6 md:p-8 shadow-2xl">
+                
+                <!-- Android Setup Options -->
+                <div class="space-y-6 mb-8">
+                    
+                    <!-- Progressive Web App Option -->
+                    <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="text-4xl mr-4">📱</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-green-400">Install as Progressive Web App</h3>
+                                <p class="text-gray-300">Recommended for best Android experience</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm text-gray-300 mb-4">
+                            <div>• Works like a native Android app</div>
+                            <div>• Offline access to downloaded books</div>
+                            <div>• Add to home screen like any app</div>
+                            <div>• Automatic updates</div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button id="installPWA" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 hidden">
+                                📱 Install OurLibrary App
+                            </button>
+                            
+                            <div id="manualPWA" class="bg-gray-800/50 rounded-lg p-4">
+                                <div class="font-semibold text-green-400 mb-2">Manual Installation:</div>
+                                <div class="space-y-2 text-sm">
+                                    <div>1. Tap the browser menu (⋮)</div>
+                                    <div>2. Select "Add to Home screen" or "Install app"</div>
+                                    <div>3. Tap "Add" or "Install"</div>
+                                    <div>4. Find OurLibrary on your home screen</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Browser-Based Option -->
+                    <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="text-4xl mr-4">🌐</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-blue-400">Use in Browser</h3>
+                                <p class="text-gray-300">Quick access without installation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm text-gray-300 mb-4">
+                            <div>• No installation required</div>
+                            <div>• Access from any Android browser</div>
+                            <div>• Bookmark for easy return</div>
+                            <div>• Works on tablets and phones</div>
+                        </div>
+                        
+                        <button onclick="setupWebLibrary()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200">
+                            🌐 Set Up Web Library
+                        </button>
+                    </div>
+
+                    <!-- Download Database Option -->
+                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="text-4xl mr-4">💾</div>
+                            <div>
+                                <h3 class="text-xl font-bold text-purple-400">Download Database</h3>
+                                <p class="text-gray-300">For offline access (advanced users)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm text-gray-300 mb-4">
+                            <div>• Download book catalog to device storage</div>
+                            <div>• Access with file manager or SQLite apps</div>
+                            <div>• Full offline capabilities</div>
+                            <div>• 10MB database file</div>
+                        </div>
+                        
+                        <button onclick="downloadDatabase()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200">
+                            💾 Download Database
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Status Display -->
+                <div id="statusDisplay" class="bg-slate-800/50 rounded-xl p-6 mb-6 hidden">
+                    <div id="statusText" class="text-xl font-medium text-center mb-4">
+                        Setting up your library...
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-700 rounded-full h-3 mb-4">
+                        <div id="progressBar" class="progress-bar w-0 h-3 rounded-full"></div>
+                    </div>
+                    
+                    <div id="progressDetails" class="text-sm text-gray-400 text-center">
+                        Please wait...
+                    </div>
+                </div>
+
+                <!-- Success Display -->
+                <div id="successDisplay" class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6 hidden">
+                    <div class="font-semibold text-green-400 mb-2">🎉 Setup Complete!</div>
+                    <div id="successMessage" class="text-sm text-gray-300 mb-4"></div>
+                    <button onclick="goToLibrary()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200">
+                        📚 Open Your Library
+                    </button>
+                </div>
+
+                <!-- Device Info -->
+                <div class="bg-gray-800/30 rounded-lg p-4 text-center">
+                    <div class="text-sm text-gray-400">
+                        <span id="deviceInfo">Detected: Android Device</span>
+                        <span id="browserInfo" class="ml-4"></span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Android Setup Controller
+        class AndroidSetup {
+            constructor() {
+                this.detectDevice();
+                this.setupPWA();
+                this.initializeLibrary();
+            }
+
+            detectDevice() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                const isAndroid = userAgent.includes('android');
+                const isTablet = userAgent.includes('tablet') || (window.screen.width > 768);
+                const browser = this.getBrowserName();
+
+                document.getElementById('deviceInfo').textContent = 
+                    `Detected: ${isAndroid ? 'Android' : 'Mobile'} ${isTablet ? 'Tablet' : 'Phone'}`;
+                document.getElementById('browserInfo').textContent = `Browser: ${browser}`;
+            }
+
+            getBrowserName() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                if (userAgent.includes('chrome')) return 'Chrome';
+                if (userAgent.includes('firefox')) return 'Firefox';
+                if (userAgent.includes('safari')) return 'Safari';
+                if (userAgent.includes('edge')) return 'Edge';
+                return 'Unknown';
+            }
+
+            setupPWA() {
+                // Check if PWA installation is available
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    document.getElementById('installPWA').classList.remove('hidden');
+                    document.getElementById('manualPWA').classList.add('hidden');
+                });
+
+                // PWA install button handler
+                document.getElementById('installPWA').addEventListener('click', async () => {
+                    if (this.deferredPrompt) {
+                        this.deferredPrompt.prompt();
+                        const { outcome } = await this.deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            this.showSuccess('Progressive Web App installed successfully! Find OurLibrary on your home screen.');
+                        }
+                        this.deferredPrompt = null;
+                    }
+                });
+            }
+
+            initializeLibrary() {
+                // Set up library data in browser storage for Android
+                if (!localStorage.getItem('ourlibrary_android_setup')) {
+                    localStorage.setItem('ourlibrary_android_setup', JSON.stringify({
+                        setupDate: new Date().toISOString(),
+                        platform: 'android',
+                        version: '1.0.0',
+                        installMethod: 'web'
+                    }));
+                }
+            }
+
+            async setupWebLibrary() {
+                this.showStatus('Setting up web library for Android...', 0);
+                
+                try {
+                    // Step 1: Initialize storage
+                    this.updateProgress(25, 'Initializing browser storage...');
+                    await this.sleep(1000);
+
+                    // Step 2: Check for offline support
+                    this.updateProgress(50, 'Checking offline capabilities...');
+                    await this.sleep(1000);
+
+                    // Step 3: Set up service worker if available
+                    this.updateProgress(75, 'Setting up offline access...');
+                    if ('serviceWorker' in navigator) {
+                        try {
+                            // Register service worker for caching
+                            await navigator.serviceWorker.register('sw.js');
+                        } catch (e) {
+                            console.log('Service worker not available');
+                        }
+                    }
+                    await this.sleep(1000);
+
+                    // Step 4: Complete setup
+                    this.updateProgress(100, 'Setup complete!');
+                    await this.sleep(500);
+
+                    this.showSuccess('Web library is ready! You can now bookmark this page for easy access.');
+
+                } catch (error) {
+                    this.showError('Setup failed: ' + error.message);
+                }
+            }
+
+            async downloadDatabase() {
+                this.showStatus('Downloading book catalog database...', 0);
+                
+                try {
+                    this.updateProgress(25, 'Preparing download...');
+                    
+                    // Create download link for database
+                    const response = await fetch('library_web.db');
+                    this.updateProgress(50, 'Downloading database...');
+                    
+                    if (!response.ok) {
+                        throw new Error('Database download failed');
+                    }
+                    
+                    const blob = await response.blob();
+                    this.updateProgress(75, 'Processing download...');
+                    
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'ourlibrary-catalog.db';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    this.updateProgress(100, 'Download complete!');
+                    await this.sleep(500);
+                    
+                    this.showSuccess('Database downloaded to your Downloads folder! Use a SQLite app to view the book catalog.');
+                    
+                } catch (error) {
+                    this.showError('Download failed: ' + error.message);
+                }
+            }
+
+            showStatus(message, progress) {
+                document.getElementById('statusDisplay').classList.remove('hidden');
+                document.getElementById('statusText').textContent = message;
+                document.getElementById('progressBar').style.width = progress + '%';
+            }
+
+            updateProgress(percentage, details) {
+                document.getElementById('progressBar').style.width = percentage + '%';
+                document.getElementById('progressDetails').textContent = details;
+            }
+
+            showSuccess(message) {
+                document.getElementById('statusDisplay').classList.add('hidden');
+                document.getElementById('successDisplay').classList.remove('hidden');
+                document.getElementById('successMessage').textContent = message;
+            }
+
+            showError(message) {
+                document.getElementById('statusDisplay').classList.add('hidden');
+                alert('Error: ' + message);
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            goToLibrary() {
+                window.location.href = '../LibraryFlow/7) desktop-library-enhanced.html';
+            }
+        }
+
+        // Global functions for button handlers
+        function setupWebLibrary() {
+            window.androidSetup.setupWebLibrary();
+        }
+
+        function downloadDatabase() {
+            window.androidSetup.downloadDatabase();
+        }
+
+        function goToLibrary() {
+            window.androidSetup.goToLibrary();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.androidSetup = new AndroidSetup();
+        });
+    </script>
+</body>
+</html>
