@@ -329,9 +329,49 @@
             document.getElementById('email-verification').classList.add('hidden');
         }
         
-        function continueWithGoogle() {
-            alert('Google authentication is temporarily disabled. Please use email registration instead.');
-            return;
+        async function continueWithGoogle() {
+            try {
+                console.log('🔄 Initiating Google OAuth sign-in...');
+                
+                // Initialize Google Auth Provider
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+                
+                // Sign in with popup
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+                
+                console.log('✅ Google OAuth successful:', {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName
+                });
+                
+                // Store user info
+                localStorage.setItem('ourlibrary_user', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || 'Google User',
+                    provider: 'google',
+                    verified: true,
+                    registeredAt: new Date().toISOString()
+                }));
+                
+                // Redirect to setup consent page
+                window.location.href = 'setup-consent.html';
+                
+            } catch (error) {
+                console.error('❌ Google OAuth failed:', error);
+                
+                if (error.code === 'auth/popup-closed-by-user') {
+                    alert('Sign-in was cancelled. Please try again.');
+                } else if (error.code === 'auth/popup-blocked') {
+                    alert('Pop-up was blocked. Please allow pop-ups for this site and try again.');
+                } else {
+                    alert('Google sign-in failed: ' + error.message);
+                }
+            }
         }
         
         async function verifyCode() {
