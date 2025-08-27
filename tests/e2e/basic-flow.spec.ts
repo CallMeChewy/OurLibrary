@@ -9,7 +9,7 @@ test('application loads correctly', async ({ page }) => {
   
   // Check navigation works
   await expect(page.locator('a[href="#/"]')).toBeVisible();
-  await expect(page.locator('a[href="#/register"]')).toBeVisible();
+  await expect(page.locator('nav a[href="#/register"]')).toBeVisible();
 });
 
 test('navigation between pages', async ({ page }) => {
@@ -19,13 +19,13 @@ test('navigation between pages', async ({ page }) => {
   await expect(page.locator('text=Welcome to OurLibrary')).toBeVisible();
   
   // Navigate to register
-  await page.click('a[href="#/register"]');
-  await expect(page.locator('text=Register')).toBeVisible();
+  await page.click('nav a[href="#/register"]');
+  await expect(page.locator('h2:has-text("Register")')).toBeVisible();
   await expect(page.locator('#email')).toBeVisible();
   
   // Navigate to sign in
   await page.click('a[href="#/signin"]');
-  await expect(page.locator('text=Sign In')).toBeVisible();
+  await expect(page.locator('h2:has-text("Sign In")')).toBeVisible();
 });
 
 test('email verification progression', async ({ page }) => {

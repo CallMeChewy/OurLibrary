@@ -1,6 +1,6 @@
 import { mount, withForm, $ } from './ui/dom.js';
 import { auth, deriveState } from './auth/AuthService.js';
-import { MainPage } from './pages/MainPage.js';
+import { NewMainPage } from './pages/NewMainPage.js';
 import { RegistrationModal } from './pages/RegistrationModal.js';
 import { RegistrationComplete } from './pages/RegistrationComplete.js';
 import { EmailVerification } from './pages/EmailVerification.js';
@@ -10,7 +10,7 @@ import { DesktopLibrary } from './pages/DesktopLibrary.js';
 import { SignIn } from './pages/SignIn.js';
 
 const routes = {
-  '/': () => MainPage(),
+  '/': () => NewMainPage(),
   '/register': () => RegistrationModal(),
   '/registered': () => RegistrationComplete(),
   '/verify': (state) => EmailVerification(state?.isEmailVerified),

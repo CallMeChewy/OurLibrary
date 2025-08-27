@@ -1,3 +1,4 @@
+// Force rebuild timestamp: 2025-08-26 19:25  
 import './styles.css';
 import { render } from './router.js';
 

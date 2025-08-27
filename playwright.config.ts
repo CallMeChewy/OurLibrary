@@ -1,11 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
   fullyParallel: true,
   retries: 0,
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
     headless: true
   },
@@ -13,8 +13,8 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
   webServer: {
-    command: 'npm run dev',
-    port: 5173,
+    command: 'npx http-server . -p 8080 --cors',
+    port: 8080,
     reuseExistingServer: !process.env.CI,
   },
 });

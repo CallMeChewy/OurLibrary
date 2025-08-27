@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OurLibrary - Getting Education Into the Hands of People Who Can Least Afford It</title>
-    <!-- FORCE CACHE REFRESH v2 -->
+    <!-- Force cache refresh -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,8 +150,8 @@
         </div>
     </footer>
 
-    <!-- Registration Modal (Stage 2) - FIXED BACKGROUND -->
-    <div id="registration-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden">
+    <!-- Registration Modal (Stage 2) -->
+    <div id="registration-modal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-slate-900 rounded-xl p-8 max-w-md w-full border border-slate-600 shadow-2xl">
                 <h2 class="text-2xl font-bold text-white mb-4 text-center">Join OurLibrary</h2>
@@ -179,8 +179,8 @@
         </div>
     </div>
 
-    <!-- Registration Form (Stage 3) - FIXED BACKGROUND -->
-    <div id="registration-form" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden">
+    <!-- Registration Form (Stage 3) -->
+    <div id="registration-form" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-slate-900 rounded-xl p-8 max-w-md w-full border border-slate-600 max-h-screen overflow-y-auto shadow-2xl">
                 <div class="flex items-center mb-6">
@@ -226,8 +226,8 @@
         </div>
     </div>
 
-    <!-- Email Verification (Stage 4) - FIXED BACKGROUND -->
-    <div id="email-verification" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden">
+    <!-- Email Verification (Stage 4) -->
+    <div id="email-verification" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-slate-900 rounded-xl p-8 max-w-md w-full border border-slate-600 text-center shadow-2xl">
                 <div class="mb-6">
@@ -263,11 +263,11 @@
         </div>
     </div>
 
-    <!-- Firebase SDK v9 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js";
-        
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js"></script>
+    
+    <script>
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDuE7IxTlpjKJr_nK6LD0XqK7qNh8mD5Ls",
@@ -279,17 +279,9 @@
         };
         
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const functions = getFunctions(app);
+        firebase.initializeApp(firebaseConfig);
+        const functions = firebase.functions();
         
-        // Make functions globally available
-        window.firebaseFunctions = functions;
-        window.httpsCallable = httpsCallable;
-        
-        console.log('Firebase initialized successfully!');
-    </script>
-    
-    <script>
         // JavaScript for modal management
         function showRegistrationModal() {
             document.getElementById('registration-modal').classList.remove('hidden');
@@ -358,7 +350,7 @@
                 window.currentVerificationCode = verificationCode;
                 
                 // Call Firebase function to send email
-                const sendEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
+                const sendEmail = functions.httpsCallable('sendVerificationEmail');
                 const result = await sendEmail({
                     email: email,
                     code: verificationCode
@@ -376,54 +368,49 @@
             }
         }
         
-        // Form submission handler with Firebase integration
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('regForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const email = this.email.value;
-                const submitBtn = this.querySelector('button[type="submit"]');
-                
-                // Show loading state
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sending Verification Email...';
-                
-                try {
-                    // Check if Firebase is loaded
-                    if (!window.firebaseFunctions) {
-                        throw new Error('Firebase not loaded. Please refresh the page.');
-                    }
-                    
-                    // Generate verification code
-                    const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-                    
-                    // Store code and email for verification
-                    window.currentVerificationCode = verificationCode;
-                    window.currentVerificationEmail = email;
-                    
-                    // Call Firebase function to send email
-                    const sendEmail = window.httpsCallable(window.firebaseFunctions, 'sendVerificationEmail');
-                    const result = await sendEmail({
-                        email: email,
-                        code: verificationCode
-                    });
-                    
-                    console.log('Email sent successfully:', result.data);
-                    
-                    // Show verification form
-                    document.getElementById('verification-email').textContent = email;
-                    showEmailVerification();
-                    
-                } catch (error) {
-                    console.error('Error sending email:', error);
-                    alert('Failed to send verification email: ' + error.message + '. Please try again.');
-                    
-                    // Reset button
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Account & Send Verification';
-                }
-            });
+        // Form submission handler
+        document.getElementById('regForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = this.email.value;
+            const submitBtn = this.querySelector('button[type="submit"]');
             
-            // Update footer year
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending Verification Email...';
+            
+            try {
+                // Generate verification code
+                const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                
+                // Store code and email for verification
+                window.currentVerificationCode = verificationCode;
+                window.currentVerificationEmail = email;
+                
+                // Call Firebase function to send email
+                const sendEmail = functions.httpsCallable('sendVerificationEmail');
+                const result = await sendEmail({
+                    email: email,
+                    code: verificationCode
+                });
+                
+                console.log('Email sent successfully:', result.data);
+                
+                // Show verification form
+                document.getElementById('verification-email').textContent = email;
+                showEmailVerification();
+                
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert('Failed to send verification email. Please try again.');
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account & Send Verification';
+            }
+        });
+        
+        // Update footer year
+        document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('footer-year').textContent = new Date().getFullYear();
         });
     </script>

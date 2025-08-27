@@ -1,6 +1,5 @@
-// Updated MainPage with full reference design matching - v2
-function MainPageContent() {
-  return `
+// New MainPage implementation matching LibraryFlow reference
+export const NewMainPage = () => `
   <!-- Attribution Banner -->
   <div class="bg-black bg-opacity-50 text-center py-1 text-xs text-slate-400 mb-0">
     Sponsored by BowersWorld.com
@@ -23,11 +22,6 @@ function MainPageContent() {
         OurLibrary is a free digital library platform providing access to thousands of educational 
         books and resources. Our mission is to break down barriers to education by offering 
         completely free access to quality educational content for students worldwide.
-      </p>
-      <p class="text-lg text-gray-400 leading-relaxed mb-8">
-        From elementary school textbooks to university-level research materials, we believe 
-        that knowledge should be accessible to everyone, regardless of economic circumstances. 
-        Join our community of learners and educators working together to democratize education.
       </p>
       
       <!-- Call to Action Button -->
@@ -73,21 +67,4 @@ function MainPageContent() {
       </div>
     </div>
   </div>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 py-4 border-t border-gray-800 mt-16">
-    <div class="max-w-4xl mx-auto px-4 text-center text-gray-500 text-sm">
-      © <span id="footer-year">2025</span> OurLibrary - Getting education into the hands of people who can least afford it. Sponsored by BowersWorld.com
-      <div class="mt-1">
-        <a href="#" class="text-blue-400 hover:text-blue-300 underline text-xs">📊 Analytics Dashboard</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    document.getElementById('footer-year').textContent = new Date().getFullYear();
-  </script>
 `;
-}
-
-export const MainPage = MainPageContent;
