@@ -278,9 +278,22 @@
             appId: "1:71206584632:web:8b5a5a9e5c5a5a5a5a5a5a"
         };
         
-        // Initialize Firebase
+        // Initialize Firebase - but check Auth availability first
         firebase.initializeApp(firebaseConfig);
         const functions = firebase.functions();
+        
+        // Dynamic Firebase Auth loading if not available
+        if (typeof firebase.auth === 'undefined') {
+            console.log('Firebase Auth not loaded - loading dynamically...');
+            const authScript = document.createElement('script');
+            authScript.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js';
+            authScript.onload = () => {
+                console.log('Firebase Auth loaded dynamically! Auth available:', typeof firebase.auth);
+            };
+            document.head.appendChild(authScript);
+        } else {
+            console.log('Firebase Auth already available:', typeof firebase.auth);
+        }
         
         // Make functions globally available
         window.firebaseFunctions = functions;
