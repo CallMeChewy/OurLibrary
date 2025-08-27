@@ -263,9 +263,10 @@
         </div>
     </div>
 
-    <!-- Firebase SDK v8 (compatible mode) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <!-- Firebase SDK v8 (compatible mode) - Cache busting for Auth fix -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js?v=auth-fix"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js?v=auth-fix"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js?v=auth-fix"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
