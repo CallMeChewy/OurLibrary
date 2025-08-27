@@ -95,7 +95,7 @@
                 
                 <!-- Call to Action Button -->
                 <div class="mb-12">
-                    <button onclick="window.location.hash='#register'" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <button id="getStartedBtn" onclick="showRegistrationModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
                         📚 Get Started - Join OurLibrary!
                     </button>
                     <p class="text-gray-400 mt-4 text-sm">
@@ -315,16 +315,8 @@
             showEmailVerification();
         });
         
-        // Update Get Started button to show modal
+        // Update footer year
         document.addEventListener('DOMContentLoaded', function() {
-            const getStartedBtn = document.querySelector('[href="#/register"]');
-            if (getStartedBtn) {
-                getStartedBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showRegistrationModal();
-                });
-            }
-            
             document.getElementById('footer-year').textContent = new Date().getFullYear();
         });
     </script>
