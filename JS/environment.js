@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const setupData = localStorage.getItem('ourLibrary_setupComplete');
         if (!setupData) {
             console.log('No setup found on library page - routing to setup');
-            window.location.href = 'library.html';
+            window.location.href = 'setup-consent.html';
         }
     }
 });
