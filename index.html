@@ -318,7 +318,7 @@
             alert('Google registration will redirect to Google OAuth...');
         }
         
-        function verifyCode() {
+        async function verifyCode() {
             const enteredCode = document.getElementById('verification-code').value;
             const correctCode = window.currentVerificationCode;
             
@@ -328,8 +328,42 @@
             }
             
             if (enteredCode.toUpperCase() === correctCode) {
-                alert('Code verified! Redirecting to setup...');
-                window.location.href = 'setup-consent.html';
+                // Code is correct - now create Firebase user account
+                try {
+                    console.log('Code verified! Creating Firebase user account...');
+                    
+                    // Get registration data
+                    const email = window.currentVerificationEmail;
+                    const password = window.currentVerificationPassword;
+                    const fullName = window.currentVerificationFullName;
+                    
+                    if (!email || !password || !fullName) {
+                        console.error('Missing registration data:', { email, password: password ? '[SET]' : '[MISSING]', fullName });
+                        alert('Registration data missing. Please start over.');
+                        return;
+                    }
+                    
+                    // Create Firebase user
+                    console.log('Creating Firebase user for:', email);
+                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    console.log('Firebase user created successfully:', user.uid);
+                    
+                    // Update user profile with display name
+                    await user.updateProfile({
+                        displayName: fullName
+                    });
+                    
+                    console.log('User profile updated with display name:', fullName);
+                    
+                    alert('Account created successfully! Redirecting to setup...');
+                    window.location.href = 'setup-consent.html';
+                    
+                } catch (error) {
+                    console.error('Error creating Firebase user:', error);
+                    alert('Failed to create account: ' + error.message + '. Please try again.');
+                }
             } else {
                 alert('Invalid verification code. Please check your email and try again.');
                 document.getElementById('verification-code').value = '';
@@ -379,7 +413,16 @@
             document.getElementById('regForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const email = this.email.value;
+                const fullName = this.fullName.value;
+                const password = this.password.value;
+                const confirmPassword = this.confirmPassword.value;
                 const submitBtn = this.querySelector('button[type="submit"]');
+                
+                // Validate password confirmation
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match. Please try again.');
+                    return;
+                }
                 
                 // Show loading state
                 submitBtn.disabled = true;
@@ -394,9 +437,11 @@
                     // Generate verification code
                     const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
                     
-                    // Store code and email for verification
+                    // Store all registration data for verification
                     window.currentVerificationCode = verificationCode;
                     window.currentVerificationEmail = email;
+                    window.currentVerificationPassword = password;
+                    window.currentVerificationFullName = fullName;
                     
                     // Call Firebase function to send email
                     const sendEmail = window.firebaseFunctions.httpsCallable('sendVerificationEmail');
