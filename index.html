@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OurLibrary - Getting Education Into the Hands of People Who Can Least Afford It</title>
+    <!-- Force cache refresh -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -262,7 +263,25 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions.js"></script>
+    
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDuE7IxTlpjKJr_nK6LD0XqK7qNh8mD5Ls",
+            authDomain: "our-library-d7b60.firebaseapp.com",
+            projectId: "our-library-d7b60",
+            storageBucket: "our-library-d7b60.appspot.com",
+            messagingSenderId: "71206584632",
+            appId: "1:71206584632:web:8b5a5a9e5c5a5a5a5a5a5a"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const functions = firebase.functions();
+        
         // JavaScript for modal management
         function showRegistrationModal() {
             document.getElementById('registration-modal').classList.remove('hidden');
@@ -294,25 +313,100 @@
         }
         
         function verifyCode() {
-            const code = document.getElementById('verification-code').value;
-            if (code.length === 6) {
+            const enteredCode = document.getElementById('verification-code').value;
+            const correctCode = window.currentVerificationCode;
+            
+            if (enteredCode.length !== 6) {
+                alert('Please enter a 6-digit verification code.');
+                return;
+            }
+            
+            if (enteredCode.toUpperCase() === correctCode) {
                 alert('Code verified! Redirecting to setup...');
                 window.location.href = 'setup-consent.html';
             } else {
-                alert('Please enter a 6-digit verification code.');
+                alert('Invalid verification code. Please check your email and try again.');
+                document.getElementById('verification-code').value = '';
+                document.getElementById('verification-code').focus();
             }
         }
         
-        function resendCode() {
-            alert('Verification code resent!');
+        async function resendCode() {
+            const email = window.currentVerificationEmail;
+            if (!email) {
+                alert('No email found. Please start over.');
+                return;
+            }
+            
+            const resendBtn = document.querySelector('button[onclick="resendCode()"]');
+            const originalText = resendBtn.textContent;
+            
+            try {
+                resendBtn.disabled = true;
+                resendBtn.textContent = '📧 Sending...';
+                
+                // Generate new verification code
+                const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                window.currentVerificationCode = verificationCode;
+                
+                // Call Firebase function to send email
+                const sendEmail = functions.httpsCallable('sendVerificationEmail');
+                const result = await sendEmail({
+                    email: email,
+                    code: verificationCode
+                });
+                
+                console.log('Email resent successfully:', result.data);
+                alert('Verification code resent! Please check your email.');
+                
+            } catch (error) {
+                console.error('Error resending email:', error);
+                alert('Failed to resend email. Please try again.');
+            } finally {
+                resendBtn.disabled = false;
+                resendBtn.textContent = originalText;
+            }
         }
         
         // Form submission handler
-        document.getElementById('regForm').addEventListener('submit', function(e) {
+        document.getElementById('regForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = this.email.value;
-            document.getElementById('verification-email').textContent = email;
-            showEmailVerification();
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending Verification Email...';
+            
+            try {
+                // Generate verification code
+                const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+                
+                // Store code and email for verification
+                window.currentVerificationCode = verificationCode;
+                window.currentVerificationEmail = email;
+                
+                // Call Firebase function to send email
+                const sendEmail = functions.httpsCallable('sendVerificationEmail');
+                const result = await sendEmail({
+                    email: email,
+                    code: verificationCode
+                });
+                
+                console.log('Email sent successfully:', result.data);
+                
+                // Show verification form
+                document.getElementById('verification-email').textContent = email;
+                showEmailVerification();
+                
+            } catch (error) {
+                console.error('Error sending email:', error);
+                alert('Failed to send verification email. Please try again.');
+                
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account & Send Verification';
+            }
         });
         
         // Update footer year
