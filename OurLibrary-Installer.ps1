@@ -44,7 +44,7 @@ foreach ($subdir in $subdirs) {
 }
 
 # Download database if not exists
-$DatabaseFile = Join-Path (Join-Path $LibraryDir "database") "library_catalog.db"
+$DatabaseFile = Join-Path (Join-Path $LibraryDir "database") "OurLibrary.db"
 if (-not (Test-Path $DatabaseFile)) {
     Write-Host ""
     Write-Host "📥 Downloading book catalog database..." -ForegroundColor Blue

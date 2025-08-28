@@ -48,7 +48,7 @@ echo "✅ Created subdirectory: $LIBRARY_DIR/user_data"
 echo "✅ Created subdirectory: $LIBRARY_DIR/cache"
 
 # Download database if not exists
-DATABASE_FILE="$LIBRARY_DIR/database/library_catalog.db"
+DATABASE_FILE="$LIBRARY_DIR/database/OurLibrary.db"
 if [ ! -f "$DATABASE_FILE" ]; then
     echo ""
     echo "📥 Downloading book catalog database..."

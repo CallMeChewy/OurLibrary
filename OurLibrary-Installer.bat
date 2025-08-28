@@ -48,7 +48,7 @@ echo ✅ Created subdirectory: %LIBRARY_DIR%\user_data
 echo ✅ Created subdirectory: %LIBRARY_DIR%\cache
 
 REM Download database if not exists
-set "DATABASE_FILE=%LIBRARY_DIR%\database\library_catalog.db"
+set "DATABASE_FILE=%LIBRARY_DIR%\database\OurLibrary.db"
 if not exist "%DATABASE_FILE%" (
     echo.
     echo 📥 Downloading book catalog database...

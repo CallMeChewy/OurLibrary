@@ -1436,9 +1436,21 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                 });
             });
             
-            // Initialize library interface
+            // Initialize library interface with fallback for static hosting
             try {
-                window.libraryInterface = new DesktopLibraryInterface();
+                if (typeof DesktopLibraryInterface !== 'undefined') {
+                    window.libraryInterface = new DesktopLibraryInterface();
+                } else {
+                    // Fallback interface for static hosting
+                    window.libraryInterface = {
+                        setViewMode: function(mode) { console.log('View mode:', mode); },
+                        performSearch: function() { console.log('Search requested'); },
+                        onCategoryChange: function() { console.log('Category changed'); },
+                        onSubjectChange: function() { console.log('Subject changed'); },
+                        selectBook: function(id) { console.log('Book selected:', id); }
+                    };
+                    console.log('Using fallback library interface for static hosting');
+                }
             } catch (error) {
                 console.error('Failed to create library interface:', error);
             }
