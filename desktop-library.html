@@ -1462,9 +1462,15 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                 });
             });
             
-            // Initialize library interface
+            // Initialize basic library interface (simplified for GitHub Pages)
             try {
-                window.libraryInterface = new DesktopLibraryInterface();
+                window.libraryInterface = {
+                    setViewMode: function(mode) { console.log('View mode:', mode); },
+                    performSearch: function() { console.log('Search requested'); },
+                    onCategoryChange: function() { console.log('Category changed'); },
+                    onSubjectChange: function() { console.log('Subject changed'); },
+                    selectBook: function(id) { console.log('Book selected:', id); }
+                };
             } catch (error) {
                 console.error('Failed to create library interface:', error);
             }
@@ -1563,7 +1569,6 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
         }
     </script>
     <!-- Include Google Drive database sync system -->
-    <script src="/JS/database-sync.js"></script>
-    <script src="/static/JS/library-api-client.js?v=3"></script>
+    <script src="JS/database-sync.js"></script>
 </body>
 </html>
