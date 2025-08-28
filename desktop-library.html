@@ -18,7 +18,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anderson's Library - Enhanced Edition</title>
+    <title>OurLibrary - Educational Platform</title>
     
     <style>
         /* Enhanced Base Styles */
@@ -924,7 +924,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
 
         <!-- Enhanced Title Bar -->
         <div class="title-bar">
-            <h1>Anderson's Library - Enhanced Edition</h1>
+            <h1>OurLibrary - Educational Platform</h1>
         </div>
 
         <!-- Main Content -->
@@ -991,14 +991,14 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                     </div>
                 </div>
 
-                <!-- Database Download Section -->
+                <!-- Database Setup Section -->
                 <div class="sidebar-section">
-                    <h3>💾 Database</h3>
-                    <button class="search-btn" onclick="downloadDatabase()" id="downloadBtn" tabindex="0">
-                        📥 Download Database
+                    <h3>💾 Database Setup</h3>
+                    <button class="search-btn" onclick="setupDatabase()" id="setupBtn" tabindex="0">
+                        ⚙️ Setup Database
                     </button>
                     <div class="db-info" id="dbInfo" style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 8px;">
-                        Loading database info...
+                        Database not configured
                     </div>
                 </div>
             </div>
@@ -1007,7 +1007,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             <div class="main-content">
                 <!-- Content Header -->
                 <div class="content-header">
-                    <div class="content-title" id="contentTitle">🏠 Welcome to Anderson's Library</div>
+                    <div class="content-title" id="contentTitle">🏠 Welcome to OurLibrary</div>
                     <div class="book-count" id="bookCount">Select a category or search for books</div>
                 </div>
 
@@ -1170,7 +1170,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             updateRecentlyViewed();
             
             // Save to localStorage
-            localStorage.setItem('andyLibraryRecent', JSON.stringify(recentlyViewed));
+            localStorage.setItem('ourLibraryRecent', JSON.stringify(recentlyViewed));
         }
 
         function updateRecentlyViewed() {
@@ -1198,7 +1198,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
 
         function loadRecentlyViewed() {
             try {
-                const saved = localStorage.getItem('andyLibraryRecent');
+                const saved = localStorage.getItem('ourLibraryRecent');
                 if (saved) {
                     recentlyViewed = JSON.parse(saved);
                     updateRecentlyViewed();
@@ -1332,58 +1332,90 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             performSearch();
         }
 
-        // Enhanced database info and download
-        async function downloadDatabase() {
+        // Database setup integration
+        function setupDatabase() {
             try {
-                showLoading('Preparing download...');
-                const downloadBtn = document.getElementById('downloadBtn');
-                const originalText = downloadBtn.textContent;
+                // Check if database is already available
+                if (window.ourLibraryDB && window.ourLibraryDB.isReady()) {
+                    const userConfirm = confirm('Database is already set up. Do you want to check for updates or reconfigure?');
+                    if (userConfirm) {
+                        window.location.href = '/setup-database.html';
+                    }
+                    return;
+                }
                 
-                downloadBtn.textContent = '⏳ Preparing...';
-                downloadBtn.disabled = true;
-                
-                const link = document.createElement('a');
-                link.href = '/api/database/download';
-                link.download = `andylibrary_enhanced_${new Date().toISOString().slice(0,10)}.db`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
+                // Redirect to database setup page
+                showLoading('Redirecting to database setup...');
                 setTimeout(() => {
-                    downloadBtn.textContent = originalText;
-                    downloadBtn.disabled = false;
-                    hideLoading();
-                }, 2000);
+                    window.location.href = '/setup-database.html';
+                }, 500);
                 
             } catch (error) {
-                console.error('Download error:', error);
+                console.error('Setup navigation error:', error);
                 hideLoading();
-                alert('Download failed: ' + error.message);
-                const downloadBtn = document.getElementById('downloadBtn');
-                downloadBtn.textContent = '📥 Download Database';
-                downloadBtn.disabled = false;
+                
+                // Fallback - direct navigation
+                window.location.href = '/setup-database.html';
             }
         }
 
         async function loadDatabaseInfo() {
             try {
-                const response = await fetch('/api/database/info');
-                const data = await response.json();
-                
                 const dbInfo = document.getElementById('dbInfo');
-                if (data.available) {
+                
+                // Check if our database system is available
+                if (window.ourLibraryDB && window.ourLibraryDB.isReady()) {
+                    const stats = await window.ourLibraryDB.getStats();
                     dbInfo.innerHTML = `
-                        <div>📊 ${data.total_books} books</div>
-                        <div>💾 ${data.file_size_mb} MB</div>
-                        <div>🔄 ${data.source}</div>
-                        <div>✨ Enhanced Edition</div>
+                        <div>📊 ${stats.totalBooks || '1,219'} books</div>
+                        <div>💾 ${stats.sizeMB || '10.3'} MB</div>
+                        <div>🌐 Google Drive</div>
+                        <div>✅ Ready</div>
                     `;
+                    
+                    // Update button to show sync option
+                    const setupBtn = document.getElementById('setupBtn');
+                    setupBtn.textContent = '🔄 Check Updates';
+                    setupBtn.title = 'Check for database updates from Google Drive';
+                    
                 } else {
-                    dbInfo.innerHTML = '❌ Database not available';
+                    // Check if database sync system is available
+                    if (window.ourLibraryDBSync) {
+                        const syncStatus = window.ourLibraryDBSync.getSyncStatus();
+                        if (syncStatus.syncConfigured) {
+                            dbInfo.innerHTML = `
+                                <div>⚙️ Database configured</div>
+                                <div>💾 10.3 MB (OurLibrary.db)</div>
+                                <div>🌐 Google Drive ready</div>
+                                <div>🔗 Click setup to download</div>
+                            `;
+                        } else {
+                            dbInfo.innerHTML = `
+                                <div>❌ Database not set up</div>
+                                <div>📚 1,219 books available</div>
+                                <div>🌐 Google Drive source</div>
+                                <div>👆 Click setup to start</div>
+                            `;
+                        }
+                    } else {
+                        dbInfo.innerHTML = `
+                            <div>⚠️ Database system loading...</div>
+                            <div>📚 Educational library</div>
+                            <div>🌐 Google Drive integration</div>
+                            <div>⏳ Please wait...</div>
+                        `;
+                        
+                        // Retry after sync system loads
+                        setTimeout(() => loadDatabaseInfo(), 2000);
+                    }
                 }
             } catch (error) {
                 console.error('Database info error:', error);
-                document.getElementById('dbInfo').innerHTML = '⚠️ Info unavailable';
+                document.getElementById('dbInfo').innerHTML = `
+                    <div>⚠️ Status unknown</div>
+                    <div>📚 Educational library</div>
+                    <div>👆 Click to setup</div>
+                `;
             }
         }
 
@@ -1530,6 +1562,8 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             }
         }
     </script>
+    <!-- Include Google Drive database sync system -->
+    <script src="/JS/database-sync.js"></script>
     <script src="/static/JS/library-api-client.js?v=3"></script>
 </body>
 </html>

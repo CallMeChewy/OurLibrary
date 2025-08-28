@@ -1,29 +1,39 @@
 {
-    "google_client_id": "YOUR_GOOGLE_CLIENT_ID_HERE",
-    "google_api_key": "YOUR_GOOGLE_API_KEY_HERE",
-    "spreadsheet_ids": {
-        "user_registrations": "YOUR_USER_REGISTRATIONS_SHEET_ID",
-        "incomplete_emails": "YOUR_INCOMPLETE_EMAILS_SHEET_ID", 
-        "session_tracking": "YOUR_SESSION_TRACKING_SHEET_ID"
-    },
-    "sheet_structure": {
-        "user_registrations": {
-            "headers": ["UserID", "Email", "Name", "AuthMethod", "Status", "RegStartTime", "RegCompleteTime", "Location", "Consent", "Notes"],
-            "description": "Complete user registrations from both email and Google OAuth"
-        },
-        "incomplete_emails": {
-            "headers": ["Email", "Timestamp", "LastStep", "SessionID", "UserAgent", "Referrer", "Hostname"],
-            "description": "Emails entered but registration not completed"
-        },
-        "session_tracking": {
-            "headers": ["UserID", "Email", "Action", "Details", "SessionID", "Timestamp", "UserAgent", "Hostname"],
-            "description": "Detailed activity tracking for all registration steps"
-        }
-    },
-    "privacy_settings": {
-        "auto_delete_incomplete_after_days": 30,
-        "gdpr_compliant": true,
-        "track_user_agent": true,
-        "track_referrer": true
-    }
+  "_comment": "OurLibrary Google Drive Configuration - REAL PRODUCTION SETTINGS",
+  "_service_account": "anderson-library-service@anderson-library.iam.gserviceaccount.com",
+  "_last_updated": "2025-08-28",
+  
+  "database_file_id": "19uVpwt7uROQ_BCdsea32LlBUQF5v7zJl",
+  "database_filename": "OurLibrary.db",
+  "database_version": "1.0.0",
+  "database_size_mb": 10.3,
+  "total_books": 1219,
+  
+  "sync_settings": {
+    "auto_sync_enabled": true,
+    "sync_interval_hours": 24,
+    "check_interval_minutes": 60
+  },
+  
+  "gdrive_folders": {
+    "main_folder_id": "1_JFXXXKoQBlfqiwSvJ3OkQ3Q8DCue3hA",
+    "database_folder_id": "1d_LbPby6QCkJm7LYxTZjZ_D8aB_KIDUP", 
+    "books_folder_id": "17PyEAd1I43IVxcA7LdRHNlJg4ClE0dDw"
+  },
+  
+  "_setup_instructions": {
+    "step1": "Database 'OurLibrary.db' is already uploaded to Google Drive folder",
+    "step2": "File should be publicly accessible with 'Anyone with the link can view'",
+    "step3": "Visit https://drive.google.com/drive/folders/1d_LbPby6QCkJm7LYxTZjZ_D8aB_KIDUP",
+    "step4": "Find 'OurLibrary.db' file and copy its file ID from the URL",
+    "step5": "Replace 'database_file_id' above with the real file ID",
+    "step6": "The setup will automatically download the database for users",
+    "note": "File ID is the long string in the Google Drive URL after /file/d/"
+  },
+  
+  "_actual_urls": {
+    "google_drive_file": "https://drive.google.com/file/d/19uVpwt7uROQ_BCdsea32LlBUQF5v7zJl/view",
+    "direct_download": "https://drive.google.com/uc?export=download&id=19uVpwt7uROQ_BCdsea32LlBUQF5v7zJl",
+    "preview": "https://drive.google.com/file/d/19uVpwt7uROQ_BCdsea32LlBUQF5v7zJl/preview"
+  }
 }

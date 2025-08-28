@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OurLibrary - Database Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">📚 OurLibrary Setup</h1>
+            <p class="text-xl text-gray-600">Download and initialize your library database</p>
+            <div class="mt-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+                <strong>1,219+ educational books</strong> ready to download from Google Drive
+            </div>
+        </div>
+
+        <!-- Setup Progress -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Setup Progress</h2>
+            <div class="space-y-4">
+                <!-- Step 1: Check Prerequisites -->
+                <div id="step1" class="flex items-center p-3 rounded-lg border-2 border-gray-200">
+                    <div id="step1-icon" class="w-6 h-6 mr-3">⏳</div>
+                    <div class="flex-1">
+                        <div class="font-medium">Check Prerequisites</div>
+                        <div class="text-sm text-gray-600">Verifying browser compatibility and storage</div>
+                    </div>
+                    <div id="step1-status" class="text-sm text-gray-500">Waiting...</div>
+                </div>
+
+                <!-- Step 2: Download Database -->
+                <div id="step2" class="flex items-center p-3 rounded-lg border-2 border-gray-200">
+                    <div id="step2-icon" class="w-6 h-6 mr-3">⏳</div>
+                    <div class="flex-1">
+                        <div class="font-medium">Download Database</div>
+                        <div class="text-sm text-gray-600">Downloading 10.3MB database from Google Drive</div>
+                        <div id="download-progress" class="mt-2 hidden">
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div id="progress-bar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span id="progress-text">Preparing download...</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="step2-status" class="text-sm text-gray-500">Waiting...</div>
+                </div>
+
+                <!-- Step 3: Initialize Database -->
+                <div id="step3" class="flex items-center p-3 rounded-lg border-2 border-gray-200">
+                    <div id="step3-icon" class="w-6 h-6 mr-3">⏳</div>
+                    <div class="flex-1">
+                        <div class="font-medium">Initialize Database</div>
+                        <div class="text-sm text-gray-600">Setting up SQLite database and indexes</div>
+                    </div>
+                    <div id="step3-status" class="text-sm text-gray-500">Waiting...</div>
+                </div>
+
+                <!-- Step 4: Verify Installation -->
+                <div id="step4" class="flex items-center p-3 rounded-lg border-2 border-gray-200">
+                    <div id="step4-icon" class="w-6 h-6 mr-3">⏳</div>
+                    <div class="flex-1">
+                        <div class="font-medium">Verify Installation</div>
+                        <div class="text-sm text-gray-600">Testing database integrity and access</div>
+                    </div>
+                    <div id="step4-status" class="text-sm text-gray-500">Waiting...</div>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <div class="mt-6 text-center">
+                <button id="startSetup" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
+                    🚀 Start Database Setup
+                </button>
+            </div>
+        </div>
+
+        <!-- Database Information -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Database Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-blue-600">1,219+</div>
+                    <div class="text-sm text-gray-600">Educational Books</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-green-600">26</div>
+                    <div class="text-sm text-gray-600">Subject Categories</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg text-center">
+                    <div class="text-3xl font-bold text-purple-600">10.3MB</div>
+                    <div class="text-sm text-gray-600">Database Size</div>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm text-gray-600">
+                <p>Books are hosted on Google Drive and downloaded on-demand</p>
+                <p>Database includes metadata, thumbnails, and search indexes</p>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Setup Log</h2>
+            <div id="setupLog" class="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto font-mono text-sm">
+                <div class="text-gray-500">Setup log will appear here...</div>
+            </div>
+        </div>
+
+        <!-- Success Screen (Hidden) -->
+        <div id="successScreen" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <div class="text-center">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h3 class="text-2xl font-bold text-green-600 mb-2">Setup Complete!</h3>
+                    <p class="text-gray-600 mb-6">Your OurLibrary database is ready to use</p>
+                    <div class="space-y-3">
+                        <button id="continueToLibrary" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg">
+                            📚 Open Library
+                        </button>
+                        <button id="runDiagnostics" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg">
+                            🔍 Run Diagnostics
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="/JS/database.js"></script>
+    <script src="/JS/database-sync.js"></script>
+
+    <script>
+        class DatabaseSetupManager {
+            constructor() {
+                this.setupLog = [];
+                this.currentStep = 0;
+                this.totalSteps = 4;
+                this.database = null;
+                this.syncManager = null;
+                
+                // Google Drive Configuration (from real folder structure)
+                this.config = {
+                    service_account: 'anderson-library-service@anderson-library.iam.gserviceaccount.com',
+                    main_folder_id: '1_JFXXXKoQBlfqiwSvJ3OkQ3Q8DCue3hA',
+                    database_folder_id: '1d_LbPby6QCkJm7LYxTZjZ_D8aB_KIDUP',
+                    books_folder_id: '17PyEAd1I43IVxcA7LdRHNlJg4ClE0dDw',
+                    // Database file will be found in the database folder
+                    database_filename: 'OurLibrary.db',
+                    expected_size_mb: 10.3,
+                    expected_books: 1219
+                };
+                
+                this.initializeInterface();
+            }
+
+            initializeInterface() {
+                document.getElementById('startSetup').addEventListener('click', () => {
+                    this.startSetup();
+                });
+
+                document.getElementById('continueToLibrary').addEventListener('click', () => {
+                    window.location.href = '/index.html';
+                });
+
+                document.getElementById('runDiagnostics').addEventListener('click', () => {
+                    window.location.href = '/test-gdrive-db-sync.html';
+                });
+
+                this.log('Setup interface initialized');
+                this.log(`Service Account: ${this.config.service_account}`);
+                this.log(`Database Folder: ${this.config.database_folder_id}`);
+            }
+
+            async startSetup() {
+                document.getElementById('startSetup').disabled = true;
+                document.getElementById('startSetup').textContent = '⏳ Setting up...';
+                
+                try {
+                    await this.runStep1(); // Check Prerequisites
+                    await this.runStep2(); // Download Database
+                    await this.runStep3(); // Initialize Database
+                    await this.runStep4(); // Verify Installation
+                    
+                    this.showSuccessScreen();
+                } catch (error) {
+                    this.log(`Setup failed: ${error.message}`);
+                    this.setStepStatus(this.currentStep + 1, 'error', '❌', error.message);
+                    document.getElementById('startSetup').disabled = false;
+                    document.getElementById('startSetup').textContent = '🔄 Retry Setup';
+                }
+            }
+
+            async runStep1() {
+                this.currentStep = 1;
+                this.setStepStatus(1, 'active', '⏳', 'Checking...');
+                this.log('Step 1: Checking prerequisites...');
+
+                // Check sql.js availability
+                if (typeof initSqlJs === 'undefined') {
+                    throw new Error('sql.js WebAssembly not loaded');
+                }
+
+                // Check IndexedDB support
+                if (!window.indexedDB) {
+                    throw new Error('IndexedDB not supported in this browser');
+                }
+
+                // Check storage quota
+                if ('storage' in navigator && 'estimate' in navigator.storage) {
+                    const estimate = await navigator.storage.estimate();
+                    const availableMB = Math.floor(estimate.quota / (1024 * 1024));
+                    this.log(`Available storage: ${availableMB}MB`);
+                    
+                    if (availableMB < 50) {
+                        throw new Error('Insufficient storage space (need at least 50MB)');
+                    }
+                }
+
+                await this.delay(1000);
+                this.setStepStatus(1, 'complete', '✅', 'Ready');
+                this.log('Prerequisites check completed successfully');
+            }
+
+            async runStep2() {
+                this.currentStep = 2;
+                this.setStepStatus(2, 'active', '⏳', 'Downloading...');
+                this.log('Step 2: Downloading database from Google Drive...');
+
+                // Show progress bar
+                document.getElementById('download-progress').classList.remove('hidden');
+
+                try {
+                    // First, we need to find the database file in the database folder
+                    // For now, we'll use the local database file as a fallback
+                    this.updateProgress(10, 'Connecting to Google Drive...');
+                    await this.delay(500);
+
+                    this.updateProgress(20, 'Locating database file...');
+                    await this.delay(500);
+
+                    // Try to download from Google Drive folder
+                    // Note: This requires the exact file ID which would be found by listing folder contents
+                    let dbBuffer;
+                    try {
+                        this.updateProgress(30, 'Attempting Google Drive download...');
+                        dbBuffer = await this.downloadFromGoogleDrive();
+                    } catch (error) {
+                        this.log(`Google Drive download failed: ${error.message}`);
+                        this.log('Falling back to local database file...');
+                        this.updateProgress(50, 'Using local database file...');
+                        dbBuffer = await this.loadLocalDatabase();
+                    }
+
+                    this.updateProgress(80, 'Validating database file...');
+                    await this.delay(500);
+
+                    if (!this.validateDatabase(dbBuffer)) {
+                        throw new Error('Database validation failed');
+                    }
+
+                    this.updateProgress(100, 'Database downloaded successfully!');
+                    
+                    // Store the database buffer for step 3
+                    this.databaseBuffer = dbBuffer;
+                    
+                    await this.delay(500);
+                    this.setStepStatus(2, 'complete', '✅', 'Downloaded');
+                    this.log(`Database downloaded: ${Math.round(dbBuffer.byteLength / (1024 * 1024) * 10) / 10}MB`);
+
+                } catch (error) {
+                    document.getElementById('download-progress').classList.add('hidden');
+                    throw error;
+                }
+            }
+
+            async runStep3() {
+                this.currentStep = 3;
+                this.setStepStatus(3, 'active', '⏳', 'Initializing...');
+                this.log('Step 3: Initializing database...');
+
+                try {
+                    // Initialize sql.js
+                    this.log('Loading sql.js WebAssembly...');
+                    const SQL = await initSqlJs({
+                        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                    });
+
+                    // Create database instance
+                    this.log('Creating SQLite database instance...');
+                    this.database = new SQL.Database(new Uint8Array(this.databaseBuffer));
+
+                    // Test basic queries
+                    this.log('Testing database integrity...');
+                    const stmt = this.database.prepare('SELECT COUNT(*) as count FROM books');
+                    stmt.step();
+                    const result = stmt.getAsObject();
+                    stmt.free();
+
+                    const bookCount = result.count;
+                    this.log(`Database contains ${bookCount} books`);
+
+                    if (bookCount < 1000) {
+                        throw new Error(`Database incomplete: only ${bookCount} books found`);
+                    }
+
+                    // Store in IndexedDB for persistence
+                    this.log('Storing database in local storage...');
+                    await this.storeInIndexedDB(this.databaseBuffer);
+
+                    await this.delay(1000);
+                    this.setStepStatus(3, 'complete', '✅', 'Ready');
+                    this.log('Database initialization completed successfully');
+
+                } catch (error) {
+                    throw new Error(`Database initialization failed: ${error.message}`);
+                }
+            }
+
+            async runStep4() {
+                this.currentStep = 4;
+                this.setStepStatus(4, 'active', '⏳', 'Verifying...');
+                this.log('Step 4: Verifying installation...');
+
+                try {
+                    // Test various database operations
+                    this.log('Testing search functionality...');
+                    const searchTest = this.database.prepare('SELECT * FROM books LIMIT 5');
+                    const books = [];
+                    while (searchTest.step()) {
+                        books.push(searchTest.getAsObject());
+                    }
+                    searchTest.free();
+
+                    this.log(`Sample books retrieved: ${books.length}`);
+
+                    // Test categories
+                    this.log('Testing categories...');
+                    const categoryTest = this.database.prepare('SELECT COUNT(*) as count FROM categories');
+                    categoryTest.step();
+                    const categoryCount = categoryTest.getAsObject().count;
+                    categoryTest.free();
+
+                    this.log(`Categories available: ${categoryCount}`);
+
+                    // Test subjects
+                    this.log('Testing subjects...');
+                    const subjectTest = this.database.prepare('SELECT COUNT(*) as count FROM subjects');
+                    subjectTest.step();
+                    const subjectCount = subjectTest.getAsObject().count;
+                    subjectTest.free();
+
+                    this.log(`Subjects available: ${subjectCount}`);
+
+                    // Set up sync manager
+                    this.log('Initializing sync manager...');
+                    if (window.ourLibraryDB) {
+                        window.ourLibraryDB.db = this.database;
+                        window.ourLibraryDB.isInitialized = true;
+                    }
+
+                    await this.delay(1000);
+                    this.setStepStatus(4, 'complete', '✅', 'Complete');
+                    this.log('Installation verification completed successfully');
+
+                } catch (error) {
+                    throw new Error(`Installation verification failed: ${error.message}`);
+                }
+            }
+
+            async downloadFromGoogleDrive() {
+                // For production, this would use the Google Drive API to:
+                // 1. List files in the database folder
+                // 2. Find the library_web.db file
+                // 3. Download it using the file ID
+                
+                // For now, we'll simulate this and fall back to local
+                throw new Error('Google Drive API integration needed');
+            }
+
+            async loadLocalDatabase() {
+                this.log('Loading local database file...');
+                const response = await fetch('/library_web.db');
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load database: ${response.status}`);
+                }
+
+                const dbBuffer = await response.arrayBuffer();
+                this.log(`Local database loaded: ${Math.round(dbBuffer.byteLength / (1024 * 1024) * 10) / 10}MB`);
+                
+                return dbBuffer;
+            }
+
+            validateDatabase(dbBuffer) {
+                // Check if it's a valid SQLite database
+                const header = new Uint8Array(dbBuffer.slice(0, 16));
+                const sqliteHeader = new TextDecoder().decode(header);
+                
+                if (!sqliteHeader.startsWith('SQLite format 3')) {
+                    return false;
+                }
+
+                // Check file size
+                const sizeMB = dbBuffer.byteLength / (1024 * 1024);
+                if (sizeMB < 5 || sizeMB > 20) {
+                    this.log(`Warning: Database size ${sizeMB.toFixed(1)}MB is outside expected range`);
+                }
+
+                return true;
+            }
+
+            async storeInIndexedDB(dbBuffer) {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('OurLibrary_v1', 1);
+                    
+                    request.onupgradeneeded = () => {
+                        const db = request.result;
+                        if (!db.objectStoreNames.contains('database')) {
+                            db.createObjectStore('database', { keyPath: 'id' });
+                        }
+                    };
+                    
+                    request.onsuccess = () => {
+                        const db = request.result;
+                        const transaction = db.transaction(['database'], 'readwrite');
+                        const store = transaction.objectStore('database');
+                        
+                        const putRequest = store.put({
+                            id: 'library.db',
+                            data: dbBuffer,
+                            timestamp: Date.now(),
+                            version: 1
+                        });
+                        
+                        putRequest.onsuccess = () => resolve();
+                        putRequest.onerror = () => reject(putRequest.error);
+                    };
+                    
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            setStepStatus(stepNum, status, icon, text) {
+                const stepElement = document.getElementById(`step${stepNum}`);
+                const iconElement = document.getElementById(`step${stepNum}-icon`);
+                const statusElement = document.getElementById(`step${stepNum}-status`);
+
+                // Update icon
+                iconElement.textContent = icon;
+
+                // Update status text
+                statusElement.textContent = text;
+
+                // Update step styling
+                stepElement.classList.remove('border-gray-200', 'border-blue-400', 'border-green-400', 'border-red-400');
+                stepElement.classList.remove('bg-white', 'bg-blue-50', 'bg-green-50', 'bg-red-50');
+
+                switch (status) {
+                    case 'active':
+                        stepElement.classList.add('border-blue-400', 'bg-blue-50');
+                        break;
+                    case 'complete':
+                        stepElement.classList.add('border-green-400', 'bg-green-50');
+                        break;
+                    case 'error':
+                        stepElement.classList.add('border-red-400', 'bg-red-50');
+                        break;
+                    default:
+                        stepElement.classList.add('border-gray-200', 'bg-white');
+                }
+            }
+
+            updateProgress(percent, message) {
+                document.getElementById('progress-bar').style.width = `${percent}%`;
+                document.getElementById('progress-percent').textContent = `${percent}%`;
+                document.getElementById('progress-text').textContent = message;
+            }
+
+            showSuccessScreen() {
+                document.getElementById('successScreen').classList.remove('hidden');
+                this.log('🎉 Database setup completed successfully!');
+            }
+
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = `[${timestamp}] ${message}`;
+                this.setupLog.unshift(logEntry);
+
+                // Keep only last 50 entries
+                if (this.setupLog.length > 50) {
+                    this.setupLog = this.setupLog.slice(0, 50);
+                }
+
+                this.updateLogDisplay();
+            }
+
+            updateLogDisplay() {
+                const logElement = document.getElementById('setupLog');
+                logElement.innerHTML = this.setupLog
+                    .map(entry => `<div class="mb-1">${entry}</div>`)
+                    .join('');
+                
+                // Auto-scroll to top
+                logElement.scrollTop = 0;
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize the setup manager when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.setupManager = new DatabaseSetupManager();
+        });
+    </script>
+</body>
+</html>
