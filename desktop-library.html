@@ -1339,7 +1339,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                 if (window.ourLibraryDB && window.ourLibraryDB.isReady()) {
                     const userConfirm = confirm('Database is already set up. Do you want to check for updates or reconfigure?');
                     if (userConfirm) {
-                        window.location.href = '/setup-database.html';
+                        window.location.href = 'setup-database.html';
                     }
                     return;
                 }
@@ -1347,7 +1347,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                 // Redirect to database setup page
                 showLoading('Redirecting to database setup...');
                 setTimeout(() => {
-                    window.location.href = '/setup-database.html';
+                    window.location.href = 'setup-database.html';
                 }, 500);
                 
             } catch (error) {
