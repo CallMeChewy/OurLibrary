@@ -204,7 +204,7 @@
 
                     // Step 1: Download appropriate installer
                     await this.executeStep(1, `Downloading ${os} installer...`, async () => {
-                        const response = await fetch(`../${installerInfo.filename}`);
+                        const response = await fetch(`./${installerInfo.filename}`);
                         if (!response.ok) {
                             throw new Error(`Failed to download installer: ${response.status}`);
                         }
@@ -221,7 +221,7 @@
                         
                         // For Windows, also offer PowerShell version
                         if (os === 'windows' && installerInfo.alternativeFilename) {
-                            const psResponse = await fetch(`../${installerInfo.alternativeFilename}`);
+                            const psResponse = await fetch(`./${installerInfo.alternativeFilename}`);
                             if (psResponse.ok) {
                                 const psBlob = await psResponse.blob();
                                 const psUrl = window.URL.createObjectURL(psBlob);
