@@ -166,7 +166,7 @@ class OurLibraryFileManager {
 
             // Save to REAL database subdirectory
             const dbDir = await this.directoryHandle.getDirectoryHandle(this.subdirectories.database);
-            const dbFile = await dbDir.getFileHandle('library_catalog.db', { create: true });
+            const dbFile = await dbDir.getFileHandle('OurLibrary.db', { create: true });
             const writable = await dbFile.createWritable();
             
             await writable.write(databaseData);
@@ -177,7 +177,7 @@ class OurLibraryFileManager {
             return {
                 success: true,
                 size: downloadedSize,
-                location: `${this.directoryHandle.name}/${this.subdirectories.database}/library_catalog.db`
+                location: `${this.directoryHandle.name}/${this.subdirectories.database}/OurLibrary.db`
             };
 
         } catch (error) {

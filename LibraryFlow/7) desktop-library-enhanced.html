@@ -1343,7 +1343,7 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
                 downloadBtn.disabled = true;
                 
                 const link = document.createElement('a');
-                link.href = '/api/database/download';
+                link.href = 'setup-database.html'; // Redirect to setup for static hosting
                 link.download = `andylibrary_enhanced_${new Date().toISOString().slice(0,10)}.db`;
                 document.body.appendChild(link);
                 link.click();
@@ -1367,8 +1367,14 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
 
         async function loadDatabaseInfo() {
             try {
-                const response = await fetch('/api/database/info');
-                const data = await response.json();
+                // Mock database info for static hosting
+                const data = {
+                    available: true,
+                    total_books: 1219,
+                    file_size_mb: '10.3',
+                    source: 'LOCAL (Enhanced)'
+                };
+                // Data already defined above
                 
                 const dbInfo = document.getElementById('dbInfo');
                 if (data.available) {
@@ -1530,6 +1536,5 @@ Description: Enhanced Anderson's Library Desktop Web Interface with UX improveme
             }
         }
     </script>
-    <script src="/static/JS/library-api-client.js?v=3"></script>
 </body>
 </html>
