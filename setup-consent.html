@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/web-shim.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Up Your Personal Library - OurLibrary</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hover-lift {
+            transition: transform 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        .scrollable-content {
+            max-height: 70vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+        .scrollable-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollable-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .scrollable-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .scrollable-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-x-hidden">
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 -left-4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-0 -right-4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    📚 <span class="gradient-text">OurLibrary</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 font-light">
+                    You're about to install your personal educational library
+                </p>
+                <div class="mt-4 inline-flex items-center px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full text-green-400">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                    1,219+ Books • 26 Categories • Free Forever
+                </div>
+            </div>
+
+            <!-- Main Content Card -->
+            <div class="glass-effect rounded-2xl p-6 md:p-8 shadow-2xl">
+                <div class="scrollable-content space-y-6">
+                    
+                    <!-- How It Works -->
+                    <div class="section-card rounded-xl p-6">
+                        <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                            🎯 <span class="ml-2">How OurLibrary Works</span>
+                        </h2>
+                        <p class="text-gray-300 mb-4">This system has two parts:</p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 hover-lift">
+                                <div class="text-lg font-medium text-blue-400 mb-2">📚 Book Catalog</div>
+                                <div class="text-sm text-gray-300">Installed locally - Browse and search 1,219+ books</div>
+                            </div>
+                            <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4 hover-lift">
+                                <div class="text-lg font-medium text-cyan-400 mb-2">📖 Actual Books</div>
+                                <div class="text-sm text-gray-300">Download on demand - Get the books you want to read</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Installation Process -->
+                    <div class="section-card rounded-xl p-6">
+                        <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                            ⚡ <span class="ml-2">Installation Preview</span>
+                        </h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                                <div>
+                                    <div class="font-medium">Catalog Download (20-45 seconds)</div>
+                                    <div class="text-sm text-gray-400">Download book thumbnails and search index (~10MB)</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                                <div>
+                                    <div class="font-medium">System Setup (15-30 seconds)</div>
+                                    <div class="text-sm text-gray-400">Build search index and prepare personal library space</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                                <div>
+                                    <div class="font-medium">Optimization (10-20 seconds)</div>
+                                    <div class="text-sm text-gray-400">Configure for your device and browser</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center text-sm font-bold">🎉</div>
+                                <div>
+                                    <div class="font-medium">Ready to Use!</div>
+                                    <div class="text-sm text-gray-400">Start searching and downloading books</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage & Performance -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="section-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-3 flex items-center">
+                                💾 <span class="ml-2">Storage Impact</span>
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Initial setup:</span>
+                                    <span class="font-medium">~10-20MB</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Per downloaded book:</span>
+                                    <span class="font-medium">1-10MB each</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Comparable to:</span>
+                                    <span class="font-medium text-green-400">2-3 photos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-card rounded-xl p-6">
+                            <h3 class="text-xl font-semibold mb-3 flex items-center">
+                                🌐 <span class="ml-2">Internet Usage</span>
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <span class="text-gray-400">Required: Setup & downloading new books</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    <span class="text-gray-400">Offline: Search & read downloaded books</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy & Security -->
+                    <div class="section-card rounded-xl p-6">
+                        <h2 class="text-2xl font-semibold mb-4 flex items-center">
+                            🛡️ <span class="ml-2">Privacy & Security</span>
+                        </h2>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium text-cyan-400 mb-2">✅ What Stays Private</h4>
+                                <ul class="text-sm text-gray-300 space-y-1">
+                                    <li>• Your reading history - never leaves your device</li>
+                                    <li>• Search queries - processed locally only</li>
+                                    <li>• Personal preferences - stored in your browser</li>
+                                    <li>• Reading progress - private to your device</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-blue-400 mb-2">🔒 How It's Protected</h4>
+                                <ul class="text-sm text-gray-300 space-y-1">
+                                    <li>• Local storage only - no external data transmission</li>
+                                    <li>• No user accounts - no profiles stored anywhere</li>
+                                    <li>• No tracking - we don't monitor your activity</li>
+                                    <li>• Browser security - standard privacy protections</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mission Statement -->
+                    <div class="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl p-6">
+                        <h2 class="text-2xl font-semibold mb-3 flex items-center">
+                            🎓 <span class="ml-2">Your Educational Journey Starts Here</span>
+                        </h2>
+                        <p class="text-gray-300 mb-4">
+                            This library represents our mission: <strong class="text-yellow-400">"Getting education into the hands of people who can least afford it."</strong> 
+                            Once installed, you'll have immediate access to a comprehensive educational resource that works anytime, anywhere.
+                        </p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-cyan-400">1,219+</div>
+                                <div class="text-xs text-gray-400">Books Available</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-blue-400">26</div>
+                                <div class="text-xs text-gray-400">Categories</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-indigo-400">118</div>
+                                <div class="text-xs text-gray-400">Specialized Topics</div>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-sky-400">Free</div>
+                                <div class="text-xs text-gray-400">Forever</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Easy Removal -->
+                    <div class="section-card rounded-xl p-4">
+                        <h4 class="font-medium mb-2 flex items-center text-gray-400">
+                            🗑️ <span class="ml-2">Easy Removal</span>
+                        </h4>
+                        <p class="text-sm text-gray-400">
+                            If you ever want to remove OurLibrary, simply clear your browser's storage for this site. 
+                            All library files are immediately and completely removed with no system files left behind.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 pt-6 border-t border-white/10">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <button 
+                            id="cancelBtn"
+                            class="px-8 py-3 bg-gray-600 hover:bg-gray-500 rounded-xl font-medium transition-all duration-200 hover-lift"
+                        >
+                            Maybe Later
+                        </button>
+                        <button 
+                            id="acceptBtn"
+                            class="px-12 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-xl font-medium transition-all duration-200 hover-lift shadow-lg"
+                        >
+                            🚀 Set Up My Library Now
+                        </button>
+                    </div>
+                    
+                    <!-- Confirmation Checkboxes -->
+                    <div class="mt-6 space-y-3 text-sm">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="confirm1" class="w-4 h-4 text-green-600 rounded">
+                            <span class="text-gray-300">I understand this will download ~10MB book catalog for searching</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="confirm2" class="w-4 h-4 text-green-600 rounded">
+                            <span class="text-gray-300">I have sufficient storage space (~10-20MB initially, more as I download books)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="confirm3" class="w-4 h-4 text-green-600 rounded">
+                            <span class="text-gray-300">I'm connected to internet for setup and future book downloads</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="confirm4" class="w-4 text-green-600 rounded">
+                            <span class="text-gray-300">I want to search 1,219+ books and download them for offline reading</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Modal -->
+    <div id="cancelModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl p-8 max-w-md w-full text-center">
+            <div class="text-6xl mb-4">🤔</div>
+            <h3 class="text-2xl font-semibold mb-4">Are you sure?</h3>
+            <p class="text-gray-300 mb-6">
+                You're about to miss out on instant access to 1,219+ educational books. 
+                This is a free, private, and powerful learning resource that could transform your studies.
+            </p>
+            <div class="space-y-3">
+                <button id="stayBtn" class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl font-medium hover-lift">
+                    🎯 Let's Set It Up!
+                </button>
+                <button id="leaveBtn" class="w-full px-6 py-2 bg-gray-600 hover:bg-gray-500 rounded-xl transition-all">
+                    I'll come back later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enable accept button only when all checkboxes are checked
+        const checkboxes = ['confirm1', 'confirm2', 'confirm3', 'confirm4'];
+        const acceptBtn = document.getElementById('acceptBtn');
+        
+        function updateAcceptButton() {
+            const allChecked = checkboxes.every(id => document.getElementById(id).checked);
+            acceptBtn.disabled = !allChecked;
+            acceptBtn.className = allChecked 
+                ? "px-12 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-xl font-medium transition-all duration-200 hover-lift shadow-lg cursor-pointer"
+                : "px-12 py-3 bg-gray-600 rounded-xl font-medium opacity-50 cursor-not-allowed";
+        }
+        
+        checkboxes.forEach(id => {
+            document.getElementById(id).addEventListener('change', updateAcceptButton);
+        });
+        
+        // Initial state
+        updateAcceptButton();
+        
+        // Accept button action
+        acceptBtn.addEventListener('click', () => {
+            if (!acceptBtn.disabled) {
+                // Redirect to working library application
+                window.location.href = 'new-desktop-library.html';
+            }
+        });
+        
+        // Cancel button - show modal
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('cancelModal').classList.remove('hidden');
+            document.getElementById('cancelModal').classList.add('flex');
+        });
+        
+        // Stay button - close modal
+        document.getElementById('stayBtn').addEventListener('click', () => {
+            document.getElementById('cancelModal').classList.add('hidden');
+            document.getElementById('cancelModal').classList.remove('flex');
+        });
+        
+        // Leave button - go back to main
+        document.getElementById('leaveBtn').addEventListener('click', () => {
+            window.location.href = '/';
+        });
+        
+        // Close modal on background click
+        document.getElementById('cancelModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('cancelModal')) {
+                document.getElementById('cancelModal').classList.add('hidden');
+                document.getElementById('cancelModal').classList.remove('flex');
+            }
+        });
+    </script>
+</body>
+</html>
